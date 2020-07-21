@@ -1,0 +1,17 @@
+{
+  "name": "FormulaTextArea",
+  "version": "0.1.0",
+  "description": "公式编辑器",
+  "main": "index.js",
+  "repository": {
+    "url": "git@git.yonyou.com:e-invoice-FE/FormulaTextArea.git",
+    "type": "git"
+  },
+  "author": "zhangyef@yonyou.com",
+  "license": "MIT",
+  "dependencies": {
+    "@formulajs/formulajs": "^2.4.3",
+    "antlr4": "^4.8.0",
+    "mocha": "^8.0.1"
+  }
+}
