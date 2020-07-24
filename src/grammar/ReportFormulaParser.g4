@@ -1,7 +1,7 @@
 parser grammar ReportFormulaParser;
 
 options {
-    tokenVocab=ReportFormulaLexer;
+    tokenVocab = ReportFormulaLexer;
 }
 
 formulaExpr : expressionStatement;
@@ -21,8 +21,11 @@ singleExpression
     | singleExpression '&&' singleExpression                                   # LogicalAndExpression
     | singleExpression '||' singleExpression                                   # LogicalOrExpression
     | singleExpression '?' singleExpression ':' singleExpression               # TernaryExpression
+    | <assoc=right> singleExpression '=' singleExpression                      # AssignmentExpression
     | identifier                                                               # IdentifierExpression
     | literal                                                                  # LiteralExpression
+    | arrayLiteral                                                          # ArrayLiteralExpression
+    | objectLiteral                                                         # ObjectLiteralExpression
     | '(' expressionSequence ')'                                               # ParenthesizedExpression
     ;
 
@@ -35,6 +38,33 @@ argument
     | identifier
     ;
 
+objectLiteral
+    : '{' (propertyAssignment (',' propertyAssignment)*)? ','? '}'
+    ;
+
+arrayLiteral
+    : ('[' elementList ']')
+    ;
+
+elementList
+    : ','* arrayElement? (','+ arrayElement)* ','* // Yes, everything is optional
+    ;
+
+arrayElement
+    : singleExpression
+    ;
+
+propertyAssignment
+    : propertyName ':' singleExpression                                             # PropertyExpressionAssignment
+    | '[' singleExpression ']' ':' singleExpression                                 # ComputedPropertyExpressionAssignment
+    ;
+
+propertyName
+    : identifierName
+    | StringLiteral
+    | numericLiteral
+    | '[' singleExpression ']'
+    ;
 
 identifierName
     : identifier
@@ -47,18 +77,22 @@ identifierName
 identifier
     : refItemCode
     | cellAddressLiteral
+    | cellRangeLiteral
     | Identifier
     ;
 
 refItemCode: '@' Identifier; //报表项的标识符
 
+// 单元格范围
+cellRangeLiteral: cellAddressLiteral ':' cellAddressLiteral; 
+
 // 字面量
 
 literal
-    : numericLiteral
-    | NullLiteral
-    | BooleanLiteral
-    | StringLiteral
+    : numericLiteral    #NumericLiteralExpression
+    | NullLiteral       #NullLiteralExpression
+    | BooleanLiteral    #BooleanLiteralExpression
+    | StringLiteral     #StringLiteralExpression
     ;
 
 cellAddressLiteral

@@ -7,7 +7,10 @@ SingleLineComment:              '//' ~[\r\n\u2028\u2029]* -> channel(HIDDEN);
 
 OpenParen:                      '(';
 CloseParen:                     ')';
-
+OpenBracket:                    '[';
+CloseBracket:                   ']';
+OpenBrace:                      '{';
+CloseBrace:                     '}';
 Comma:                          ',';
 Assign:                         '=';
 QuestionMark:                   '?';
@@ -47,7 +50,7 @@ NullLiteral:                    'null';
 Identifier:                     IdentifierStart IdentifierPart*;
 
 /// String Literals
-StringLiteral:                 '"' DoubleStringCharacter* '"'
+StringLiteral:                 '"' DoubleStringCharacter* '"'       
              |                  '\'' SingleStringCharacter* '\''
              ;
 

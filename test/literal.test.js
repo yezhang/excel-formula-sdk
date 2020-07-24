@@ -1,5 +1,6 @@
 const assert = require('assert');
 const antlr4 = require('antlr4');
+const punycode = require('punycode');
 
 const FormulaParser = require('../out/ReportFormulaParser.js').ReportFormulaParser;
 const FormulaLexer = require('../out/ReportFormulaLexer.js').ReportFormulaLexer;
@@ -17,15 +18,45 @@ function calc(input) {
 
   return tree.accept(new FormulaVisitor());
 }
-describe('加法测试', function () {
-  it('1 + 1 + 1 = 3', function () {
-    var input = "1 + 1 + 1"
-    var result = calc(input);
 
-    assert.equal(3, result);
+function assertList(list) {
+  if (!list) {
+    return;
+  }
+  list.forEach(function (item) {
+    var result = calc(item.rawValue);
+    assert.equal(item.expected, result);
+  })
+}
+
+describe('一般常量', function () {
+  it('识别:字符串', function () {
+    assertList([
+      {
+        rawValue: "\"OK\"",
+        expected: "OK"
+      },
+      {
+        rawValue: "\"\"",
+        expected: ""
+      },
+      {
+        rawValue: "\"\\\"\"",
+        expected: "\""
+      }
+    ]);
   });
 
-  it('should ', function() {
+
+  it('识别:布尔', function () {
+
+  });
+
+  it('识别:数字', function () {
+
+  });
+
+  it('识别:空', function () {
 
   });
 

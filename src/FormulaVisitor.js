@@ -1,5 +1,7 @@
 const ReportFormulaParserVisitor = require('../out/ReportFormulaParserVisitor.js').ReportFormulaParserVisitor;
 
+const StringUtils = require('./util/StringUtils.js').StringUtils;
+
 class FormulaVisitor extends ReportFormulaParserVisitor {
   visitFormulaExpr(ctx) {
     return ctx.expressionStatement().accept(this);
@@ -29,12 +31,24 @@ class FormulaVisitor extends ReportFormulaParserVisitor {
     return ctx.getText();
   }
 
+  
+  visitStringLiteralExpression(ctx) {
+    var rawText = ctx.getText();
+    return StringUtils.unwrapText(rawText);
+  }
+
+  visitTerminal(ctx) {
+    return ctx.getText();
+  }
+
   visitLiteral(ctx) {
     return ctx.children[0].accept(this);
   }
   visitLiteralExpression(ctx) {
     return ctx.children[0].accept(this); // 直接返回孩子节点的结果，不使用数组包装
   }
+
+
 
   visitNumericLiteral(ctx) {
     return new Number(ctx.getText());
