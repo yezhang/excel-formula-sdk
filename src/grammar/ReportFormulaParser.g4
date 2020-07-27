@@ -87,7 +87,6 @@ refItemCode: '@' Identifier; //报表项的标识符
 cellRangeLiteral: cellAddressLiteral ':' cellAddressLiteral; 
 
 // 字面量
-
 literal
     : numericLiteral    #NumericLiteralExpression
     | NullLiteral       #NullLiteralExpression
@@ -121,8 +120,8 @@ sheetAddress
     ;
 
 numericLiteral
-    : percentageLiteral
-    | basicNumberLiteral
+    : percentageLiteral  
+    | basicNumberLiteral 
     ;
 
 percentageLiteral

@@ -1,6 +1,6 @@
-const ReportFormulaParserVisitor = require('../out/ReportFormulaParserVisitor.js').ReportFormulaParserVisitor;
+const ReportFormulaParserVisitor = require('../../out/ReportFormulaParserVisitor').ReportFormulaParserVisitor;
 
-const StringUtils = require('./util/StringUtils.js').StringUtils;
+const StringUtils = require('../util/StringUtils').StringUtils;
 
 class FormulaVisitor extends ReportFormulaParserVisitor {
   visitFormulaExpr(ctx) {
@@ -27,6 +27,14 @@ class FormulaVisitor extends ReportFormulaParserVisitor {
     }
   }
 
+  visitUnaryMinusExpression(ctx) {
+    return -1 * ctx.singleExpression().accept(this);
+  }
+
+  visitUnaryPlusExpression(ctx) {
+    return ctx.singleExpression().accept(this);
+  }
+
   visitSheetAddress(ctx) {
     return ctx.getText();
   }
@@ -37,21 +45,44 @@ class FormulaVisitor extends ReportFormulaParserVisitor {
     return StringUtils.unwrapText(rawText);
   }
 
+  visitNumericLiteralExpression(ctx) {
+    var num = ctx.children[0].accept(this);
+    return num;
+  }
+
+  visitNumericLiteral(ctx) {
+    return ctx.children[0].accept(this);
+  }
+  /**
+   * 访问百分数
+   */
+  visitPercentageLiteral(ctx) {
+    return ctx.basicNumberLiteral().accept(this) / 100.0;
+  }
+
+  /**
+   * 访问基本数字
+   */
+  visitBasicNumberLiteral(ctx) {
+    return Number(ctx.getText());
+  }
+
+  /**
+   * 识别 null
+   */
+  visitNullLiteralExpression(ctx) {
+    return null;
+  }
+
   visitTerminal(ctx) {
     return ctx.getText();
   }
 
-  visitLiteral(ctx) {
-    return ctx.children[0].accept(this);
-  }
+  // visitLiteral(ctx) {
+  //   return ctx.children[0].accept(this);
+  // }
   visitLiteralExpression(ctx) {
     return ctx.children[0].accept(this); // 直接返回孩子节点的结果，不使用数组包装
-  }
-
-
-
-  visitNumericLiteral(ctx) {
-    return new Number(ctx.getText());
   }
 
   // singleExpression ('+' | '-') singleExpression

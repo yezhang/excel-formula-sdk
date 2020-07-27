@@ -1,4 +1,6 @@
-const StringBuffer = require('./StringUtils.js');
+/**
+ * 
+ */
 
 function StringUtils (){}
 
