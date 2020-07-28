@@ -1,4 +1,6 @@
 const assert = require('assert').strict;
+const sinon = require('sinon');
+
 const FormulaCore = require('../src/core/FormulaCore.js');
 
 const core = FormulaCore.INSTANCE;
@@ -29,15 +31,62 @@ describe('一般常量', function () {
         expected: "\""
       }
     ]);
-
-    // 测试错误的符号是否可以正确识别，并提供恰当充分的出错信息
-    core.removeErrorHandler().setErrorHandler({
-      handle: function (input, line, column, message) {
-        assert.equal(message, 'no viable alternative at input \'"\'');
-      }
-    }).calc('"');
   });
 
+  describe('识别:字符串:错误处理', function () {
+    function decorateCore(rawInput) {
+
+      var handleRuntimeErrorStub = sinon.spy(function(e) {
+
+      });
+
+      var handleStub = sinon.spy(function (input, line, column, message) {
+        assert.equal(input, rawInput);
+        assert.equal(message, '无法识别的符号');
+      });
+
+      // 测试错误的符号是否可以正确识别，并提供恰当充分的出错信息
+      core.removeErrorHandler().setErrorHandler({
+        handleRuntimeError: handleRuntimeErrorStub,
+        handle: handleStub
+      });
+      core.calc(rawInput);
+
+      assert.equal(handleStub.called, true); //验证语法错误必须识别
+    }
+
+    it('"', function(){
+      decorateCore('"');
+    });
+    
+    it('\'', function(){
+      decorateCore('\'');
+    });
+
+    it('#', function(){
+      decorateCore('#');
+    });
+
+    it('1-', function(){
+      decorateCore('1-');
+    });
+    
+    it('1a', function(){
+      decorateCore('1a');
+    });
+  
+    it('a1', function(){
+      decorateCore('a1');
+    });
+
+    it('a.0', function(){
+      decorateCore('a.0');
+    });
+
+    it('0.a', function(){
+      decorateCore('0.a');
+    });
+  });
 
   it('识别:布尔', function () {
 

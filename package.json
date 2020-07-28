@@ -9,10 +9,14 @@
   },
   "author": "zhangyef@yonyou.com",
   "license": "MIT",
+  "scripts": {
+    "test": "mocha"
+  },
   "dependencies": {
     "@formulajs/formulajs": "^2.4.3",
     "antlr4": "^4.8.0",
     "mocha": "^8.0.1",
-    "punycode": "^2.1.1"
+    "punycode": "^2.1.1",
+    "sinon": "^9.0.2"
   }
 }

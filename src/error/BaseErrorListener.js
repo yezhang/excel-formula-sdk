@@ -1,4 +1,5 @@
 const antlr4 = require('antlr4');
+const { ParseCancellationException } = require('antlr4/error/Errors');
 
 class BaseErrorListener extends antlr4.error.ErrorListener {
 
@@ -25,11 +26,13 @@ class BaseErrorListener extends antlr4.error.ErrorListener {
      * @param {RecognitionException} exception 异常信息
      */
   syntaxError(recognizer, symbol, line, column, message, exception) {
-    // throw new SyntaxGenericError({line, column, message});
     var tokens = recognizer.getInputStream();
-    var rawText = tokens.tokenSource.text;
+    var rawText = tokens.tokenSource.inputStream.toString();
 
-    this.getErrorHandler().handle(rawText, line, column, message);
+    var errHandler = this.getErrorHandler();
+    if(errHandler && errHandler.handle instanceof Function) {
+      errHandler.handle(rawText, line, column, '无法识别的符号');
+    }
   }
 }
 

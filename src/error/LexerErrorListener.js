@@ -6,6 +6,7 @@
 const BaseErrorListener = require('./BaseErrorListener');
 
 class LexerErrorListener extends BaseErrorListener {
+  
 
   /**
    * 检查文法错误

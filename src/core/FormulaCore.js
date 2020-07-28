@@ -7,8 +7,7 @@ const FormulaVisitor = require('./FormulaVisitor').FormulaVisitor;
 const ParserErrorListener = require('../error/ParserErrorListener');
 const LexerErrorListener = require('../error/LexerErrorListener');
 
-const defaultLexerErrListener = new LexerErrorListener();
-const defaultParserErrListener = new ParserErrorListener();
+
 
 const EditorErrorHandler = require('../contrib/errorHandler/EditorErrorHandler');
 
@@ -16,49 +15,64 @@ const EditorErrorHandler = require('../contrib/errorHandler/EditorErrorHandler')
  * 公式引擎核心，解析公式并计算
  */
 
- function FormulaCore(errorHandler) {
-  this.lexerErrListener = defaultLexerErrListener;
-  this.parserErrListener = defaultParserErrListener;
-
+function FormulaCore(errorHandler) {
+  this.formulaVisitor = new FormulaVisitor()
   this.setErrorHandler(errorHandler);
- }
+}
 
- FormulaCore.prototype.setErrorHandler = function setErrorHandler(errorHandler) {
-  this.lexerErrListener.setErrorHandler(errorHandler);
-  this.parserErrListener.setErrorHandler(errorHandler);
-
-  return this;
- }
-
- FormulaCore.prototype.removeErrorHandler = function removeErrorHandler() {
-  this.lexerErrListener.removeErrorHandler();
-  this.parserErrListener.removeErrorHandler();
+FormulaCore.prototype.setErrorHandler = function setErrorHandler(errorHandler) {
+  this.sharedErrorHandler = errorHandler;
 
   return this;
- }
+}
+
+FormulaCore.prototype.removeErrorHandler = function removeErrorHandler() {
+  this.sharedErrorHandler = null;
+
+  return this;
+}
+
+FormulaCore.prototype.createErrorListener = function createErrorListener(errorHandler) {
+  const defaultLexerErrListener = new LexerErrorListener();
+  const defaultParserErrListener = new ParserErrorListener();
+
+  defaultLexerErrListener.setErrorHandler(errorHandler);
+  defaultParserErrListener.setErrorHandler(errorHandler);
+
+  return {
+    lexerErrorListener: defaultLexerErrListener,
+    parserErrorListener: defaultParserErrListener
+  }
+}
+
+FormulaCore.prototype.calc = function calc(input) {
+
+  var errorListenerObj = this.createErrorListener(this.sharedErrorHandler);
 
 
- FormulaCore.prototype.calc = function calc(input) {
   var chars = new antlr4.InputStream(input);
   var lexer = new FormulaLexer(chars);
 
   lexer.removeErrorListeners();
-  lexer.addErrorListener(this.lexerErrListener);
-  
+  lexer.addErrorListener(errorListenerObj.lexerErrorListener);
+
   var tokens = new antlr4.CommonTokenStream(lexer);
   var parser = new FormulaParser(tokens);
 
   // 在创建解析器后，执行解析器前定义错误监听。
   parser.removeErrorListeners(); // 移除默认的 ConsoleErrorListener
-  parser.addErrorListener(this.parserErrListener); 
+  parser.addErrorListener(errorListenerObj.parserErrorListener);
 
-  var tree = parser.formulaExpr();
+  var tree = parser.formulaExpr(); // 启动公式解析，遇到错误会触发 ErrorListener。
 
-  return tree.accept(new FormulaVisitor());
+  try {
+    return tree.accept(this.formulaVisitor);
+  } catch (e) {
+    this.sharedErrorHandler.handleRuntimeError(e);
+  }
 }
 
 const INSTANCE = new FormulaCore(new EditorErrorHandler());
+FormulaCore.INSTANCE = INSTANCE;
 
- FormulaCore.INSTANCE = INSTANCE;
-
- module.exports = FormulaCore;
+module.exports = FormulaCore;

@@ -1,6 +1,9 @@
 const ReportFormulaParserVisitor = require('../../out/ReportFormulaParserVisitor').ReportFormulaParserVisitor;
+const ReportFormulaParser = require('../../out/ReportFormulaParser').ReportFormulaParser;
 
 const StringUtils = require('../util/StringUtils').StringUtils;
+const CalculationException = require('../error/FormulaExceptions').CalculationException;
+
 
 class FormulaVisitor extends ReportFormulaParserVisitor {
   visitFormulaExpr(ctx) {
@@ -71,16 +74,13 @@ class FormulaVisitor extends ReportFormulaParserVisitor {
    * 识别 null
    */
   visitNullLiteralExpression(ctx) {
-    return null;
+    return null; // 直接反馈 null 字面量
   }
 
   visitTerminal(ctx) {
     return ctx.getText();
   }
 
-  // visitLiteral(ctx) {
-  //   return ctx.children[0].accept(this);
-  // }
   visitLiteralExpression(ctx) {
     return ctx.children[0].accept(this); // 直接返回孩子节点的结果，不使用数组包装
   }
@@ -88,12 +88,19 @@ class FormulaVisitor extends ReportFormulaParserVisitor {
   // singleExpression ('+' | '-') singleExpression
   visitAdditiveExpression(ctx) {
     var leftValue = ctx.singleExpression(0).accept(this);
+    if(!leftValue){
+      throw new CalculationException();
+    }
     var rightValue = ctx.singleExpression(1).accept(this);
-    if(ctx.op === ctx.Plus().getSymbol()){
+    if(!rightValue){
+      throw new CalculationException();
+    }
+
+    if(ctx.op.type === ReportFormulaParser.Plus){
       return leftValue + rightValue;
     }
 
-    if(ctx.op === ctx.Minus().getSymbol()) {
+    if(ctx.op.type === ReportFormulaParser.Minus) {
       return leftValue - rightValue;
     }
   }
