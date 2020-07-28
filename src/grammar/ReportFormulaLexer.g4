@@ -58,7 +58,27 @@ WhiteSpaces:                    [\t\u000B\u000C\u0020\u00A0]+ -> channel(HIDDEN)
 
 LineTerminator:                 [\r\n\u2028\u2029] -> channel(HIDDEN);
 
+// 单元格范围
+CellRangeLiteral: CellAddressLiteral ':' CellAddressLiteral; 
+
+// 单元格地址需要作为一个整体识别，识别后在 visitor 中解析。
+// 如果在语法上将行、列进一步拆分，会与 标识符、数字字面量 有歧义。
+CellAddressLiteral
+    : SheetAddress? '$'? [A-Z] [A-Z]* '$'? [1-9] [0-9]* ;
+
+// 表格名称
+SheetAddress
+    : StringCharacter+ '!'
+    ;
+
 /// Numeric Literals
+BasicNumberLiteral
+    : DecimalLiteral
+    | HexIntegerLiteral
+    | OctalIntegerLiteral
+    | OctalIntegerLiteral2
+    | BinaryIntegerLiteral
+    ;
 
 DecimalLiteral:                 DecimalIntegerLiteral '.' [0-9] [0-9_]* ExponentPart?
               |                 '.' [0-9] [0-9_]* ExponentPart?
@@ -67,8 +87,10 @@ DecimalLiteral:                 DecimalIntegerLiteral '.' [0-9] [0-9_]* Exponent
 
 /// Numeric Literals
 
+
+
 HexIntegerLiteral:              '0' [xX] [0-9a-fA-F] HexDigit*;
-OctalIntegerLiteral:            '0' [0-7]+ {!this.IsStrictMode()}?;
+OctalIntegerLiteral:            '0' [0-7]+;
 OctalIntegerLiteral2:           '0' [oO] [0-7] [_0-7]*;
 BinaryIntegerLiteral:           '0' [bB] [01] [_01]*;
 
@@ -77,16 +99,9 @@ BigOctalIntegerLiteral:         '0' [oO] [0-7] [_0-7]* 'n';
 BigBinaryIntegerLiteral:        '0' [bB] [01] [_01]* 'n';
 BigDecimalIntegerLiteral:       DecimalIntegerLiteral 'n';
 
-CellColumnLiteral 
-    : [A-Z] [A-Z]*
-    ;
-  
-CellRowLiteral
-    : [1-9] [0-9]*
-    ;
 
 // 用户可输入的字符串
-StringCharacter
+fragment StringCharacter
     : ~[\\\r\n]
     | '\\' EscapeSequence
     | LineContinuation

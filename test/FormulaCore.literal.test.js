@@ -44,14 +44,14 @@ describe('一般常量', function () {
         assert.equal(input, rawInput);
         assert.equal(message, '无法识别的符号');
       });
-
+      
       // 测试错误的符号是否可以正确识别，并提供恰当充分的出错信息
       core.removeErrorHandler().setErrorHandler({
         handleRuntimeError: handleRuntimeErrorStub,
         handle: handleStub
       });
       core.calc(rawInput);
-
+      
       assert.equal(handleStub.called, true); //验证语法错误必须识别
     }
 

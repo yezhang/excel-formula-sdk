@@ -19,7 +19,12 @@ class LexerErrorListener extends BaseErrorListener {
    * @param {RecognitionException} exception 异常信息
    */
   syntaxError(recognizer, symbol, line, column, message, exception) {
-    super.syntaxError(recognizer, symbol, line, column, message, exception);
+    var rawText = recognizer.inputStream.toString();
+
+    var errHandler = this.getErrorHandler();
+    if(errHandler && errHandler.handle instanceof Function) {
+      errHandler.handle(rawText, line, column, '无法识别的符号');
+    }
   }
 }
 

@@ -57,6 +57,7 @@ FormulaCore.prototype.calc = function calc(input) {
   lexer.addErrorListener(errorListenerObj.lexerErrorListener);
 
   var tokens = new antlr4.CommonTokenStream(lexer);
+
   var parser = new FormulaParser(tokens);
 
   // 在创建解析器后，执行解析器前定义错误监听。

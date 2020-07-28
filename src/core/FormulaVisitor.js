@@ -53,20 +53,21 @@ class FormulaVisitor extends ReportFormulaParserVisitor {
     return num;
   }
 
-  visitNumericLiteral(ctx) {
-    return ctx.children[0].accept(this);
-  }
   /**
    * 访问百分数
    */
+  visitPercentageLiteralExpression(ctx) {
+    return ctx.percentageLiteral().accept(this);
+  }
+
   visitPercentageLiteral(ctx) {
-    return ctx.basicNumberLiteral().accept(this) / 100.0;
+    return ctx.BasicNumberLiteral().accept(this) / 100.0;
   }
 
   /**
    * 访问基本数字
    */
-  visitBasicNumberLiteral(ctx) {
+  visitBasicNumberLiteralExpression(ctx) {
     return Number(ctx.getText());
   }
 

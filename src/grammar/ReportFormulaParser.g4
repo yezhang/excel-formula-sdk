@@ -76,15 +76,14 @@ identifierName
 
 identifier
     : refItemCode
-    | cellAddressLiteral
-    | cellRangeLiteral
+    | CellAddressLiteral
+    | CellRangeLiteral
     | Identifier
     ;
 
 refItemCode: '@' Identifier; //报表项的标识符
 
-// 单元格范围
-cellRangeLiteral: cellAddressLiteral ':' cellAddressLiteral; 
+
 
 // 字面量
 literal
@@ -94,47 +93,14 @@ literal
     | StringLiteral     #StringLiteralExpression
     ;
 
-cellAddressLiteral
-    : (sheetAddress '!')? CellColumnLiteral CellRowLiteral
-    ;
-
-cellColumnAddress
-    : cellColumnRelativeAddress
-    | cellColumnAbsoluteAddress
-    ;
-
-cellRowAddress
-    : cellRowRelativeAddress
-    | cellRowAbsoluteAddress
-    ;
-
-cellColumnRelativeAddress: CellColumnLiteral;
-cellColumnAbsoluteAddress: '$' CellColumnLiteral;
-
-cellRowRelativeAddress: CellRowLiteral;
-cellRowAbsoluteAddress: '$' CellRowLiteral;
-
-// 表格名称
-sheetAddress
-    : StringCharacter+
-    ;
 
 numericLiteral
-    : percentageLiteral  
-    | basicNumberLiteral 
+    : percentageLiteral  #PercentageLiteralExpression
+    | BasicNumberLiteral #BasicNumberLiteralExpression
     ;
 
 percentageLiteral
-    : basicNumberLiteral '%';
-
-basicNumberLiteral
-    : DecimalLiteral
-    | HexIntegerLiteral
-    | OctalIntegerLiteral
-    | OctalIntegerLiteral2
-    | BinaryIntegerLiteral
-    ;
-
+    : BasicNumberLiteral '%';
 
 reservedWord
     : keyword
