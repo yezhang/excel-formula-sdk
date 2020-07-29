@@ -6,8 +6,17 @@ function FormulaException() {
 FormulaException.prototype = Object.create(Error.prototype);
 FormulaException.prototype.constructor = FormulaException;
 
-function ParseException() {
+/**
+ * 语法解析错误
+ */
+function ParseException(input, line, column, message) {
   FormulaException.call(this);
+
+  this.input = input;
+  this.line = line;
+  this.column = column;
+  this.message = message;
+
   return this;
 }
 

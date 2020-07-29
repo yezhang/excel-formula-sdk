@@ -2,8 +2,9 @@ const ReportFormulaParserVisitor = require('../../out/ReportFormulaParserVisitor
 const ReportFormulaParser = require('../../out/ReportFormulaParser').ReportFormulaParser;
 
 const StringUtils = require('../util/StringUtils').StringUtils;
-const CalculationException = require('../error/FormulaExceptions').CalculationException;
-
+const FormulaErrs = require('../error/FormulaExceptions');
+const CalculationException = FormulaErrs.CalculationException;
+const ParseException = FormulaErrs.ParseException;
 
 class FormulaVisitor extends ReportFormulaParserVisitor {
   visitFormulaExpr(ctx) {
@@ -16,13 +17,13 @@ class FormulaVisitor extends ReportFormulaParserVisitor {
 
   // 多个表达式序列时，使用最后一个序列为计算结果
   visitExpressionSequence(ctx) {
-    if(!ctx){
+    if (!ctx) {
       return;
     }
 
-    if(ctx.children) {
+    if (ctx.children) {
       var result = undefined;
-      for(var i = 0; i < ctx.children.length; i++){
+      for (var i = 0; i < ctx.children.length; i++) {
         result = ctx.children[i].accept(this);
       }
 
@@ -42,7 +43,7 @@ class FormulaVisitor extends ReportFormulaParserVisitor {
     return ctx.getText();
   }
 
-  
+
   visitStringLiteralExpression(ctx) {
     var rawText = ctx.getText();
     return StringUtils.unwrapText(rawText);
@@ -77,6 +78,18 @@ class FormulaVisitor extends ReportFormulaParserVisitor {
 
   visitIdentifierPlainText(ctx) {
     //TODO 实现该方法
+    // 分析标识符前面是否有数字，如果有数字，则是非法字符。
+    var tokens = ctx.parser.getInputStream();
+    var lineText = tokenSource.inputStream.toString();
+    var symbol = ctx.Identifier().symbol;
+    var startIndex = symbol.start;
+    var stopIndex = symbol.stop;
+    if(startIndex > 0) {
+      // 标识符前面紧邻数字
+      if(/[.0-9]/.test(lineText.charAt(startIndex))){
+        throw new ParseException(lineText, symbol.line, startIndex, "标识符不能紧跟在数字文本之后");
+      }
+    }
     return ctx.getText();
   }
 
@@ -100,19 +113,19 @@ class FormulaVisitor extends ReportFormulaParserVisitor {
   // singleExpression ('+' | '-') singleExpression
   visitAdditiveExpression(ctx) {
     var leftValue = ctx.singleExpression(0).accept(this);
-    if(!leftValue){
+    if (!leftValue) {
       throw new CalculationException();
     }
     var rightValue = ctx.singleExpression(1).accept(this);
-    if(!rightValue){
+    if (!rightValue) {
       throw new CalculationException();
     }
 
-    if(ctx.op.type === ReportFormulaParser.Plus){
+    if (ctx.op.type === ReportFormulaParser.Plus) {
       return leftValue + rightValue;
     }
 
-    if(ctx.op.type === ReportFormulaParser.Minus) {
+    if (ctx.op.type === ReportFormulaParser.Minus) {
       return leftValue - rightValue;
     }
   }

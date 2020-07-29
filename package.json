@@ -18,5 +18,8 @@
     "mocha": "^8.0.1",
     "punycode": "^2.1.1",
     "sinon": "^9.0.2"
+  },
+  "devDependencies": {
+    "mochawesome": "^6.1.1"
   }
 }

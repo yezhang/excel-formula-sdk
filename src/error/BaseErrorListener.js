@@ -1,7 +1,21 @@
 const antlr4 = require('antlr4');
 const { ParseCancellationException } = require('antlr4/error/Errors');
 
+class SyntaxErrorItem {
+  constructor(symbol, line, column, message, e) {
+    this.offendingSymbol = symbol;
+    this.line = line;
+    this.column = column;
+    this.message = message;
+    this.exception = e;
+  }
+}
 class BaseErrorListener extends antlr4.error.ErrorListener {
+  constructor(){
+    super();
+
+    this.errorItems = [];
+  }
 
   setErrorHandler(errorHandler) {
     this.errorHandler = errorHandler;
@@ -15,6 +29,9 @@ class BaseErrorListener extends antlr4.error.ErrorListener {
     return this.errorHandler;
   }
 
+  recordError(recognizer, symbol, line, column, message, exception) {
+    this.errorItems.push(new SyntaxErrorItem(symbol, line, column, message, exception));
+  }
   /**
      * 检查文法错误
      *
@@ -26,6 +43,8 @@ class BaseErrorListener extends antlr4.error.ErrorListener {
      * @param {RecognitionException} exception 异常信息
      */
   syntaxError(recognizer, symbol, line, column, message, exception) {
+    this.recordError(recognizer, symbol, line, column, message, exception);
+    
     var tokens = recognizer.getInputStream();
     var rawText = tokens.tokenSource.inputStream.toString();
 
@@ -33,6 +52,14 @@ class BaseErrorListener extends antlr4.error.ErrorListener {
     if(errHandler && errHandler.handle instanceof Function) {
       errHandler.handle(rawText, line, column, '无法识别的符号');
     }
+  }
+
+  hasErrors() {
+    return this.errorItems.length > 0;
+  }
+
+  clearErrors() {
+    this.errorItems = [];
   }
 }
 

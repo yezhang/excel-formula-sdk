@@ -15,7 +15,9 @@
         "--timeout",
         "999999",
         "--colors",
-        "${workspaceFolder}/test"
+        "${workspaceFolder}/test",
+        "--reporter",
+        "mochawesome"
       ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"

@@ -7,7 +7,9 @@ const FormulaVisitor = require('./FormulaVisitor').FormulaVisitor;
 const ParserErrorListener = require('../error/ParserErrorListener');
 const LexerErrorListener = require('../error/LexerErrorListener');
 
-
+const FormulaErrs = require('../error/FormulaExceptions');
+const CalculationException = FormulaErrs.CalculationException;
+const ParseException = FormulaErrs.ParseException;
 
 const EditorErrorHandler = require('../contrib/errorHandler/EditorErrorHandler');
 
@@ -49,7 +51,6 @@ FormulaCore.prototype.calc = function calc(input) {
 
   var errorListenerObj = this.createErrorListener(this.sharedErrorHandler);
 
-
   var chars = new antlr4.InputStream(input);
   var lexer = new FormulaLexer(chars);
 
@@ -65,11 +66,21 @@ FormulaCore.prototype.calc = function calc(input) {
   parser.addErrorListener(errorListenerObj.parserErrorListener);
 
   var tree = parser.formulaExpr(); // 启动公式解析，遇到错误会触发 ErrorListener。
+  // 如果已经形成语法错误，则不再执行公式
+  if (errorListenerObj.lexerErrorListener.hasErrors()
+    || errorListenerObj.parserErrorListener.hasErrors()) {
+    return;
+  }
 
   try {
     return tree.accept(this.formulaVisitor);
   } catch (e) {
-    this.sharedErrorHandler.handleRuntimeError(e);
+    if (e instanceof ParseException) {
+      this.sharedErrorHandler.handle(e.input, e.line, e.column, e.message);
+    } else {
+      this.sharedErrorHandler.handleRuntimeError(e);
+    }
+
   }
 }
 

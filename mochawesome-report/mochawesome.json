@@ -1,0 +1,328 @@
+{
+  "stats": {
+    "suites": 2,
+    "tests": 11,
+    "passes": 7,
+    "pending": 0,
+    "failures": 4,
+    "start": "2020-07-29T05:43:55.994Z",
+    "end": "2020-07-29T05:44:04.406Z",
+    "duration": 8412,
+    "testsRegistered": 11,
+    "passPercent": 63.63636363636363,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "36e4491a-1a08-43fe-bc48-82e7aa67370e",
+      "title": "",
+      "fullFile": "",
+      "file": "",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "1329e300-b752-4169-8ff5-abe348d37bc9",
+          "title": "一般常量",
+          "fullFile": "/Users/zhangye/Documents/code/code_yonyou/FormulaTextArea/test/FormulaCore.literal.test.js",
+          "file": "/test/FormulaCore.literal.test.js",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "识别:字符串",
+              "fullTitle": "一般常量 识别:字符串",
+              "timedOut": false,
+              "duration": 14,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "assertList([\n  {\n    rawValue: \"\\\"OK\\\"\",\n    expected: \"OK\"\n  },\n  {\n    rawValue: \"\\\"\\\"\",\n    expected: \"\"\n  },\n  {\n    rawValue: \"\\\"\\\\\\\"\\\"\",\n    expected: \"\\\"\"\n  }\n]);",
+              "err": {},
+              "uuid": "4456bcaa-d78f-43c7-8f70-3caf1a5b1efc",
+              "parentUUID": "1329e300-b752-4169-8ff5-abe348d37bc9",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "识别:布尔",
+              "fullTitle": "一般常量 识别:布尔",
+              "timedOut": false,
+              "duration": 0,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "",
+              "err": {},
+              "uuid": "3cc18bd9-00ee-437c-9119-8846e8def18c",
+              "parentUUID": "1329e300-b752-4169-8ff5-abe348d37bc9",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "识别:数字",
+              "fullTitle": "一般常量 识别:数字",
+              "timedOut": false,
+              "duration": 10,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "assertList([\n  {\n    rawValue: '1',\n    expected: 1\n  },\n  {\n    rawValue: '-1',\n    expected: -1\n  },\n  {\n    rawValue: '0',\n    expected: 0\n  },\n  {\n    rawValue: '1.2',\n    expected: 1.2\n  },\n  {\n    rawValue: '0.1',\n    expected: 0.1\n  },\n  {\n    rawValue: '-0.1',\n    expected: -0.1\n  },\n  {\n    rawValue: '13%',\n    expected: 0.13\n  },\n  {\n    rawValue: '+1',\n    expected: 1\n  },\n  {\n    rawValue: '+0',\n    expected: 0\n  },\n  {\n    rawValue: '-0',\n    expected: -0\n  },\n  {\n    rawValue: '0.0',\n    expected: 0\n  },\n  {\n    rawValue: '0.00',\n    expected: 0\n  },\n  {\n    rawValue: '100%',\n    expected: 1\n  }\n]);",
+              "err": {},
+              "uuid": "639738f7-3f1e-44a6-aeb0-1a94569769dd",
+              "parentUUID": "1329e300-b752-4169-8ff5-abe348d37bc9",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "识别:空",
+              "fullTitle": "一般常量 识别:空",
+              "timedOut": false,
+              "duration": 1,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "assertList([\n  {\n    rawValue: 'null',\n    expected: null\n  }\n]);",
+              "err": {},
+              "uuid": "d73b06bb-4cfe-48fc-b0e2-ebac26c63eb2",
+              "parentUUID": "1329e300-b752-4169-8ff5-abe348d37bc9",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [
+            {
+              "uuid": "fbba56ce-51dd-4582-aed7-ecfc85bcfc16",
+              "title": "识别:字符串:错误处理",
+              "fullFile": "/Users/zhangye/Documents/code/code_yonyou/FormulaTextArea/test/FormulaCore.literal.test.js",
+              "file": "/test/FormulaCore.literal.test.js",
+              "beforeHooks": [],
+              "afterHooks": [],
+              "tests": [
+                {
+                  "title": "\"",
+                  "fullTitle": "一般常量 识别:字符串:错误处理 \"",
+                  "timedOut": false,
+                  "duration": 3,
+                  "state": "passed",
+                  "speed": "fast",
+                  "pass": true,
+                  "fail": false,
+                  "pending": false,
+                  "context": null,
+                  "code": "decorateCore('\"');",
+                  "err": {},
+                  "uuid": "7dadb997-9719-41f4-86a7-ee357d1159bd",
+                  "parentUUID": "fbba56ce-51dd-4582-aed7-ecfc85bcfc16",
+                  "isHook": false,
+                  "skipped": false
+                },
+                {
+                  "title": "'",
+                  "fullTitle": "一般常量 识别:字符串:错误处理 '",
+                  "timedOut": false,
+                  "duration": 0,
+                  "state": "passed",
+                  "speed": "fast",
+                  "pass": true,
+                  "fail": false,
+                  "pending": false,
+                  "context": null,
+                  "code": "decorateCore('\\'');",
+                  "err": {},
+                  "uuid": "bac71bd3-fff5-422b-8b44-d9247ecfd2a7",
+                  "parentUUID": "fbba56ce-51dd-4582-aed7-ecfc85bcfc16",
+                  "isHook": false,
+                  "skipped": false
+                },
+                {
+                  "title": "#",
+                  "fullTitle": "一般常量 识别:字符串:错误处理 #",
+                  "timedOut": false,
+                  "duration": 0,
+                  "state": "passed",
+                  "speed": "fast",
+                  "pass": true,
+                  "fail": false,
+                  "pending": false,
+                  "context": null,
+                  "code": "decorateCore('#');",
+                  "err": {},
+                  "uuid": "f8d106ee-1ca0-4850-ac53-6f40b123ed5b",
+                  "parentUUID": "fbba56ce-51dd-4582-aed7-ecfc85bcfc16",
+                  "isHook": false,
+                  "skipped": false
+                },
+                {
+                  "title": "1-",
+                  "fullTitle": "一般常量 识别:字符串:错误处理 1-",
+                  "timedOut": false,
+                  "duration": 2,
+                  "state": "failed",
+                  "speed": null,
+                  "pass": false,
+                  "fail": true,
+                  "pending": false,
+                  "context": null,
+                  "code": "decorateCore('1-');",
+                  "err": {
+                    "message": "ReferenceError: ParseException is not defined",
+                    "estack": "ReferenceError: ParseException is not defined\n    at FormulaCore.calc (src/core/FormulaCore.js:72:21)\n    at decorateCore (test/FormulaCore.literal.test.js:53:12)\n    at Context.<anonymous> (test/FormulaCore.literal.test.js:71:7)\n    at processImmediate (internal/timers.js:456:21)",
+                    "diff": null
+                  },
+                  "uuid": "69e3da7d-ff3d-470d-8558-0de1dac6a7be",
+                  "parentUUID": "fbba56ce-51dd-4582-aed7-ecfc85bcfc16",
+                  "isHook": false,
+                  "skipped": false
+                },
+                {
+                  "title": "1a",
+                  "fullTitle": "一般常量 识别:字符串:错误处理 1a",
+                  "timedOut": false,
+                  "duration": 2122,
+                  "state": "failed",
+                  "speed": null,
+                  "pass": false,
+                  "fail": true,
+                  "pending": false,
+                  "context": null,
+                  "code": "decorateCore('1a');",
+                  "err": {
+                    "message": "AssertionError: Expected values to be strictly equal:\n\nfalse !== true\n",
+                    "estack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nfalse !== true\n\n    at decorateCore (test/FormulaCore.literal.test.js:55:14)\n    at Context.<anonymous> (test/FormulaCore.literal.test.js:75:7)\n    at processImmediate (internal/timers.js:456:21)",
+                    "diff": "- false\n+ true\n"
+                  },
+                  "uuid": "ddeede01-6952-4f27-b852-a0a1242a9e0e",
+                  "parentUUID": "fbba56ce-51dd-4582-aed7-ecfc85bcfc16",
+                  "isHook": false,
+                  "skipped": false
+                },
+                {
+                  "title": "a.0",
+                  "fullTitle": "一般常量 识别:字符串:错误处理 a.0",
+                  "timedOut": false,
+                  "duration": 6236,
+                  "state": "failed",
+                  "speed": null,
+                  "pass": false,
+                  "fail": true,
+                  "pending": false,
+                  "context": null,
+                  "code": "decorateCore('a.0');",
+                  "err": {
+                    "message": "ReferenceError: ParseException is not defined",
+                    "estack": "ReferenceError: ParseException is not defined\n    at FormulaCore.calc (src/core/FormulaCore.js:72:21)\n    at decorateCore (test/FormulaCore.literal.test.js:53:12)\n    at Context.<anonymous> (test/FormulaCore.literal.test.js:79:7)\n    at processImmediate (internal/timers.js:456:21)",
+                    "diff": null
+                  },
+                  "uuid": "5a47eb5a-0ca3-460b-a9d4-78421b1eb927",
+                  "parentUUID": "fbba56ce-51dd-4582-aed7-ecfc85bcfc16",
+                  "isHook": false,
+                  "skipped": false
+                },
+                {
+                  "title": "0.a",
+                  "fullTitle": "一般常量 识别:字符串:错误处理 0.a",
+                  "timedOut": false,
+                  "duration": 2,
+                  "state": "failed",
+                  "speed": null,
+                  "pass": false,
+                  "fail": true,
+                  "pending": false,
+                  "context": null,
+                  "code": "decorateCore('0.a');",
+                  "err": {
+                    "message": "AssertionError: Expected values to be strictly equal:\n\nfalse !== true\n",
+                    "estack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nfalse !== true\n\n    at decorateCore (test/FormulaCore.literal.test.js:55:14)\n    at Context.<anonymous> (test/FormulaCore.literal.test.js:83:7)\n    at processImmediate (internal/timers.js:456:21)",
+                    "diff": "- false\n+ true\n"
+                  },
+                  "uuid": "0dd14753-f173-4729-8ea5-49c94cfc1fa2",
+                  "parentUUID": "fbba56ce-51dd-4582-aed7-ecfc85bcfc16",
+                  "isHook": false,
+                  "skipped": false
+                }
+              ],
+              "suites": [],
+              "passes": [
+                "7dadb997-9719-41f4-86a7-ee357d1159bd",
+                "bac71bd3-fff5-422b-8b44-d9247ecfd2a7",
+                "f8d106ee-1ca0-4850-ac53-6f40b123ed5b"
+              ],
+              "failures": [
+                "69e3da7d-ff3d-470d-8558-0de1dac6a7be",
+                "ddeede01-6952-4f27-b852-a0a1242a9e0e",
+                "5a47eb5a-0ca3-460b-a9d4-78421b1eb927",
+                "0dd14753-f173-4729-8ea5-49c94cfc1fa2"
+              ],
+              "pending": [],
+              "skipped": [],
+              "duration": 8365,
+              "root": false,
+              "rootEmpty": false,
+              "_timeout": 999999
+            }
+          ],
+          "passes": [
+            "4456bcaa-d78f-43c7-8f70-3caf1a5b1efc",
+            "3cc18bd9-00ee-437c-9119-8846e8def18c",
+            "639738f7-3f1e-44a6-aeb0-1a94569769dd",
+            "d73b06bb-4cfe-48fc-b0e2-ebac26c63eb2"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 25,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 999999
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 999999
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "8.0.1"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "6.1.1"
+    },
+    "marge": {
+      "options": null,
+      "version": "5.1.0"
+    }
+  }
+}

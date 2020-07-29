@@ -19,6 +19,8 @@ class LexerErrorListener extends BaseErrorListener {
    * @param {RecognitionException} exception 异常信息
    */
   syntaxError(recognizer, symbol, line, column, message, exception) {
+    super.recordError(recognizer, symbol, line, column, message, exception);
+    
     var rawText = recognizer.inputStream.toString();
 
     var errHandler = this.getErrorHandler();
