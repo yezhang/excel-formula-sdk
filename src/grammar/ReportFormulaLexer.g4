@@ -1,6 +1,5 @@
 lexer grammar ReportFormulaLexer;
 
-channels { ERROR }
 
 MultiLineComment:               '/*' .*? '*/'             -> channel(HIDDEN);
 SingleLineComment:              '//' ~[\r\n\u2028\u2029]* -> channel(HIDDEN);
@@ -11,6 +10,7 @@ OpenBracket:                    '[';
 CloseBracket:                   ']';
 OpenBrace:                      '{';
 CloseBrace:                     '}';
+SemiColon:                      ';';
 Comma:                          ',';
 Assign:                         '=';
 QuestionMark:                   '?';
@@ -46,18 +46,6 @@ BooleanLiteral:                 'true'
 /// Null Literals
 NullLiteral:                    'null';
 
-/// Identifier Names and Identifiers
-Identifier:                     IdentifierStart IdentifierPart*;
-
-/// String Literals
-StringLiteral:                 '"' DoubleStringCharacter* '"'       
-             |                  '\'' SingleStringCharacter* '\''
-             ;
-
-WhiteSpaces:                    [\t\u000B\u000C\u0020\u00A0]+ -> channel(HIDDEN);
-
-LineTerminator:                 [\r\n\u2028\u2029] -> channel(HIDDEN);
-
 // 单元格范围
 CellRangeLiteral: CellAddressLiteral ':' CellAddressLiteral; 
 
@@ -67,8 +55,8 @@ CellAddressLiteral
     : SheetAddress? '$'? [A-Z] [A-Z]* '$'? [1-9] [0-9]* ;
 
 // 表格名称
-SheetAddress
-    : StringCharacter+ '!'
+fragment SheetAddress
+    : StringLiteral '!'
     ;
 
 /// Numeric Literals
@@ -85,10 +73,6 @@ DecimalLiteral:                 DecimalIntegerLiteral '.' [0-9] [0-9_]* Exponent
               |                 DecimalIntegerLiteral ExponentPart?
               ;
 
-/// Numeric Literals
-
-
-
 HexIntegerLiteral:              '0' [xX] [0-9a-fA-F] HexDigit*;
 OctalIntegerLiteral:            '0' [0-7]+;
 OctalIntegerLiteral2:           '0' [oO] [0-7] [_0-7]*;
@@ -99,6 +83,16 @@ BigOctalIntegerLiteral:         '0' [oO] [0-7] [_0-7]* 'n';
 BigBinaryIntegerLiteral:        '0' [bB] [01] [_01]* 'n';
 BigDecimalIntegerLiteral:       DecimalIntegerLiteral 'n';
 
+/// Identifiers
+Identifier:                     IdentifierStart IdentifierPart*;
+
+/// String Literals
+StringLiteral:                 '"' DoubleStringCharacter* '"'       
+             |                  '\'' SingleStringCharacter* '\''
+             ;
+
+WhiteSpaces:                    [\t\u000B\u000C\u0020\u00A0]+ -> channel(HIDDEN);
+LineTerminator:                 [\r\n\u2028\u2029] -> channel(HIDDEN);
 
 // 用户可输入的字符串
 fragment StringCharacter

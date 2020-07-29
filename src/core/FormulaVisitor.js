@@ -71,6 +71,17 @@ class FormulaVisitor extends ReportFormulaParserVisitor {
     return Number(ctx.getText());
   }
 
+  visitIdentifierExpression(ctx) {
+    return ctx.identifier().accept(this);
+  }
+
+  visitIdentifierPlainText(ctx) {
+    //TODO 实现该方法
+    return ctx.getText();
+  }
+
+
+
   /**
    * 识别 null
    */

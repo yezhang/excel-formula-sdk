@@ -74,15 +74,11 @@ describe('一般常量', function () {
     it('1a', function(){
       decorateCore('1a');
     });
-  
-    it('a1', function(){
-      decorateCore('a1');
-    });
 
     it('a.0', function(){
       decorateCore('a.0');
-    });
-
+    }); 
+    
     it('0.a', function(){
       decorateCore('0.a');
     });

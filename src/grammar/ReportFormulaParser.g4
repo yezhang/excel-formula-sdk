@@ -10,23 +10,23 @@ expressionStatement: expressionSequence;
 expressionSequence : singleExpression (',' singleExpression)* ;
 
 singleExpression
-    : singleExpression arguments                                               # ArgumentsExpression
-    | '+' singleExpression                                                     # UnaryPlusExpression
-    | '-' singleExpression                                                     # UnaryMinusExpression
-    | <assoc=right> singleExpression '**' singleExpression                     # PowerExpression
-    | singleExpression op=('*' | '/' | '%') singleExpression                   # MultiplicativeExpression
-    | singleExpression op=('+' | '-') singleExpression                         # AdditiveExpression
-    | singleExpression op=('<' | '>' | '<=' | '>=') singleExpression           # RelationalExpression
-    | singleExpression op=('==' | '!=' ) singleExpression                      # EqualityExpression
-    | singleExpression '&&' singleExpression                                   # LogicalAndExpression
-    | singleExpression '||' singleExpression                                   # LogicalOrExpression
-    | singleExpression '?' singleExpression ':' singleExpression               # TernaryExpression
-    | <assoc=right> singleExpression '=' singleExpression                      # AssignmentExpression
-    | identifier                                                               # IdentifierExpression
-    | literal                                                                  # LiteralExpression
-    | arrayLiteral                                                          # ArrayLiteralExpression
-    | objectLiteral                                                         # ObjectLiteralExpression
-    | '(' expressionSequence ')'                                               # ParenthesizedExpression
+    : singleExpression arguments                                                # ArgumentsExpression
+    | '+' singleExpression                                                      # UnaryPlusExpression
+    | '-' singleExpression                                                      # UnaryMinusExpression
+    | <assoc=right> singleExpression '**' singleExpression                      # PowerExpression
+    | singleExpression op=('*' | '/' | '%') singleExpression                    # MultiplicativeExpression
+    | singleExpression op=('+' | '-') singleExpression                          # AdditiveExpression
+    | singleExpression op=('<' | '>' | '<=' | '>=') singleExpression            # RelationalExpression
+    | singleExpression op=('==' | '!=' ) singleExpression                       # EqualityExpression
+    | singleExpression '&&' singleExpression                                    # LogicalAndExpression
+    | singleExpression '||' singleExpression                                    # LogicalOrExpression
+    | singleExpression '?' singleExpression ':' singleExpression                # TernaryExpression
+    | <assoc=right> singleExpression '=' singleExpression                       # AssignmentExpression
+    | identifier                                                                # IdentifierExpression
+    | literal                                                                   # LiteralExpression
+    | arrayLiteral                                                              # ArrayLiteralExpression
+    | objectLiteral                                                             # ObjectLiteralExpression
+    | '(' expressionSequence ')'                                                # ParenthesizedExpression
     ;
 
 arguments
@@ -75,22 +75,20 @@ identifierName
 // 标识符
 
 identifier
-    : refItemCode
-    | CellAddressLiteral
-    | CellRangeLiteral
-    | Identifier
+    : refItemCode           #IdentifierRefItemCode
+    | CellAddressLiteral    #IdentifierCellAddressLiteral
+    | CellRangeLiteral      #IdentifierCellRangeLiteral
+    | Identifier            #IdentifierPlainText
     ;
 
 refItemCode: '@' Identifier; //报表项的标识符
 
-
-
 // 字面量
 literal
-    : numericLiteral    #NumericLiteralExpression
-    | NullLiteral       #NullLiteralExpression
+    : NullLiteral       #NullLiteralExpression
     | BooleanLiteral    #BooleanLiteralExpression
     | StringLiteral     #StringLiteralExpression
+    | numericLiteral    #NumericLiteralExpression
     ;
 
 
@@ -111,3 +109,7 @@ keyword
     : If
     ;
 
+eos
+    : SemiColon
+    | EOF
+    ;
