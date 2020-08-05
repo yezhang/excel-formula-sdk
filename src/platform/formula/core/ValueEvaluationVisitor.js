@@ -31,10 +31,16 @@ class ValueEvaluationVisitor extends ReportFormulaParserVisitor {
     }
   }
 
+  /**
+   * 一元运算符: -
+   */
   visitUnaryMinusExpression(ctx) {
     return -1 * ctx.singleExpression().accept(this);
   }
 
+  /**
+   * 一元运算符：+
+   */
   visitUnaryPlusExpression(ctx) {
     return ctx.singleExpression().accept(this);
   }
@@ -44,6 +50,9 @@ class ValueEvaluationVisitor extends ReportFormulaParserVisitor {
   }
 
 
+  /**
+   * 字符串字面量
+   */
   visitStringLiteralExpression(ctx) {
     var rawText = ctx.getText();
     return StringUtils.unwrapText(rawText);
@@ -116,7 +125,9 @@ class ValueEvaluationVisitor extends ReportFormulaParserVisitor {
     return ctx.children[0].accept(this); // 直接返回孩子节点的结果，不使用数组包装
   }
 
-  // singleExpression ('+' | '-') singleExpression
+  /**
+   * 加法运算: singleExpression ('+' | '-') singleExpression
+   */
   visitAdditiveExpression(ctx) {
     var leftValue = ctx.singleExpression(0).accept(this);
     if (!leftValue) {
@@ -134,6 +145,36 @@ class ValueEvaluationVisitor extends ReportFormulaParserVisitor {
     if (ctx.op.type === ReportFormulaParser.Minus) {
       return leftValue - rightValue;
     }
+  }
+
+  /**
+   * 乘法运算: singleExpression op=('*' | '/' | '%') singleExpression
+   */
+  visitMultiplicativeExpression(ctx) {
+    var leftValue = ctx.singleExpression(0).accept(this);
+    if (!leftValue) {
+      throw new CalculationException();
+    }
+    var rightValue = ctx.singleExpression(1).accept(this);
+    if (!rightValue) {
+      throw new CalculationException();
+    }
+
+    if (ctx.op.type === ReportFormulaParser.Multiply) {
+      return leftValue * rightValue;
+    }
+
+    if (ctx.op.type === ReportFormulaParser.Divide) {
+      if(rightValue === 0) {
+        throw new CalculationException();
+      }
+      return leftValue / rightValue;
+    }
+
+    if (ctx.op.type === ReportFormulaParser.Modulus) {
+      return leftValue % rightValue;
+    }
+
   }
 
   // visitChildren(ctx) {
