@@ -45,10 +45,20 @@ class ValueEvaluationVisitor extends ReportFormulaParserVisitor {
     return ctx.singleExpression().accept(this);
   }
 
-  visitSheetAddress(ctx) {
+  /**
+   * 单元格地址：CellAddressLiteral
+   */
+  visitIdentifierCellAddressLiteral(ctx) {
+    //TODO evaluate address
     return ctx.getText();
   }
 
+  /**
+   * 单元格范围：CellRangeLiteral
+   */
+  visitIdentifierCellRangeLiteral(ctx) {
+    //TODO evaluate address
+  }
 
   /**
    * 字符串字面量
@@ -86,19 +96,6 @@ class ValueEvaluationVisitor extends ReportFormulaParserVisitor {
   }
 
   visitIdentifierPlainText(ctx) {
-    //TODO 实现该方法
-    // 分析标识符前面是否有数字，如果有数字，则是非法字符。
-    // var tokens = ctx.parser.getInputStream();
-    // var lineText = tokenSource.inputStream.toString();
-    // var symbol = ctx.Identifier().symbol;
-    // var startIndex = symbol.start;
-    // var stopIndex = symbol.stop;
-    // if(startIndex > 0) {
-    //   // 标识符前面紧邻数字
-    //   if(/[.0-9]/.test(lineText.charAt(startIndex))){
-    //     throw new ParseException(lineText, symbol.line, startIndex, "标识符不能紧跟在数字文本之后");
-    //   }
-    // }
     return ctx.getText();
   }
 

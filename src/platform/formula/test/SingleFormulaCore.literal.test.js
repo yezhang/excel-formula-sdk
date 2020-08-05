@@ -18,9 +18,9 @@ describe('一般常量', function () {
   /**
    * 处理识别错误
    */
-  function decorateCore(rawInput) {
-  
-    var handleRuntimeErrorStub = sinon.spy(function(e) {
+  function decorateCoreWithErrHandler(rawInput) {
+
+    var handleRuntimeErrorStub = sinon.spy(function (e) {
 
     });
 
@@ -28,14 +28,14 @@ describe('一般常量', function () {
       assert.equal(input, rawInput);
       assert.equal(message, '无法识别的符号');
     });
-    
+
     // 测试错误的符号是否可以正确识别，并提供恰当充分的出错信息
     core.removeErrorHandler().setErrorHandler({
       handleRuntimeError: handleRuntimeErrorStub,
       handle: handleStub
     });
     core.calc(rawInput);
-    
+
     assert.equal(handleStub.called, true); //验证语法错误必须识别
   }
 
@@ -58,23 +58,23 @@ describe('一般常量', function () {
     });
 
     describe('字符串:识别:错误处理', function () {
-      it('"', function(){
-        decorateCore('"');
+      it('"', function () {
+        decorateCoreWithErrHandler('"');
       });
-      
-      it('\'', function(){
-        decorateCore('\'');
+
+      it('\'', function () {
+        decorateCoreWithErrHandler('\'');
       });
-  
-      it('#', function(){
-        decorateCore('#');
-      });     
+
+      it('#', function () {
+        decorateCoreWithErrHandler('#');
+      });
     });
   })
- 
 
-  
-  describe('布尔', function (){
+
+
+  describe('布尔', function () {
     it('识别:布尔', function () {
       assertList([
         {
@@ -87,8 +87,35 @@ describe('一般常量', function () {
         }
       ]);
     });
+
+    it('TRUE/True', function () {
+      assertList([
+        {
+          rawValue: 'TRUE',
+          expected: 'TRUE'
+        },
+        {
+          rawValue: 'True',
+          expected: 'True'
+        }
+      ]);
+    });
+
+
+    it('FALSE/False', function () {
+      assertList([
+        {
+          rawValue: 'FALSE',
+          expected: 'FALSE'
+        },
+        {
+          rawValue: 'False',
+          expected: 'False'
+        }
+      ]);
+    });
   })
-  
+
 
   describe('数字', function () {
     it('识别:数字', function () {
@@ -148,26 +175,26 @@ describe('一般常量', function () {
       ]);
     });
 
-    describe('数字:错误处理', function() {
-      it('1-', function(){
-        decorateCore('1-');
+    describe('数字:错误处理', function () {
+      it('1-', function () {
+        decorateCoreWithErrHandler('1-');
       });
-      
-      it('1a', function(){
-        decorateCore('1a');
+
+      it('1a', function () {
+        decorateCoreWithErrHandler('1a');
       });
-  
-      it('a.0', function(){
-        decorateCore('a.0');
-      }); 
-      
-      it('0.a', function(){
-        decorateCore('0.a');
+
+      it('a.0', function () {
+        decorateCoreWithErrHandler('a.0');
+      });
+
+      it('0.a', function () {
+        decorateCoreWithErrHandler('0.a');
       });
     })
   })
 
-  
+
 
   it('识别:空', function () {
     assertList([
@@ -181,12 +208,56 @@ describe('一般常量', function () {
 });
 
 describe('识别变量', function () {
-  describe('相对单元格地址',function () {
-
+  it('相对单元格地址', function () {
+    assertList([
+      {
+        rawValue: 'A1',
+        expected: 'A1'
+      },
+      {
+        rawValue: 'B1',
+        expected: 'B1'
+      },
+      {
+        rawValue: 'A1000',
+        expected: 'A1000'
+      },
+      {
+        rawValue: 'Z1000',
+        expected: 'Z1000'
+      },
+      {
+        rawValue: 'Sheet1!A1',
+        expected: 'Sheet1!A1'
+      }
+    ]);
   });
 
-  describe('绝对单元格地址', function () {
+  it('绝对单元格地址', function () {
+    assertList([
+      {
+        rawValue: '$A$1',
+        expected: '$A$1'
+      }
+    ]);
+  });
 
+  it('混合单元格地址', function () {
+    assertList([
+      {
+        rawValue: 'A$1',
+        expected: 'A$1'
+      },
+      {
+        rawValue: '$A1',
+        expected: '$A1'
+      },
+      
+      {
+        rawValue: 'Sheet1!A$1',
+        expected: 'Sheet1!A$1'
+      }
+    ]);
   });
 
   describe('单元格范围', function () {

@@ -1,10 +1,10 @@
-// Generated from /Users/zhangye/Documents/code/code_yonyou/FormulaTextArea/src/platform/formula/grammar/CellAddressParser.g4 by ANTLR 4.8
+// Generated from /Users/zhangye/Documents/code/code_yonyou/FormulaTextArea/src/platform/formula/grammar/CellAddress.g4 by ANTLR 4.8
 // jshint ignore: start
 var antlr4 = require('antlr4/index');
-var CellAddressParserListener = require('./CellAddressParserListener').CellAddressParserListener;
-var CellAddressParserVisitor = require('./CellAddressParserVisitor').CellAddressParserVisitor;
+var CellAddressListener = require('./CellAddressListener').CellAddressListener;
+var CellAddressVisitor = require('./CellAddressVisitor').CellAddressVisitor;
 
-var grammarFileName = "CellAddressParser.g4";
+var grammarFileName = "CellAddress.g4";
 
 
 var serializedATN = ["\u0003\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964",
@@ -43,7 +43,7 @@ var symbolicNames = [ null, null, "SheetAddress", "CellColumnAddress", "CellRowA
 var ruleNames =  [ "cellAddressExpress", "cellRangeExpr", "cellAddressExpr", 
                    "cellColumnAddressExpr", "cellRowAddressExpr" ];
 
-function CellAddressParserParser (input) {
+function CellAddressParser (input) {
 	antlr4.Parser.call(this, input);
     this._interp = new antlr4.atn.ParserATNSimulator(this, atn, decisionsToDFA, sharedContextCache);
     this.ruleNames = ruleNames;
@@ -52,27 +52,27 @@ function CellAddressParserParser (input) {
     return this;
 }
 
-CellAddressParserParser.prototype = Object.create(antlr4.Parser.prototype);
-CellAddressParserParser.prototype.constructor = CellAddressParserParser;
+CellAddressParser.prototype = Object.create(antlr4.Parser.prototype);
+CellAddressParser.prototype.constructor = CellAddressParser;
 
-Object.defineProperty(CellAddressParserParser.prototype, "atn", {
+Object.defineProperty(CellAddressParser.prototype, "atn", {
 	get : function() {
 		return atn;
 	}
 });
 
-CellAddressParserParser.EOF = antlr4.Token.EOF;
-CellAddressParserParser.T__0 = 1;
-CellAddressParserParser.SheetAddress = 2;
-CellAddressParserParser.CellColumnAddress = 3;
-CellAddressParserParser.CellRowAddress = 4;
-CellAddressParserParser.StringCharacter = 5;
+CellAddressParser.EOF = antlr4.Token.EOF;
+CellAddressParser.T__0 = 1;
+CellAddressParser.SheetAddress = 2;
+CellAddressParser.CellColumnAddress = 3;
+CellAddressParser.CellRowAddress = 4;
+CellAddressParser.StringCharacter = 5;
 
-CellAddressParserParser.RULE_cellAddressExpress = 0;
-CellAddressParserParser.RULE_cellRangeExpr = 1;
-CellAddressParserParser.RULE_cellAddressExpr = 2;
-CellAddressParserParser.RULE_cellColumnAddressExpr = 3;
-CellAddressParserParser.RULE_cellRowAddressExpr = 4;
+CellAddressParser.RULE_cellAddressExpress = 0;
+CellAddressParser.RULE_cellRangeExpr = 1;
+CellAddressParser.RULE_cellAddressExpr = 2;
+CellAddressParser.RULE_cellColumnAddressExpr = 3;
+CellAddressParser.RULE_cellRowAddressExpr = 4;
 
 
 function CellAddressExpressContext(parser, parent, invokingState) {
@@ -84,7 +84,7 @@ function CellAddressExpressContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = CellAddressParserParser.RULE_cellAddressExpress;
+    this.ruleIndex = CellAddressParser.RULE_cellAddressExpress;
     return this;
 }
 
@@ -100,19 +100,19 @@ CellAddressExpressContext.prototype.cellRangeExpr = function() {
 };
 
 CellAddressExpressContext.prototype.enterRule = function(listener) {
-    if(listener instanceof CellAddressParserListener ) {
+    if(listener instanceof CellAddressListener ) {
         listener.enterCellAddressExpress(this);
 	}
 };
 
 CellAddressExpressContext.prototype.exitRule = function(listener) {
-    if(listener instanceof CellAddressParserListener ) {
+    if(listener instanceof CellAddressListener ) {
         listener.exitCellAddressExpress(this);
 	}
 };
 
 CellAddressExpressContext.prototype.accept = function(visitor) {
-    if ( visitor instanceof CellAddressParserVisitor ) {
+    if ( visitor instanceof CellAddressVisitor ) {
         return visitor.visitCellAddressExpress(this);
     } else {
         return visitor.visitChildren(this);
@@ -122,12 +122,12 @@ CellAddressExpressContext.prototype.accept = function(visitor) {
 
 
 
-CellAddressParserParser.CellAddressExpressContext = CellAddressExpressContext;
+CellAddressParser.CellAddressExpressContext = CellAddressExpressContext;
 
-CellAddressParserParser.prototype.cellAddressExpress = function() {
+CellAddressParser.prototype.cellAddressExpress = function() {
 
     var localctx = new CellAddressExpressContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 0, CellAddressParserParser.RULE_cellAddressExpress);
+    this.enterRule(localctx, 0, CellAddressParser.RULE_cellAddressExpress);
     try {
         this.state = 12;
         this._errHandler.sync(this);
@@ -170,7 +170,7 @@ function CellRangeExprContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = CellAddressParserParser.RULE_cellRangeExpr;
+    this.ruleIndex = CellAddressParser.RULE_cellRangeExpr;
     return this;
 }
 
@@ -189,19 +189,19 @@ CellRangeExprContext.prototype.cellAddressExpr = function(i) {
 };
 
 CellRangeExprContext.prototype.enterRule = function(listener) {
-    if(listener instanceof CellAddressParserListener ) {
+    if(listener instanceof CellAddressListener ) {
         listener.enterCellRangeExpr(this);
 	}
 };
 
 CellRangeExprContext.prototype.exitRule = function(listener) {
-    if(listener instanceof CellAddressParserListener ) {
+    if(listener instanceof CellAddressListener ) {
         listener.exitCellRangeExpr(this);
 	}
 };
 
 CellRangeExprContext.prototype.accept = function(visitor) {
-    if ( visitor instanceof CellAddressParserVisitor ) {
+    if ( visitor instanceof CellAddressVisitor ) {
         return visitor.visitCellRangeExpr(this);
     } else {
         return visitor.visitChildren(this);
@@ -211,18 +211,18 @@ CellRangeExprContext.prototype.accept = function(visitor) {
 
 
 
-CellAddressParserParser.CellRangeExprContext = CellRangeExprContext;
+CellAddressParser.CellRangeExprContext = CellRangeExprContext;
 
-CellAddressParserParser.prototype.cellRangeExpr = function() {
+CellAddressParser.prototype.cellRangeExpr = function() {
 
     var localctx = new CellRangeExprContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 2, CellAddressParserParser.RULE_cellRangeExpr);
+    this.enterRule(localctx, 2, CellAddressParser.RULE_cellRangeExpr);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 14;
         this.cellAddressExpr();
         this.state = 15;
-        this.match(CellAddressParserParser.T__0);
+        this.match(CellAddressParser.T__0);
         this.state = 16;
         this.cellAddressExpr();
     } catch (re) {
@@ -249,7 +249,7 @@ function CellAddressExprContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = CellAddressParserParser.RULE_cellAddressExpr;
+    this.ruleIndex = CellAddressParser.RULE_cellAddressExpr;
     return this;
 }
 
@@ -265,23 +265,23 @@ CellAddressExprContext.prototype.cellRowAddressExpr = function() {
 };
 
 CellAddressExprContext.prototype.SheetAddress = function() {
-    return this.getToken(CellAddressParserParser.SheetAddress, 0);
+    return this.getToken(CellAddressParser.SheetAddress, 0);
 };
 
 CellAddressExprContext.prototype.enterRule = function(listener) {
-    if(listener instanceof CellAddressParserListener ) {
+    if(listener instanceof CellAddressListener ) {
         listener.enterCellAddressExpr(this);
 	}
 };
 
 CellAddressExprContext.prototype.exitRule = function(listener) {
-    if(listener instanceof CellAddressParserListener ) {
+    if(listener instanceof CellAddressListener ) {
         listener.exitCellAddressExpr(this);
 	}
 };
 
 CellAddressExprContext.prototype.accept = function(visitor) {
-    if ( visitor instanceof CellAddressParserVisitor ) {
+    if ( visitor instanceof CellAddressVisitor ) {
         return visitor.visitCellAddressExpr(this);
     } else {
         return visitor.visitChildren(this);
@@ -291,21 +291,21 @@ CellAddressExprContext.prototype.accept = function(visitor) {
 
 
 
-CellAddressParserParser.CellAddressExprContext = CellAddressExprContext;
+CellAddressParser.CellAddressExprContext = CellAddressExprContext;
 
-CellAddressParserParser.prototype.cellAddressExpr = function() {
+CellAddressParser.prototype.cellAddressExpr = function() {
 
     var localctx = new CellAddressExprContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 4, CellAddressParserParser.RULE_cellAddressExpr);
+    this.enterRule(localctx, 4, CellAddressParser.RULE_cellAddressExpr);
     var _la = 0; // Token type
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 19;
         this._errHandler.sync(this);
         _la = this._input.LA(1);
-        if(_la===CellAddressParserParser.SheetAddress) {
+        if(_la===CellAddressParser.SheetAddress) {
             this.state = 18;
-            this.match(CellAddressParserParser.SheetAddress);
+            this.match(CellAddressParser.SheetAddress);
         }
 
         this.state = 21;
@@ -336,7 +336,7 @@ function CellColumnAddressExprContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = CellAddressParserParser.RULE_cellColumnAddressExpr;
+    this.ruleIndex = CellAddressParser.RULE_cellColumnAddressExpr;
     return this;
 }
 
@@ -344,23 +344,23 @@ CellColumnAddressExprContext.prototype = Object.create(antlr4.ParserRuleContext.
 CellColumnAddressExprContext.prototype.constructor = CellColumnAddressExprContext;
 
 CellColumnAddressExprContext.prototype.CellColumnAddress = function() {
-    return this.getToken(CellAddressParserParser.CellColumnAddress, 0);
+    return this.getToken(CellAddressParser.CellColumnAddress, 0);
 };
 
 CellColumnAddressExprContext.prototype.enterRule = function(listener) {
-    if(listener instanceof CellAddressParserListener ) {
+    if(listener instanceof CellAddressListener ) {
         listener.enterCellColumnAddressExpr(this);
 	}
 };
 
 CellColumnAddressExprContext.prototype.exitRule = function(listener) {
-    if(listener instanceof CellAddressParserListener ) {
+    if(listener instanceof CellAddressListener ) {
         listener.exitCellColumnAddressExpr(this);
 	}
 };
 
 CellColumnAddressExprContext.prototype.accept = function(visitor) {
-    if ( visitor instanceof CellAddressParserVisitor ) {
+    if ( visitor instanceof CellAddressVisitor ) {
         return visitor.visitCellColumnAddressExpr(this);
     } else {
         return visitor.visitChildren(this);
@@ -370,16 +370,16 @@ CellColumnAddressExprContext.prototype.accept = function(visitor) {
 
 
 
-CellAddressParserParser.CellColumnAddressExprContext = CellColumnAddressExprContext;
+CellAddressParser.CellColumnAddressExprContext = CellColumnAddressExprContext;
 
-CellAddressParserParser.prototype.cellColumnAddressExpr = function() {
+CellAddressParser.prototype.cellColumnAddressExpr = function() {
 
     var localctx = new CellColumnAddressExprContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 6, CellAddressParserParser.RULE_cellColumnAddressExpr);
+    this.enterRule(localctx, 6, CellAddressParser.RULE_cellColumnAddressExpr);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 24;
-        this.match(CellAddressParserParser.CellColumnAddress);
+        this.match(CellAddressParser.CellColumnAddress);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
@@ -404,7 +404,7 @@ function CellRowAddressExprContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = CellAddressParserParser.RULE_cellRowAddressExpr;
+    this.ruleIndex = CellAddressParser.RULE_cellRowAddressExpr;
     return this;
 }
 
@@ -412,23 +412,23 @@ CellRowAddressExprContext.prototype = Object.create(antlr4.ParserRuleContext.pro
 CellRowAddressExprContext.prototype.constructor = CellRowAddressExprContext;
 
 CellRowAddressExprContext.prototype.CellRowAddress = function() {
-    return this.getToken(CellAddressParserParser.CellRowAddress, 0);
+    return this.getToken(CellAddressParser.CellRowAddress, 0);
 };
 
 CellRowAddressExprContext.prototype.enterRule = function(listener) {
-    if(listener instanceof CellAddressParserListener ) {
+    if(listener instanceof CellAddressListener ) {
         listener.enterCellRowAddressExpr(this);
 	}
 };
 
 CellRowAddressExprContext.prototype.exitRule = function(listener) {
-    if(listener instanceof CellAddressParserListener ) {
+    if(listener instanceof CellAddressListener ) {
         listener.exitCellRowAddressExpr(this);
 	}
 };
 
 CellRowAddressExprContext.prototype.accept = function(visitor) {
-    if ( visitor instanceof CellAddressParserVisitor ) {
+    if ( visitor instanceof CellAddressVisitor ) {
         return visitor.visitCellRowAddressExpr(this);
     } else {
         return visitor.visitChildren(this);
@@ -438,16 +438,16 @@ CellRowAddressExprContext.prototype.accept = function(visitor) {
 
 
 
-CellAddressParserParser.CellRowAddressExprContext = CellRowAddressExprContext;
+CellAddressParser.CellRowAddressExprContext = CellRowAddressExprContext;
 
-CellAddressParserParser.prototype.cellRowAddressExpr = function() {
+CellAddressParser.prototype.cellRowAddressExpr = function() {
 
     var localctx = new CellRowAddressExprContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 8, CellAddressParserParser.RULE_cellRowAddressExpr);
+    this.enterRule(localctx, 8, CellAddressParser.RULE_cellRowAddressExpr);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 26;
-        this.match(CellAddressParserParser.CellRowAddress);
+        this.match(CellAddressParser.CellRowAddress);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
@@ -463,4 +463,4 @@ CellAddressParserParser.prototype.cellRowAddressExpr = function() {
 };
 
 
-exports.CellAddressParserParser = CellAddressParserParser;
+exports.CellAddressParser = CellAddressParser;

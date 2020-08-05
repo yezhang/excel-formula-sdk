@@ -56,7 +56,8 @@ CellAddressLiteral
 
 // 表格名称
 fragment SheetAddress
-    : StringLiteral '!'
+    : Identifier '!'
+    | StringLiteral '!'
     ;
 
 /// Numeric Literals

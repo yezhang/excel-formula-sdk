@@ -1,4 +1,4 @@
-grammar CellAddressParser;
+grammar CellAddress;
 
 cellAddressExpress
     : cellAddressExpr
@@ -7,8 +7,7 @@ cellAddressExpress
 // 单元格范围
 cellRangeExpr: cellAddressExpr ':' cellAddressExpr; 
 
-// 单元格地址需要作为一个整体识别，识别后在 visitor 中解析。
-// 如果在语法上将行、列进一步拆分，会与 标识符、数字字面量 有歧义。
+// 单元格地址
 cellAddressExpr
     : SheetAddress? cellColumnAddressExpr cellRowAddressExpr ;
 

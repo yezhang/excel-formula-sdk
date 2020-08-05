@@ -1,4 +1,4 @@
-// Generated from /Users/zhangye/Documents/code/code_yonyou/FormulaTextArea/src/platform/formula/grammar/CellAddressParser.g4 by ANTLR 4.8
+// Generated from /Users/zhangye/Documents/code/code_yonyou/FormulaTextArea/src/platform/formula/grammar/CellAddress.g4 by ANTLR 4.8
 // jshint ignore: start
 var antlr4 = require('antlr4/index');
 
@@ -80,49 +80,48 @@ var atn = new antlr4.atn.ATNDeserializer().deserialize(serializedATN);
 
 var decisionsToDFA = atn.decisionToState.map( function(ds, index) { return new antlr4.dfa.DFA(ds, index); });
 
-function CellAddressParserLexer(input) {
+function CellAddressLexer(input) {
 	antlr4.Lexer.call(this, input);
     this._interp = new antlr4.atn.LexerATNSimulator(this, atn, decisionsToDFA, new antlr4.PredictionContextCache());
     return this;
 }
 
-CellAddressParserLexer.prototype = Object.create(antlr4.Lexer.prototype);
-CellAddressParserLexer.prototype.constructor = CellAddressParserLexer;
+CellAddressLexer.prototype = Object.create(antlr4.Lexer.prototype);
+CellAddressLexer.prototype.constructor = CellAddressLexer;
 
-Object.defineProperty(CellAddressParserLexer.prototype, "atn", {
+Object.defineProperty(CellAddressLexer.prototype, "atn", {
         get : function() {
                 return atn;
         }
 });
 
-CellAddressParserLexer.EOF = antlr4.Token.EOF;
-CellAddressParserLexer.T__0 = 1;
-CellAddressParserLexer.SheetAddress = 2;
-CellAddressParserLexer.CellColumnAddress = 3;
-CellAddressParserLexer.CellRowAddress = 4;
-CellAddressParserLexer.StringCharacter = 5;
+CellAddressLexer.EOF = antlr4.Token.EOF;
+CellAddressLexer.T__0 = 1;
+CellAddressLexer.SheetAddress = 2;
+CellAddressLexer.CellColumnAddress = 3;
+CellAddressLexer.CellRowAddress = 4;
+CellAddressLexer.StringCharacter = 5;
 
-CellAddressParserLexer.prototype.channelNames = [ "DEFAULT_TOKEN_CHANNEL", "HIDDEN" ];
+CellAddressLexer.prototype.channelNames = [ "DEFAULT_TOKEN_CHANNEL", "HIDDEN" ];
 
-CellAddressParserLexer.prototype.modeNames = [ "DEFAULT_MODE" ];
+CellAddressLexer.prototype.modeNames = [ "DEFAULT_MODE" ];
 
-CellAddressParserLexer.prototype.literalNames = [ null, "':'" ];
+CellAddressLexer.prototype.literalNames = [ null, "':'" ];
 
-CellAddressParserLexer.prototype.symbolicNames = [ null, null, "SheetAddress", 
-                                                   "CellColumnAddress", 
-                                                   "CellRowAddress", "StringCharacter" ];
+CellAddressLexer.prototype.symbolicNames = [ null, null, "SheetAddress", 
+                                             "CellColumnAddress", "CellRowAddress", 
+                                             "StringCharacter" ];
 
-CellAddressParserLexer.prototype.ruleNames = [ "T__0", "SheetAddress", "CellColumnAddress", 
-                                               "CellRowAddress", "StringCharacter", 
-                                               "EscapeSequence", "CharacterEscapeSequence", 
-                                               "LineContinuation", "HexEscapeSequence", 
-                                               "UnicodeEscapeSequence", 
-                                               "ExtendedUnicodeEscapeSequence", 
-                                               "SingleEscapeCharacter", 
-                                               "NonEscapeCharacter", "HexDigit" ];
+CellAddressLexer.prototype.ruleNames = [ "T__0", "SheetAddress", "CellColumnAddress", 
+                                         "CellRowAddress", "StringCharacter", 
+                                         "EscapeSequence", "CharacterEscapeSequence", 
+                                         "LineContinuation", "HexEscapeSequence", 
+                                         "UnicodeEscapeSequence", "ExtendedUnicodeEscapeSequence", 
+                                         "SingleEscapeCharacter", "NonEscapeCharacter", 
+                                         "HexDigit" ];
 
-CellAddressParserLexer.prototype.grammarFileName = "CellAddressParser.g4";
+CellAddressLexer.prototype.grammarFileName = "CellAddress.g4";
 
 
-exports.CellAddressParserLexer = CellAddressParserLexer;
+exports.CellAddressLexer = CellAddressLexer;
 

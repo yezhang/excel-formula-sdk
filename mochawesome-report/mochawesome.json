@@ -1,14 +1,14 @@
 {
   "stats": {
-    "suites": 9,
-    "tests": 13,
-    "passes": 13,
+    "suites": 10,
+    "tests": 18,
+    "passes": 18,
     "pending": 0,
     "failures": 0,
-    "start": "2020-08-05T01:57:41.768Z",
-    "end": "2020-08-05T01:57:41.819Z",
-    "duration": 51,
-    "testsRegistered": 13,
+    "start": "2020-08-05T03:30:00.389Z",
+    "end": "2020-08-05T03:30:00.465Z",
+    "duration": 76,
+    "testsRegistered": 18,
     "passPercent": 100,
     "pendingPercent": 0,
     "other": 0,
@@ -18,7 +18,7 @@
   },
   "results": [
     {
-      "uuid": "9b74aa59-d1ac-4d13-987e-0aa154afdc70",
+      "uuid": "c2c62bf3-9054-4f96-878f-e56ded96453c",
       "title": "",
       "fullFile": "",
       "file": "",
@@ -27,7 +27,7 @@
       "tests": [],
       "suites": [
         {
-          "uuid": "9331f23e-92cc-452c-902f-35b70f193ee2",
+          "uuid": "1005a297-61a7-4313-b45b-f64a21b9e6bb",
           "title": "常用场景",
           "fullFile": "/Users/zhangye/Documents/code/code_yonyou/FormulaTextArea/test/FormulaEngine.test.js",
           "file": "/test/FormulaEngine.test.js",
@@ -36,7 +36,7 @@
           "tests": [],
           "suites": [
             {
-              "uuid": "e52f1554-bfab-4067-8c90-00cae5d68395",
+              "uuid": "5d54f95c-6244-4a48-95ad-333f885047b5",
               "title": "表内公式",
               "fullFile": "/Users/zhangye/Documents/code/code_yonyou/FormulaTextArea/test/FormulaEngine.test.js",
               "file": "/test/FormulaEngine.test.js",
@@ -56,15 +56,15 @@
                   "context": null,
                   "code": "",
                   "err": {},
-                  "uuid": "52db494f-9735-41c1-8603-55a01b10534c",
-                  "parentUUID": "e52f1554-bfab-4067-8c90-00cae5d68395",
+                  "uuid": "997eb99c-5a5b-4605-bf52-cdf2f72268af",
+                  "parentUUID": "5d54f95c-6244-4a48-95ad-333f885047b5",
                   "isHook": false,
                   "skipped": false
                 }
               ],
               "suites": [],
               "passes": [
-                "52db494f-9735-41c1-8603-55a01b10534c"
+                "997eb99c-5a5b-4605-bf52-cdf2f72268af"
               ],
               "failures": [],
               "pending": [],
@@ -85,7 +85,7 @@
           "_timeout": 2000
         },
         {
-          "uuid": "866e60a4-1582-4270-9fbb-18739f417ffc",
+          "uuid": "10757516-e05f-4db9-b4d8-dfa3d8618335",
           "title": "图",
           "fullFile": "/Users/zhangye/Documents/code/code_yonyou/FormulaTextArea/src/platform/formula/core/test/Graph.test.js",
           "file": "/src/platform/formula/core/test/Graph.test.js",
@@ -96,7 +96,7 @@
               "title": "应正确构造一个实例",
               "fullTitle": "图 应正确构造一个实例",
               "timedOut": false,
-              "duration": 1,
+              "duration": 0,
               "state": "passed",
               "speed": "fast",
               "pass": true,
@@ -105,26 +105,26 @@
               "context": null,
               "code": "let second = new Map([\n  [1, 'uno'],\n  [2, 'dos']\n])\nconsole.log(second.get(1));\nconsole.log(...[1, 2]);",
               "err": {},
-              "uuid": "7bb539cb-48aa-48da-bfa4-1771e9ba091a",
-              "parentUUID": "866e60a4-1582-4270-9fbb-18739f417ffc",
+              "uuid": "dd8e7098-834c-437d-a2ea-160565ebf27f",
+              "parentUUID": "10757516-e05f-4db9-b4d8-dfa3d8618335",
               "isHook": false,
               "skipped": false
             }
           ],
           "suites": [],
           "passes": [
-            "7bb539cb-48aa-48da-bfa4-1771e9ba091a"
+            "dd8e7098-834c-437d-a2ea-160565ebf27f"
           ],
           "failures": [],
           "pending": [],
           "skipped": [],
-          "duration": 1,
+          "duration": 0,
           "root": false,
           "rootEmpty": false,
           "_timeout": 2000
         },
         {
-          "uuid": "582d31d7-cae7-4c05-ac25-f3fac690de54",
+          "uuid": "629dab2e-79b9-403d-8dc6-b562fb4acb6a",
           "title": "一般常量",
           "fullFile": "/Users/zhangye/Documents/code/code_yonyou/FormulaTextArea/src/platform/formula/test/SingleFormulaCore.literal.test.js",
           "file": "/src/platform/formula/test/SingleFormulaCore.literal.test.js",
@@ -144,15 +144,15 @@
               "context": null,
               "code": "assertList([\n  {\n    rawValue: 'null',\n    expected: null\n  }\n]);",
               "err": {},
-              "uuid": "1740642b-c0a0-450e-894b-d1cc87412374",
-              "parentUUID": "582d31d7-cae7-4c05-ac25-f3fac690de54",
+              "uuid": "f59e2c59-e8c0-4728-b05e-16b2463fa27e",
+              "parentUUID": "629dab2e-79b9-403d-8dc6-b562fb4acb6a",
               "isHook": false,
               "skipped": false
             }
           ],
           "suites": [
             {
-              "uuid": "c3ebd4e4-0489-4dcf-a947-3547ed86add8",
+              "uuid": "4072a640-f699-42aa-92d5-3caf902184af",
               "title": "字符串",
               "fullFile": "/Users/zhangye/Documents/code/code_yonyou/FormulaTextArea/src/platform/formula/test/SingleFormulaCore.literal.test.js",
               "file": "/src/platform/formula/test/SingleFormulaCore.literal.test.js",
@@ -172,15 +172,15 @@
                   "context": null,
                   "code": "assertList([\n  {\n    rawValue: \"\\\"OK\\\"\",\n    expected: \"OK\"\n  },\n  {\n    rawValue: \"\\\"\\\"\",\n    expected: \"\"\n  },\n  {\n    rawValue: \"\\\"\\\\\\\"\\\"\",\n    expected: \"\\\"\"\n  }\n]);",
                   "err": {},
-                  "uuid": "6f45864d-2097-4b2a-abbc-79eebaf81f0f",
-                  "parentUUID": "c3ebd4e4-0489-4dcf-a947-3547ed86add8",
+                  "uuid": "89d6d2f5-57bd-4fb2-b4ee-74bb063cd510",
+                  "parentUUID": "4072a640-f699-42aa-92d5-3caf902184af",
                   "isHook": false,
                   "skipped": false
                 }
               ],
               "suites": [
                 {
-                  "uuid": "3418efaa-b88d-440f-8d00-7102c77e3865",
+                  "uuid": "9d6d53d9-efdb-4424-93af-d6aa510dd8af",
                   "title": "字符串:识别:错误处理",
                   "fullFile": "/Users/zhangye/Documents/code/code_yonyou/FormulaTextArea/src/platform/formula/test/SingleFormulaCore.literal.test.js",
                   "file": "/src/platform/formula/test/SingleFormulaCore.literal.test.js",
@@ -191,17 +191,17 @@
                       "title": "\"",
                       "fullTitle": "一般常量 字符串 字符串:识别:错误处理 \"",
                       "timedOut": false,
-                      "duration": 3,
+                      "duration": 2,
                       "state": "passed",
                       "speed": "fast",
                       "pass": true,
                       "fail": false,
                       "pending": false,
                       "context": null,
-                      "code": "decorateCore('\"');",
+                      "code": "decorateCoreWithErrHandler('\"');",
                       "err": {},
-                      "uuid": "0abaddea-a91e-4b8d-a299-8dbc24a46bf3",
-                      "parentUUID": "3418efaa-b88d-440f-8d00-7102c77e3865",
+                      "uuid": "301c9fcf-b05f-40b3-aa3c-231b65c292d6",
+                      "parentUUID": "9d6d53d9-efdb-4424-93af-d6aa510dd8af",
                       "isHook": false,
                       "skipped": false
                     },
@@ -216,10 +216,10 @@
                       "fail": false,
                       "pending": false,
                       "context": null,
-                      "code": "decorateCore('\\'');",
+                      "code": "decorateCoreWithErrHandler('\\'');",
                       "err": {},
-                      "uuid": "01c99500-8d21-4adc-96c8-e93cd3be800f",
-                      "parentUUID": "3418efaa-b88d-440f-8d00-7102c77e3865",
+                      "uuid": "23e183f5-412a-4e12-9126-c30160aa843f",
+                      "parentUUID": "9d6d53d9-efdb-4424-93af-d6aa510dd8af",
                       "isHook": false,
                       "skipped": false
                     },
@@ -234,31 +234,31 @@
                       "fail": false,
                       "pending": false,
                       "context": null,
-                      "code": "decorateCore('#');",
+                      "code": "decorateCoreWithErrHandler('#');",
                       "err": {},
-                      "uuid": "36c0740e-83f3-43eb-a441-1170a6452c86",
-                      "parentUUID": "3418efaa-b88d-440f-8d00-7102c77e3865",
+                      "uuid": "a7261510-54f1-40dc-9e67-613503651a94",
+                      "parentUUID": "9d6d53d9-efdb-4424-93af-d6aa510dd8af",
                       "isHook": false,
                       "skipped": false
                     }
                   ],
                   "suites": [],
                   "passes": [
-                    "0abaddea-a91e-4b8d-a299-8dbc24a46bf3",
-                    "01c99500-8d21-4adc-96c8-e93cd3be800f",
-                    "36c0740e-83f3-43eb-a441-1170a6452c86"
+                    "301c9fcf-b05f-40b3-aa3c-231b65c292d6",
+                    "23e183f5-412a-4e12-9126-c30160aa843f",
+                    "a7261510-54f1-40dc-9e67-613503651a94"
                   ],
                   "failures": [],
                   "pending": [],
                   "skipped": [],
-                  "duration": 4,
+                  "duration": 3,
                   "root": false,
                   "rootEmpty": false,
                   "_timeout": 2000
                 }
               ],
               "passes": [
-                "6f45864d-2097-4b2a-abbc-79eebaf81f0f"
+                "89d6d2f5-57bd-4fb2-b4ee-74bb063cd510"
               ],
               "failures": [],
               "pending": [],
@@ -269,7 +269,7 @@
               "_timeout": 2000
             },
             {
-              "uuid": "0753ca0d-7d10-4fd5-b710-cdd13958770f",
+              "uuid": "f6a7fa1d-d2ee-43ac-86c3-362c5e08125e",
               "title": "布尔",
               "fullFile": "/Users/zhangye/Documents/code/code_yonyou/FormulaTextArea/src/platform/formula/test/SingleFormulaCore.literal.test.js",
               "file": "/src/platform/formula/test/SingleFormulaCore.literal.test.js",
@@ -280,7 +280,7 @@
                   "title": "识别:布尔",
                   "fullTitle": "一般常量 布尔 识别:布尔",
                   "timedOut": false,
-                  "duration": 2,
+                  "duration": 4,
                   "state": "passed",
                   "speed": "fast",
                   "pass": true,
@@ -289,26 +289,64 @@
                   "context": null,
                   "code": "assertList([\n  {\n    rawValue: \"true\",\n    expected: true\n  },\n  {\n    rawValue: \"false\",\n    expected: false\n  }\n]);",
                   "err": {},
-                  "uuid": "68356b40-832b-4cc0-a236-ec09af3bb60b",
-                  "parentUUID": "0753ca0d-7d10-4fd5-b710-cdd13958770f",
+                  "uuid": "05ca627c-701d-4c88-b116-c9f9205525cc",
+                  "parentUUID": "f6a7fa1d-d2ee-43ac-86c3-362c5e08125e",
+                  "isHook": false,
+                  "skipped": false
+                },
+                {
+                  "title": "TRUE/True",
+                  "fullTitle": "一般常量 布尔 TRUE/True",
+                  "timedOut": false,
+                  "duration": 5,
+                  "state": "passed",
+                  "speed": "fast",
+                  "pass": true,
+                  "fail": false,
+                  "pending": false,
+                  "context": null,
+                  "code": "assertList([\n  {\n    rawValue: 'TRUE',\n    expected: 'TRUE'\n  },\n  {\n    rawValue: 'True',\n    expected: 'True'\n  }\n]);",
+                  "err": {},
+                  "uuid": "163c4f21-d67e-4976-974d-008f3f76a90c",
+                  "parentUUID": "f6a7fa1d-d2ee-43ac-86c3-362c5e08125e",
+                  "isHook": false,
+                  "skipped": false
+                },
+                {
+                  "title": "FALSE/False",
+                  "fullTitle": "一般常量 布尔 FALSE/False",
+                  "timedOut": false,
+                  "duration": 4,
+                  "state": "passed",
+                  "speed": "fast",
+                  "pass": true,
+                  "fail": false,
+                  "pending": false,
+                  "context": null,
+                  "code": "assertList([\n  {\n    rawValue: 'FALSE',\n    expected: 'FALSE'\n  },\n  {\n    rawValue: 'False',\n    expected: 'False'\n  }\n]);",
+                  "err": {},
+                  "uuid": "f5baae9c-ee10-4644-aee3-ad4c8c2144c6",
+                  "parentUUID": "f6a7fa1d-d2ee-43ac-86c3-362c5e08125e",
                   "isHook": false,
                   "skipped": false
                 }
               ],
               "suites": [],
               "passes": [
-                "68356b40-832b-4cc0-a236-ec09af3bb60b"
+                "05ca627c-701d-4c88-b116-c9f9205525cc",
+                "163c4f21-d67e-4976-974d-008f3f76a90c",
+                "f5baae9c-ee10-4644-aee3-ad4c8c2144c6"
               ],
               "failures": [],
               "pending": [],
               "skipped": [],
-              "duration": 2,
+              "duration": 13,
               "root": false,
               "rootEmpty": false,
               "_timeout": 2000
             },
             {
-              "uuid": "b2f2ec90-2f0e-41fe-8070-519669d9df3f",
+              "uuid": "a4391809-f550-42c2-bc7d-0fd504f90333",
               "title": "数字",
               "fullFile": "/Users/zhangye/Documents/code/code_yonyou/FormulaTextArea/src/platform/formula/test/SingleFormulaCore.literal.test.js",
               "file": "/src/platform/formula/test/SingleFormulaCore.literal.test.js",
@@ -319,7 +357,7 @@
                   "title": "识别:数字",
                   "fullTitle": "一般常量 数字 识别:数字",
                   "timedOut": false,
-                  "duration": 10,
+                  "duration": 9,
                   "state": "passed",
                   "speed": "fast",
                   "pass": true,
@@ -328,15 +366,15 @@
                   "context": null,
                   "code": "assertList([\n  {\n    rawValue: '1',\n    expected: 1\n  },\n  {\n    rawValue: '-1',\n    expected: -1\n  },\n  {\n    rawValue: '0',\n    expected: 0\n  },\n  {\n    rawValue: '1.2',\n    expected: 1.2\n  },\n  {\n    rawValue: '0.1',\n    expected: 0.1\n  },\n  {\n    rawValue: '-0.1',\n    expected: -0.1\n  },\n  {\n    rawValue: '13%',\n    expected: 0.13\n  },\n  {\n    rawValue: '+1',\n    expected: 1\n  },\n  {\n    rawValue: '+0',\n    expected: 0\n  },\n  {\n    rawValue: '-0',\n    expected: -0\n  },\n  {\n    rawValue: '0.0',\n    expected: 0\n  },\n  {\n    rawValue: '0.00',\n    expected: 0\n  },\n  {\n    rawValue: '100%',\n    expected: 1\n  }\n]);",
                   "err": {},
-                  "uuid": "3b8d6e29-7c9c-46ff-9d26-d7ebdd0f19c4",
-                  "parentUUID": "b2f2ec90-2f0e-41fe-8070-519669d9df3f",
+                  "uuid": "4477b39f-393b-437d-a899-ed4ea037ef4b",
+                  "parentUUID": "a4391809-f550-42c2-bc7d-0fd504f90333",
                   "isHook": false,
                   "skipped": false
                 }
               ],
               "suites": [
                 {
-                  "uuid": "c0c719df-5a2e-4543-bd0c-25eaf4a888e2",
+                  "uuid": "277dacac-b15e-4f4c-be11-aa4cde476ba9",
                   "title": "数字:错误处理",
                   "fullFile": "/Users/zhangye/Documents/code/code_yonyou/FormulaTextArea/src/platform/formula/test/SingleFormulaCore.literal.test.js",
                   "file": "/src/platform/formula/test/SingleFormulaCore.literal.test.js",
@@ -354,10 +392,10 @@
                       "fail": false,
                       "pending": false,
                       "context": null,
-                      "code": "decorateCore('1-');",
+                      "code": "decorateCoreWithErrHandler('1-');",
                       "err": {},
-                      "uuid": "9fe48a7b-b1bf-427c-ab8d-b51050ef918b",
-                      "parentUUID": "c0c719df-5a2e-4543-bd0c-25eaf4a888e2",
+                      "uuid": "dd0ca580-8b51-4384-ae3f-c82d6f582348",
+                      "parentUUID": "277dacac-b15e-4f4c-be11-aa4cde476ba9",
                       "isHook": false,
                       "skipped": false
                     },
@@ -372,10 +410,10 @@
                       "fail": false,
                       "pending": false,
                       "context": null,
-                      "code": "decorateCore('1a');",
+                      "code": "decorateCoreWithErrHandler('1a');",
                       "err": {},
-                      "uuid": "ade5817d-5cd3-44cf-8f53-64be7a270b01",
-                      "parentUUID": "c0c719df-5a2e-4543-bd0c-25eaf4a888e2",
+                      "uuid": "6446a889-fb44-41c2-8056-0b67fd6d56ab",
+                      "parentUUID": "277dacac-b15e-4f4c-be11-aa4cde476ba9",
                       "isHook": false,
                       "skipped": false
                     },
@@ -390,10 +428,10 @@
                       "fail": false,
                       "pending": false,
                       "context": null,
-                      "code": "decorateCore('a.0');",
+                      "code": "decorateCoreWithErrHandler('a.0');",
                       "err": {},
-                      "uuid": "9637ccb4-7fe6-4547-999f-28d48e489865",
-                      "parentUUID": "c0c719df-5a2e-4543-bd0c-25eaf4a888e2",
+                      "uuid": "338eb88e-aa33-48e6-81d2-875c1443925a",
+                      "parentUUID": "277dacac-b15e-4f4c-be11-aa4cde476ba9",
                       "isHook": false,
                       "skipped": false
                     },
@@ -408,20 +446,20 @@
                       "fail": false,
                       "pending": false,
                       "context": null,
-                      "code": "decorateCore('0.a');",
+                      "code": "decorateCoreWithErrHandler('0.a');",
                       "err": {},
-                      "uuid": "149e816e-cd4f-4af0-835d-a08c328f6cbe",
-                      "parentUUID": "c0c719df-5a2e-4543-bd0c-25eaf4a888e2",
+                      "uuid": "eeac217e-9112-42a2-85d3-2ab19b834325",
+                      "parentUUID": "277dacac-b15e-4f4c-be11-aa4cde476ba9",
                       "isHook": false,
                       "skipped": false
                     }
                   ],
                   "suites": [],
                   "passes": [
-                    "9fe48a7b-b1bf-427c-ab8d-b51050ef918b",
-                    "ade5817d-5cd3-44cf-8f53-64be7a270b01",
-                    "9637ccb4-7fe6-4547-999f-28d48e489865",
-                    "149e816e-cd4f-4af0-835d-a08c328f6cbe"
+                    "dd0ca580-8b51-4384-ae3f-c82d6f582348",
+                    "6446a889-fb44-41c2-8056-0b67fd6d56ab",
+                    "338eb88e-aa33-48e6-81d2-875c1443925a",
+                    "eeac217e-9112-42a2-85d3-2ab19b834325"
                   ],
                   "failures": [],
                   "pending": [],
@@ -433,24 +471,101 @@
                 }
               ],
               "passes": [
-                "3b8d6e29-7c9c-46ff-9d26-d7ebdd0f19c4"
+                "4477b39f-393b-437d-a899-ed4ea037ef4b"
               ],
               "failures": [],
               "pending": [],
               "skipped": [],
-              "duration": 10,
+              "duration": 9,
               "root": false,
               "rootEmpty": false,
               "_timeout": 2000
             }
           ],
           "passes": [
-            "1740642b-c0a0-450e-894b-d1cc87412374"
+            "f59e2c59-e8c0-4728-b05e-16b2463fa27e"
           ],
           "failures": [],
           "pending": [],
           "skipped": [],
           "duration": 16,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        },
+        {
+          "uuid": "4314db0d-0d1f-400f-a702-8bf7747a76d2",
+          "title": "识别变量",
+          "fullFile": "/Users/zhangye/Documents/code/code_yonyou/FormulaTextArea/src/platform/formula/test/SingleFormulaCore.literal.test.js",
+          "file": "/src/platform/formula/test/SingleFormulaCore.literal.test.js",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "相对单元格地址",
+              "fullTitle": "识别变量 相对单元格地址",
+              "timedOut": false,
+              "duration": 6,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "assertList([\n  {\n    rawValue: 'A1',\n    expected: 'A1'\n  },\n  {\n    rawValue: 'B1',\n    expected: 'B1'\n  },\n  {\n    rawValue: 'A1000',\n    expected: 'A1000'\n  },\n  {\n    rawValue: 'Z1000',\n    expected: 'Z1000'\n  },\n  {\n    rawValue: 'Sheet1!A1',\n    expected: 'Sheet1!A1'\n  }\n]);",
+              "err": {},
+              "uuid": "b05bcc6a-e6d3-453a-9598-1dda7e6315e3",
+              "parentUUID": "4314db0d-0d1f-400f-a702-8bf7747a76d2",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "绝对单元格地址",
+              "fullTitle": "识别变量 绝对单元格地址",
+              "timedOut": false,
+              "duration": 3,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "assertList([\n  {\n    rawValue: '$A$1',\n    expected: '$A$1'\n  }\n]);",
+              "err": {},
+              "uuid": "c9e0819e-a60e-4eae-bfa8-5c09b1f0bc4c",
+              "parentUUID": "4314db0d-0d1f-400f-a702-8bf7747a76d2",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "混合单元格地址",
+              "fullTitle": "识别变量 混合单元格地址",
+              "timedOut": false,
+              "duration": 0,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "assertList([\n  {\n    rawValue: 'A$1',\n    expected: 'A$1'\n  },\n  {\n    rawValue: '$A1',\n    expected: '$A1'\n  },\n  \n  {\n    rawValue: 'Sheet1!A$1',\n    expected: 'Sheet1!A$1'\n  }\n]);",
+              "err": {},
+              "uuid": "f329cc76-63b0-45b4-96f6-fc16ca265993",
+              "parentUUID": "4314db0d-0d1f-400f-a702-8bf7747a76d2",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "b05bcc6a-e6d3-453a-9598-1dda7e6315e3",
+            "c9e0819e-a60e-4eae-bfa8-5c09b1f0bc4c",
+            "f329cc76-63b0-45b4-96f6-fc16ca265993"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 9,
           "root": false,
           "rootEmpty": false,
           "_timeout": 2000
