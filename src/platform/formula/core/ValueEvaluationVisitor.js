@@ -58,6 +58,7 @@ class ValueEvaluationVisitor extends ReportFormulaParserVisitor {
    */
   visitIdentifierCellRangeLiteral(ctx) {
     //TODO evaluate address
+    return ctx.getText();
   }
 
   /**

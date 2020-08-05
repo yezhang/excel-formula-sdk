@@ -252,7 +252,7 @@ describe('识别变量', function () {
         rawValue: '$A1',
         expected: '$A1'
       },
-      
+
       {
         rawValue: 'Sheet1!A$1',
         expected: 'Sheet1!A$1'
@@ -260,8 +260,25 @@ describe('识别变量', function () {
     ]);
   });
 
-  describe('单元格范围', function () {
-
+  it('单元格范围', function () {
+    assertList([
+      {
+        rawValue: 'A1:B1',
+        expected: 'A1:B1'
+      },
+      {
+        rawValue: 'Sheet1!A1:B1',
+        expected: 'Sheet1!A1:B1'
+      },
+      {
+        rawValue: 'Sheet1!A$1:$B1',
+        expected: 'Sheet1!A$1:$B1'
+      },
+      {
+        rawValue: 'Sheet1!$A$1:$B$1',
+        expected: 'Sheet1!$A$1:$B$1'
+      },
+    ]);
   });
 
   describe('报表项', function () {
@@ -271,4 +288,8 @@ describe('识别变量', function () {
   describe('普通变量', function () {
 
   });
+});
+
+describe('', function () {
+
 });
