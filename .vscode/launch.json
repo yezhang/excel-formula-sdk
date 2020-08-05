@@ -16,8 +16,6 @@
         "999999",
         "--colors",
         "${workspaceFolder}/test",
-        "--reporter",
-        "mochawesome"
       ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"

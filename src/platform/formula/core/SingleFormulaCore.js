@@ -1,9 +1,9 @@
 const antlr4 = require('antlr4');
 
-const FormulaParser = require('../../out/ReportFormulaParser').ReportFormulaParser;
-const FormulaLexer = require('../../out/ReportFormulaLexer').ReportFormulaLexer;
+const FormulaParser = require('../runtime/ReportFormulaParser').ReportFormulaParser;
+const FormulaLexer = require('../runtime/ReportFormulaLexer').ReportFormulaLexer;
 
-const FormulaVisitor = require('./FormulaVisitor').FormulaVisitor;
+const ValueEvaluationVisitor = require('./ValueEvaluationVisitor').ValueEvaluationVisitor;
 const ParserErrorListener = require('../error/ParserErrorListener');
 const LexerErrorListener = require('../error/LexerErrorListener');
 
@@ -11,30 +11,50 @@ const FormulaErrs = require('../error/FormulaExceptions');
 const CalculationException = FormulaErrs.CalculationException;
 const ParseException = FormulaErrs.ParseException;
 
-const EditorErrorHandler = require('../contrib/errorHandler/EditorErrorHandler');
+const EditorErrorHandler = require('../../contrib/errorHandler/EditorErrorHandler');
 
 /**
  * 公式引擎核心，解析公式并计算
  */
 
-function FormulaCore(errorHandler) {
-  this.formulaVisitor = new FormulaVisitor()
+function SingleFormulaCore(errorHandler, cellValueProvider) {
+  this.formulaVisitor = new ValueEvaluationVisitor()
   this.setErrorHandler(errorHandler);
+  this.setCellValueProvider(cellValueProvider);
 }
 
-FormulaCore.prototype.setErrorHandler = function setErrorHandler(errorHandler) {
+SingleFormulaCore.prototype.setErrorHandler = function setErrorHandler(errorHandler) {
   this.sharedErrorHandler = errorHandler;
 
   return this;
 }
 
-FormulaCore.prototype.removeErrorHandler = function removeErrorHandler() {
+SingleFormulaCore.prototype.removeErrorHandler = function removeErrorHandler() {
   this.sharedErrorHandler = null;
 
   return this;
 }
 
-FormulaCore.prototype.createErrorListener = function createErrorListener(errorHandler) {
+SingleFormulaCore.prototype.setCellValueProvider = function setCellValueProvider(valueProvider) {
+  if (!valueProvider) {
+    return this;
+  }
+
+  this.cellValueProvider = valueProvider;
+
+  return this;
+}
+
+SingleFormulaCore.prototype.getCellValueProvider = function getCellValueProvider() {
+  return this.cellValueProvider;
+}
+
+SingleFormulaCore.prototype.removeCellValueProvider = function removeCellValueProvider() {
+  this.cellValueProvider = null;
+  return this;
+}
+
+SingleFormulaCore.prototype.createErrorListener = function createErrorListener(errorHandler) {
   const defaultLexerErrListener = new LexerErrorListener();
   const defaultParserErrListener = new ParserErrorListener();
 
@@ -47,8 +67,17 @@ FormulaCore.prototype.createErrorListener = function createErrorListener(errorHa
   }
 }
 
-FormulaCore.prototype.calc = function calc(input) {
+/**
+ * 解析单元格地址的值
+ */
+SingleFormulaCore.prototype.evaluateCellAddress = function (cellAddress) {
+  // 第一步，解析单元格地址为地址对象
 
+  // 第二部，根据地址对象，获取单元格的值
+  return 0;
+}
+
+SingleFormulaCore.prototype.parse = function parse(input) {
   var errorListenerObj = this.createErrorListener(this.sharedErrorHandler);
 
   var chars = new antlr4.InputStream(input);
@@ -69,11 +98,23 @@ FormulaCore.prototype.calc = function calc(input) {
   // 如果已经形成语法错误，则不再执行公式
   if (errorListenerObj.lexerErrorListener.hasErrors()
     || errorListenerObj.parserErrorListener.hasErrors()) {
+    return null;
+  }
+
+  return tree;
+}
+
+
+
+SingleFormulaCore.prototype.calc = function calc(input, workingCellAddress) {
+
+  var ast = this.parse(input);
+  if (!ast) {
     return;
   }
 
   try {
-    return tree.accept(this.formulaVisitor);
+    return ast.accept(this.formulaVisitor);
   } catch (e) {
     if (e instanceof ParseException) {
       this.sharedErrorHandler.handle(e.input, e.line, e.column, e.message);
@@ -84,7 +125,7 @@ FormulaCore.prototype.calc = function calc(input) {
   }
 }
 
-const INSTANCE = new FormulaCore(new EditorErrorHandler());
-FormulaCore.INSTANCE = INSTANCE;
+const INSTANCE = new SingleFormulaCore(new EditorErrorHandler());
+SingleFormulaCore.INSTANCE = INSTANCE;
 
-module.exports = FormulaCore;
+module.exports = SingleFormulaCore;

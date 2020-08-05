@@ -10,16 +10,21 @@
   "author": "zhangyef@yonyou.com",
   "license": "MIT",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --config test/.mocharc.js --reporter mochawesome"
   },
   "dependencies": {
+    "@dagrejs/graphlib": "^2.1.4",
     "@formulajs/formulajs": "^2.4.3",
     "antlr4": "^4.8.0",
+    "core-js": "^3.6.5",
     "mocha": "^8.0.1",
     "punycode": "^2.1.1",
     "sinon": "^9.0.2"
   },
   "devDependencies": {
-    "mochawesome": "^6.1.1"
+    "gulp": "^4.0.2",
+    "mochawesome": "^6.1.1",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
   }
 }

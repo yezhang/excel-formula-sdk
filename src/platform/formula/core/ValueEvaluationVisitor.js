@@ -1,12 +1,12 @@
-const ReportFormulaParserVisitor = require('../../out/ReportFormulaParserVisitor').ReportFormulaParserVisitor;
-const ReportFormulaParser = require('../../out/ReportFormulaParser').ReportFormulaParser;
+const ReportFormulaParserVisitor = require('../runtime/ReportFormulaParserVisitor').ReportFormulaParserVisitor;
+const ReportFormulaParser = require('../runtime/ReportFormulaParser').ReportFormulaParser;
 
-const StringUtils = require('../util/StringUtils').StringUtils;
+const StringUtils = require('../../../base/StringUtils').StringUtils;
 const FormulaErrs = require('../error/FormulaExceptions');
 const CalculationException = FormulaErrs.CalculationException;
 const ParseException = FormulaErrs.ParseException;
 
-class FormulaVisitor extends ReportFormulaParserVisitor {
+class ValueEvaluationVisitor extends ReportFormulaParserVisitor {
   visitFormulaExpr(ctx) {
     return ctx.expressionStatement().accept(this);
   }
@@ -79,21 +79,27 @@ class FormulaVisitor extends ReportFormulaParserVisitor {
   visitIdentifierPlainText(ctx) {
     //TODO 实现该方法
     // 分析标识符前面是否有数字，如果有数字，则是非法字符。
-    var tokens = ctx.parser.getInputStream();
-    var lineText = tokenSource.inputStream.toString();
-    var symbol = ctx.Identifier().symbol;
-    var startIndex = symbol.start;
-    var stopIndex = symbol.stop;
-    if(startIndex > 0) {
-      // 标识符前面紧邻数字
-      if(/[.0-9]/.test(lineText.charAt(startIndex))){
-        throw new ParseException(lineText, symbol.line, startIndex, "标识符不能紧跟在数字文本之后");
-      }
-    }
+    // var tokens = ctx.parser.getInputStream();
+    // var lineText = tokenSource.inputStream.toString();
+    // var symbol = ctx.Identifier().symbol;
+    // var startIndex = symbol.start;
+    // var stopIndex = symbol.stop;
+    // if(startIndex > 0) {
+    //   // 标识符前面紧邻数字
+    //   if(/[.0-9]/.test(lineText.charAt(startIndex))){
+    //     throw new ParseException(lineText, symbol.line, startIndex, "标识符不能紧跟在数字文本之后");
+    //   }
+    // }
     return ctx.getText();
   }
 
-
+  /**
+   * 识别布尔字面量
+   */
+  visitBooleanLiteralExpression(ctx) {
+    var plainText = ctx.getText();
+    return (plainText === 'true');
+  }
 
   /**
    * 识别 null
@@ -146,4 +152,4 @@ class FormulaVisitor extends ReportFormulaParserVisitor {
   // }
 }
 
-exports.FormulaVisitor = FormulaVisitor;
+exports.ValueEvaluationVisitor = ValueEvaluationVisitor;
