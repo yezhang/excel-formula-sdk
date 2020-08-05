@@ -77,7 +77,7 @@ SingleFormulaCore.prototype.evaluateCellAddress = function (cellAddress) {
   return 0;
 }
 
-SingleFormulaCore.prototype.parse = function parse(input) {
+SingleFormulaCore.prototype.parse = function parse(input, context) {
   var errorListenerObj = this.createErrorListener(this.sharedErrorHandler);
 
   var chars = new antlr4.InputStream(input);
@@ -106,7 +106,7 @@ SingleFormulaCore.prototype.parse = function parse(input) {
 
 
 
-SingleFormulaCore.prototype.calc = function calc(input, workingCellAddress) {
+SingleFormulaCore.prototype.calc = function calc(input, context) {
 
   var ast = this.parse(input);
   if (!ast) {

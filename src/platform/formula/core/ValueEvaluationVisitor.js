@@ -7,6 +7,23 @@ const CalculationException = FormulaErrs.CalculationException;
 const ParseException = FormulaErrs.ParseException;
 
 class ValueEvaluationVisitor extends ReportFormulaParserVisitor {
+  constructor(cellValueProvider) {
+    super();
+
+    this.cellValueProvider = cellValueProvider;
+  }
+
+  setCellValueProvider(provider) {
+    if(!provider) {
+      return;
+    }
+    this.cellValueProvider = provider;
+  }
+
+  getCellValueProvider() {
+    return this.cellValueProvider;
+  }
+
   visitFormulaExpr(ctx) {
     return ctx.expressionStatement().accept(this);
   }

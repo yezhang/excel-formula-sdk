@@ -1,7 +1,10 @@
 const ReportFormulaParserVisitor = require('../runtime/ReportFormulaParserVisitor').ReportFormulaParserVisitor;
 const ReportFormulaParser = require('../runtime/ReportFormulaParser').ReportFormulaParser;
 
-class CellAddressVisitor extends ReportFormulaParserVisitor {
+/**
+ * 收集单元格依赖的其他单元格地址。
+ */
+class CellDependencyVisitor extends ReportFormulaParserVisitor {
   constructor() {
     super();
 
@@ -43,18 +46,17 @@ class CellAddressVisitor extends ReportFormulaParserVisitor {
   visitIdentifierCellAddressLiteral(ctx) {
     let addr = ctx.getText();
     this.collectAddress(addr);
-    return addr;
+    return ctx.getText();
   }
 
   /**
    * 单元格范围：CellRangeLiteral
    */
   visitIdentifierCellRangeLiteral(ctx) {
-    let addr = ctx.getText();
-    this.collectAddress(addr);
-    return addr;
+    //TODO evaluate address
+    return ctx.getText();
   }
 
 }
 
-exports.CellAddressVisitor = CellAddressVisitor;
+exports.CellDependencyVisitor = CellDependencyVisitor;
