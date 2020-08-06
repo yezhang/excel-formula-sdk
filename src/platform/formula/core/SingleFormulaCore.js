@@ -77,6 +77,39 @@ SingleFormulaCore.prototype.evaluateCellAddress = function (cellAddress) {
   return 0;
 }
 
+SingleFormulaCore.prototype.collectTokens = function (input, context) {
+  const errorStartingColumns = [];
+  const EOF = -1;
+
+  class ErrorTokenListener extends antlr4.error.ErrorListener {
+    syntaxError(recognizer, offendingSymbol, line, column, msg, e) {
+      errorStartingColumns.push(column)
+    }
+  }
+  const chars = new antlr4.InputStream(input);
+  const lexer = new FormulaLexer(chars);
+
+  lexer.removeErrorListeners();
+  lexer.addErrorListener(new ErrorTokenListener());
+
+  let tokenList = [];
+  do {
+    let token = lexer.nextToken();
+    if (!token || token.type == EOF) {
+      break;
+    }
+
+    let tokenTypeName = lexer.symbolicNames[token.type];
+    tokenList.push({ tokenTypeName, column: token.column });
+  } while (true);
+
+  errorStartingColumns.forEach(function (errTokenColumn) {
+    tokenList.push({ tokenTypeName: 'error', column: errTokenColumn });
+  });
+
+  return tokenList;
+}
+
 SingleFormulaCore.prototype.parse = function parse(input, context) {
   var errorListenerObj = this.createErrorListener(this.sharedErrorHandler);
 
@@ -121,11 +154,14 @@ SingleFormulaCore.prototype.calc = function calc(input, context) {
     } else {
       this.sharedErrorHandler.handleRuntimeError(e);
     }
-
   }
+}
+
+SingleFormulaCore.createInstance = function () {
+  return new SingleFormulaCore(new EditorErrorHandler());
 }
 
 const INSTANCE = new SingleFormulaCore(new EditorErrorHandler());
 SingleFormulaCore.INSTANCE = INSTANCE;
 
-module.exports = SingleFormulaCore;
+exports.SingleFormulaCore = SingleFormulaCore;

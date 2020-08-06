@@ -10,21 +10,31 @@
   "author": "zhangyef@yonyou.com",
   "license": "MIT",
   "scripts": {
-    "test": "mocha --config test/.mocharc.js --reporter mochawesome"
+    "test": "mocha --config test/.mocharc.js --reporter mochawesome",
+    "start": "webpack-dev-server --config build/webpack.config.dev.js",
+    "build": "webpack --config build/webpack.config.js"
   },
   "dependencies": {
-    "@dagrejs/graphlib": "^2.1.4",
     "@formulajs/formulajs": "^2.4.3",
     "antlr4": "^4.8.0",
     "core-js": "^3.6.5",
     "mocha": "^8.0.1",
+    "monaco-editor-core": "^0.20.0",
     "punycode": "^2.1.1",
     "sinon": "^9.0.2"
   },
+  "peerDependencies": {
+    "monaco-editor-core": "^0.20.0"
+  },
   "devDependencies": {
+    "bufferutil": "^4.0.1",
     "gulp": "^4.0.2",
     "mochawesome": "^6.1.1",
+    "puppeteer": "^5.2.1",
+    "rimraf": "^3.0.2",
+    "utf-8-validate": "^5.0.2",
     "webpack": "^4.44.1",
-    "webpack-cli": "^3.3.12"
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
   }
 }

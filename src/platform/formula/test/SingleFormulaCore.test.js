@@ -1,6 +1,6 @@
 const assert = require('assert').strict;
 const sinon = require('sinon');
-const FormulaCore = require('../core/SingleFormulaCore.js');
+const FormulaCore = require('../core/SingleFormulaCore').SingleFormulaCore;
 
 const core = FormulaCore.INSTANCE;
 
