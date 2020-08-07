@@ -1,5 +1,6 @@
 lexer grammar ReportFormulaLexer;
 
+channels { ERROR }
 
 MultiLineComment:               '/*' .*? '*/'             -> channel(HIDDEN);
 SingleLineComment:              '//' ~[\r\n\u2028\u2029]* -> channel(HIDDEN);
@@ -94,6 +95,8 @@ StringLiteral:                 '"' DoubleStringCharacter* '"'
 
 WhiteSpaces:                    [\t\u000B\u000C\u0020\u00A0]+ -> channel(HIDDEN);
 LineTerminator:                 [\r\n\u2028\u2029] -> channel(HIDDEN);
+
+UnexpectedCharacter:            . -> channel(ERROR);
 
 // 用户可输入的字符串
 fragment StringCharacter

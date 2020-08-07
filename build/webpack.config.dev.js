@@ -7,7 +7,7 @@ module.exports = {
     path: path.resolve(__dirname, '../dist_dev'),
     filename: 'formula-sdk.js',
     library: 'formulaSDK',
-    libraryTarget: 'umd', //umd
+    libraryTarget: 'umd', 
   },
   devtool: 'source-map',
   optimization: {

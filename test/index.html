@@ -8,7 +8,7 @@
 </head>
 
 <body>
-  <h2>Monaco Editor Sample</h2>
+  <h2>公式编辑器（IntelliSense）</h2>
   <div id="container" style="width:600px;height:38px;border:1px solid grey"></div>
   <script src="/formula-sdk.js" ></script>
   <script src="/main.formula-sdk.js" ></script>
@@ -37,13 +37,25 @@
           {
             token: 'basicnumberliteral.formula',
             foreground: literalFg
+          },
+          {
+            token: 'unexpectedcharacter.formula',
+            foreground: 'ff0000'
+          },
+          {
+            token: 'fnidentifier.formula',
+            foreground: '0000ff'
+          },
+          {
+            token: 'error.formula',
+            foreground: 'ff0000'
           }
         ]
       });
       
       var editor = monaco.editor.create(document.getElementById('container'), {
         value: [
-          '1.1 + A1',
+          'IF(C7 <  E7, MIN( ABS(E7 -C7),D7), 0)',
         ].join('\n'),
         language: langId,
         theme: themeName,

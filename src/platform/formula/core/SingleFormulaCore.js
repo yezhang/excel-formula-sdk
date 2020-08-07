@@ -100,11 +100,34 @@ SingleFormulaCore.prototype.collectTokens = function (input, context) {
     }
 
     let tokenTypeName = lexer.symbolicNames[token.type];
-    tokenList.push({ tokenTypeName, column: token.column });
+    tokenList.push({ column: token.column, tokenTypeName });
   } while (true);
 
+  // 处理函数调用的标识符
+  tokenList.forEach(function (token, index, allTokens) {
+    let lastIndex = allTokens.length;
+    let identifierName = lexer.symbolicNames[FormulaLexer.Identifier];
+    let openParenName = lexer.symbolicNames[FormulaLexer.OpenParen];
+    let whiteSpacesName = lexer.symbolicNames[FormulaLexer.WhiteSpaces]
+    if(token.tokenTypeName === identifierName) {
+      if(index + 1 < lastIndex) {
+        let tokenType = allTokens[index + 1].tokenTypeName;
+        if(tokenType === openParenName) {
+          token.tokenTypeName = 'fnIdentifier';
+        }else if(tokenType === whiteSpacesName){
+          if(index + 2 < lastIndex) {
+            tokenType = allTokens[index + 2].tokenTypeName;
+            if(tokenType === openParenName) {
+              token.tokenTypeName = 'fnIdentifier';
+            }
+          }
+        }
+      }
+    }
+  });
+
   errorStartingColumns.forEach(function (errTokenColumn) {
-    tokenList.push({ tokenTypeName: 'error', column: errTokenColumn });
+    tokenList.push({ column: errTokenColumn, tokenTypeName: 'error' });
   });
 
   return tokenList;

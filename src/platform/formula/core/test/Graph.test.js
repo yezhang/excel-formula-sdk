@@ -9,8 +9,8 @@
       [2, 'dos']
     ])
 
-    console.log(second.get(1));
+    // console.log(second.get(1));
 
-    console.log(...[1, 2]);
+    // console.log(...[1, 2]);
   })
  });

@@ -50,6 +50,7 @@ Identifier=49
 StringLiteral=50
 WhiteSpaces=51
 LineTerminator=52
+UnexpectedCharacter=53
 '('=3
 ')'=4
 '['=5

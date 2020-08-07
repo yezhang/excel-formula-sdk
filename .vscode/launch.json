@@ -39,7 +39,7 @@
       "type": "antlr-debug",
       "request": "launch",
       "input": "test/input/formula1.txt",
-      "grammar": "src/grammar/ReportFormulaParser.g4",
+      "grammar": "src/platform/formula/grammar/ReportFormulaParser.g4",
       // "actionFile": "grammars/exampleActions.js",
       "startRule": "formulaExpr",
       "printParseTree": true,
