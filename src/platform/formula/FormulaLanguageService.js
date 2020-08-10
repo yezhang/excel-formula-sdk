@@ -27,6 +27,7 @@ class FormulaLanguageService {
     let editorTokens = [];
     tokens.forEach(function (token){
       editorTokens.push({
+        lineNumber: token.line,
         tokenType: token.tokenTypeName,
         startColumn: token.startIndex,
         stopColumn: token.stopIndex,

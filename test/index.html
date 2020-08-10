@@ -9,6 +9,8 @@
 
 <body>
   <h2>公式编辑器（IntelliSense）</h2>
+  <div>样例：</div>
+  <div style="margin:10px 0 10px 0">=IF(C7&lt;E7,MIN(ABS(E7-C7),D7),0)</div>
   <div id="container" style="width:600px;height:38px;border:1px solid grey"></div>
   <script src="/formula-sdk.js"></script>
   <script src="/main.formula-sdk.js"></script>
@@ -30,7 +32,7 @@
       });
 
       monaco.languages.setTokensProvider(langId, new formulaSDK.FormulaTokensProvider());
-      let literalFg = '098658';
+      let literalFg = '1155cc';
 
       monaco.editor.defineTheme(themeName, {
         base: 'vs',
@@ -45,13 +47,17 @@
           },
           {
             token: 'fnidentifier.formula',
-            foreground: '0000ff'
+            foreground: '000000'
           },
           {
             token: 'error.formula',
             foreground: 'ff0000'
           }
         ]
+      });
+
+      monaco.editor.onDidCreateEditor(function(editor) {
+        console.log('created', editor);
       });
 
       var editor = monaco.editor.create(document.getElementById('container'), {
@@ -106,8 +112,6 @@
 
       formulaSDK.CellAddressTokensDecorator.registerDecorator(editor, monaco);
 
-      
-      
     });
   </script>
 </body>

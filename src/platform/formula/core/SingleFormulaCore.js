@@ -83,7 +83,14 @@ SingleFormulaCore.prototype.collectTokens = function (input, context) {
 
   class ErrorTokenListener extends antlr4.error.ErrorListener {
     syntaxError(recognizer, offendingSymbol, line, column, msg, e) {
-      errorStartingColumns.push(column)
+      let token = offendingSymbol;
+      errorStartingColumns.push({
+        line: line,
+        text: token ? token.text : '<ERROR>',
+        startIndex: column,
+        stopIndex: token ? token.stopIndex : -1,
+        tokenTypeName: 'error'
+      })
     }
   }
   const chars = new antlr4.InputStream(input);
@@ -105,9 +112,10 @@ SingleFormulaCore.prototype.collectTokens = function (input, context) {
     // FormulaLexer.CellAddressLiteral
    
     tokenList.push({ 
+      line: token.line,
       text: token.text, 
-      startIndex: token.start,
-      stopIndex: token.stop,
+      startIndex: token.column,
+      stopIndex: token.column + token.text.length - 1,
       tokenTypeName 
     });
   } while (true);
@@ -135,8 +143,8 @@ SingleFormulaCore.prototype.collectTokens = function (input, context) {
     }
   });
 
-  errorStartingColumns.forEach(function (errTokenColumn) {
-    tokenList.push({ column: errTokenColumn, tokenTypeName: 'error' });
+  errorStartingColumns.forEach(function (errToken) {
+    tokenList.push(errToken);
   });
 
   return tokenList;

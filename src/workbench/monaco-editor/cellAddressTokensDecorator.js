@@ -9,21 +9,20 @@ const colorsProviderInst = ColorsProvider.INSTANCE;
  */
 class CellAddressTokensDecorator {
   constructor() {
-    this.decorations = {
-      1: []
-    };
+    this.decorations = [];
   }
 
   register(editor, namespace) {
     let _this = this;
     editor.onDidChangeModelContent(function (e) {
+      let allLinesContent = editor.getModel().getLinesContent().join('\n');
 
       // 假定用户不断进行单行输入，处理第一个改变对应的行
-      let lineNumber = e.changes[0].range.startLineNumber;
+      // let lineNumber = e.changes[0].range.startLineNumber;
 
-      const input = editor.getModel().getLineContent(lineNumber);
+      // const input = editor.getModel().getLineContent(lineNumber);
 
-      const tokens = langService.provideTokensFromCache(input);
+      const tokens = langService.provideTokensFromCache(allLinesContent);
 
       const cellAddressIndex = {
         cursor: 1
@@ -40,21 +39,19 @@ class CellAddressTokensDecorator {
           let colorIndex = cellAddressIndex[token.text];
 
           decorationRangeList.push({
-            range: new monaco.Range(lineNumber, token.startColumn + 1, lineNumber, token.stopColumn + 1 + 1),
+            range: new monaco.Range(token.lineNumber, token.startColumn + 1, token.lineNumber, token.stopColumn + 1 + 1),
             options: {
               inlineClassName: 'ftc' + colorIndex
             }
           });
 
-          colorsProviderInst.pickOrCreateColor(colorIndex);
+          let color = colorsProviderInst.pickOrCreateColor(colorIndex);
+          console.log(color);
         }
       });
 
-      let lineDecorations = _this.decorations[lineNumber];
-      if (!lineDecorations) {
-        lineDecorations = [];
-      }
-      _this.decorations[lineNumber] = editor.deltaDecorations(lineDecorations, decorationRangeList);
+    
+      _this.decorations = editor.deltaDecorations(_this.decorations, decorationRangeList);
     });
   }
 }
