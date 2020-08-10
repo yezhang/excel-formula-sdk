@@ -10,8 +10,8 @@
 <body>
   <h2>公式编辑器（IntelliSense）</h2>
   <div id="container" style="width:600px;height:38px;border:1px solid grey"></div>
-  <script src="/formula-sdk.js" ></script>
-  <script src="/main.formula-sdk.js" ></script>
+  <script src="/formula-sdk.js"></script>
+  <script src="/main.formula-sdk.js"></script>
   <!-- OR ANY OTHER AMD LOADER HERE INSTEAD OF loader.js -->
   <script src="/node_modules/monaco-editor-core/min/vs/loader.js"></script>
   <script>
@@ -25,16 +25,17 @@
       let langId = 'lang-formula';
       let themeName = langId + '-theme';
 
-      monaco.languages.register({ id: langId });
+      monaco.languages.register({
+        id: langId
+      });
 
       monaco.languages.setTokensProvider(langId, new formulaSDK.FormulaTokensProvider());
-      let literalFg = '3b8737';
-      
+      let literalFg = '098658';
+
       monaco.editor.defineTheme(themeName, {
-        base: 'vs', 
+        base: 'vs',
         inherit: false,
-        rules: [
-          {
+        rules: [{
             token: 'basicnumberliteral.formula',
             foreground: literalFg
           },
@@ -52,7 +53,7 @@
           }
         ]
       });
-      
+
       var editor = monaco.editor.create(document.getElementById('container'), {
         value: [
           'IF(C7 <  E7, MIN( ABS(E7 -C7),D7), 0)',
@@ -61,10 +62,52 @@
         theme: themeName,
         minimap: {
           enabled: false
-        }
+        },
+        autoClosingBrackets: true,
+        lineNumbers: false, //隐藏行号
+        folding: false //关闭折叠占位符
       });
 
+      monaco.languages.setLanguageConfiguration(langId, {
+        brackets: [
+          ['{', '}'],
+          ['[', ']'],
+          ['(', ')']
+        ],
+        autoClosingPairs: [{
+            open: '{',
+            close: '}'
+          },
+          {
+            open: '[',
+            close: ']'
+          },
+          {
+            open: '(',
+            close: ')'
+          },
+          {
+            open: '"',
+            close: '"',
+            notIn: ['string']
+          },
+          {
+            open: '\'',
+            close: '\'',
+            notIn: ['string', 'comment']
+          },
+          {
+            open: "/**",
+            close: " */",
+            notIn: ["string"]
+          }
+        ]
+      });
 
+      formulaSDK.CellAddressTokensDecorator.registerDecorator(editor, monaco);
+
+      
+      
     });
   </script>
 </body>

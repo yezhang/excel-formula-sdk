@@ -99,9 +99,20 @@ SingleFormulaCore.prototype.collectTokens = function (input, context) {
       break;
     }
 
-    let tokenTypeName = lexer.symbolicNames[token.type];
-    tokenList.push({ column: token.column, tokenTypeName });
+    let tokenTypeName = lexer.symbolicNames[token.type];;
+    // 处理单元格地址
+    // FormulaLexer.CellRangeLiteral
+    // FormulaLexer.CellAddressLiteral
+   
+    tokenList.push({ 
+      text: token.text, 
+      startIndex: token.start,
+      stopIndex: token.stop,
+      tokenTypeName 
+    });
   } while (true);
+
+
 
   // 处理函数调用的标识符
   tokenList.forEach(function (token, index, allTokens) {
@@ -109,17 +120,15 @@ SingleFormulaCore.prototype.collectTokens = function (input, context) {
     let identifierName = lexer.symbolicNames[FormulaLexer.Identifier];
     let openParenName = lexer.symbolicNames[FormulaLexer.OpenParen];
     let whiteSpacesName = lexer.symbolicNames[FormulaLexer.WhiteSpaces]
-    if(token.tokenTypeName === identifierName) {
-      if(index + 1 < lastIndex) {
+    if (token.tokenTypeName === identifierName) {
+      if (index + 1 < lastIndex) {
         let tokenType = allTokens[index + 1].tokenTypeName;
-        if(tokenType === openParenName) {
+        if (tokenType === openParenName) {
           token.tokenTypeName = 'fnIdentifier';
-        }else if(tokenType === whiteSpacesName){
-          if(index + 2 < lastIndex) {
-            tokenType = allTokens[index + 2].tokenTypeName;
-            if(tokenType === openParenName) {
-              token.tokenTypeName = 'fnIdentifier';
-            }
+        } else if (tokenType === whiteSpacesName && index + 2 < lastIndex) {
+          tokenType = allTokens[index + 2].tokenTypeName;
+          if (tokenType === openParenName) {
+            token.tokenTypeName = 'fnIdentifier';
           }
         }
       }
@@ -159,7 +168,6 @@ SingleFormulaCore.prototype.parse = function parse(input, context) {
 
   return tree;
 }
-
 
 
 SingleFormulaCore.prototype.calc = function calc(input, context) {

@@ -1,30 +1,16 @@
 const FormulaLanguageService = require('../../platform/formula/FormulaLanguageService').FormulaLanguageService;
 
-const langService = new FormulaLanguageService();
+const langService = FormulaLanguageService.INSTANCE;
 
-class FormulaState {
+class FormulaLineState {
   clone() {
-    return new FormulaState();
+    return new FormulaLineState();
   }
 
   equals(other) {
     return true;
   }
 }
-
-class FormulaTokensProvider {
-  getInitialState() {
-    return new FormulaState();
-  }
-
-  tokenize(line, state) {
-    // So far we ignore the state, which is not great for performance reasons
-    return tokensForLine(line);
-  }
-
-}
-
-
 
 class FormulaToken {
   constructor(ruleName, startIndex) {
@@ -35,19 +21,35 @@ class FormulaToken {
 
 class FormulaLineTokens {
   constructor(tokens) {
-    this.endState = new FormulaState();
+    this.endState = new FormulaLineState();
     this.tokens = tokens;
   }
 }
 
-function tokensForLine(input) {
-  let tokens = langService.provideTokens(input);
-  let lineTokenList = [];
-  tokens.forEach(function(token){
-    lineTokenList.push(new FormulaToken(token.tokenType, token.startColumn));
-  });
 
-  return new FormulaLineTokens(lineTokenList);
+class FormulaTokensProvider {
+  constructor() {
+    this.lineTokens = null;
+  }
+  getInitialState() {
+    return new FormulaLineState();
+  }
+
+  tokenize(line, state) {
+    // 由于性能原因，忽略状态
+    this.lineTokens = this.tokensForLine(line);
+    return this.lineTokens;
+  }
+
+  tokensForLine(input) {
+    let tokens = langService.provideTokensFromCache(input);
+    let lineTokenList = [];
+    tokens.forEach(function(token){
+      lineTokenList.push(new FormulaToken(token.tokenType, token.startColumn));
+    });
+  
+    return new FormulaLineTokens(lineTokenList);
+  }
 }
 
 exports.FormulaTokensProvider = FormulaTokensProvider;
