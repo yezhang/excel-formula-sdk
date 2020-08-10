@@ -56,8 +56,8 @@
         ]
       });
 
-      monaco.editor.onDidCreateEditor(function(editor) {
-        console.log('created', editor);
+      monaco.editor.onDidCreateEditor(function (editor) {
+
       });
 
       var editor = monaco.editor.create(document.getElementById('container'), {
@@ -74,6 +74,7 @@
         folding: false //关闭折叠占位符
       });
 
+      // 配置基本的编辑功能
       monaco.languages.setLanguageConfiguration(langId, {
         brackets: [
           ['{', '}'],
@@ -110,7 +111,17 @@
         ]
       });
 
+      // 配置自动补全
+      monaco.languages.registerCompletionItemProvider(langId, new formulaSDK.FormulaSuggestionsProvider());
+
+      // 配置上浮提示
+      monaco.languages.registerHoverProvider(langId, {
+        provideHover: function (model, position) {
+
+        }
+      });
       formulaSDK.CellAddressTokensDecorator.registerDecorator(editor, monaco);
+
 
     });
   </script>
