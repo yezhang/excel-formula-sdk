@@ -3,7 +3,9 @@
  */
 const chroma = require('chroma-js');
 
- class ColorsProvider {
+const colorTest = require('./colorTest').ColorTest;
+
+class ColorsProvider {
   constructor() {
     this.cellAddress2color = {};
 
@@ -18,7 +20,7 @@ const chroma = require('chroma-js');
 
     this._styleSheet = styleDomNode.sheet;
   }
- }
+}
 
  ColorsProvider.prototype.appendToCSS = function(index, hexColor) {
   this._styleSheet.insertRule('.ftc' + index + '{ color: ' + hexColor + ' !important; }', this._styleSheet.cssRules.length);
@@ -46,7 +48,21 @@ const chroma = require('chroma-js');
  }
 
  ColorsProvider.prototype.generate = function() {
-  return chroma.random();
+  let color = chroma.random();
+  let channels = color.rgb();
+  let contrast = colorTest(1, 1, 1, channels[0], channels[1], channels[2]);
+  let scale = 1.0;
+  if(contrast > 100) {
+    color = color.darken();
+  }
+
+  if(contrast < 80) {
+    color = color.darken();
+  }
+
+  console.log('%c contract' + contrast, 'font-size: 20px')
+  
+  return color;
  }
 
  ColorsProvider.prototype.pickOrCreateColor = function(index) {
