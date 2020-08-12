@@ -4,10 +4,10 @@ options {
     tokenVocab = ReportFormulaLexer;
 }
 
-formulaExpr : expressionStatement EOF; // EOF 终止符需要添加，保证所有字符都会解析
+formulaExpr : '='? expressionStatement EOF; // EOF 终止符需要添加，保证所有字符都会解析
 expressionStatement: expressionSequence;
 
-expressionSequence : singleExpression (',' singleExpression)* ;
+expressionSequence : singleExpression ; //(',' singleExpression)* 
 
 singleExpression
     : singleExpression arguments                                                # ArgumentsExpression

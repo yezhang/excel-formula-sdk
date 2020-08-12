@@ -45,7 +45,7 @@ class FormulaTokensProvider {
     let tokens = langService.provideTokensFromCache(input);
     let lineTokenList = [];
     tokens.forEach(function(token){
-      lineTokenList.push(new FormulaToken(token.tokenType, token.startColumn));
+      lineTokenList.push(new FormulaToken(token.tokenType + '.formula', token.startColumn));
     });
   
     return new FormulaLineTokens(lineTokenList);

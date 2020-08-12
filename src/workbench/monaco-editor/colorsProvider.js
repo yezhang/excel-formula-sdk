@@ -60,8 +60,6 @@ class ColorsProvider {
   if(contrast < 50) {
     color = color.darken();
   }
-
-  console.log('%c contract' + contrast, 'font-size: 20px')
   
   return color;
  }

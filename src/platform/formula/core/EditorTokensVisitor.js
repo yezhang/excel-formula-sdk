@@ -3,30 +3,84 @@
  * 生成的 token 用于编辑器高亮。
  * 需要高亮的 token 有：字面量、单元格地址、函数名称。
  */
-
+const ReportFormulaParser = require('../runtime/ReportFormulaParser').ReportFormulaParser;
 const ReportFormulaParserVisitor = require('../runtime/ReportFormulaParserVisitor').ReportFormulaParserVisitor;
 
 class EditorTokensVisitor extends ReportFormulaParserVisitor {
-  constructor(tokenContainer) {
+  constructor(tokenSink) {
     super();
-    this.tokenContainer = tokenContainer;
+    this.tokenSink = tokenSink;
+
+    // token 缓存，用于支持根据坐标查询 token。
+    // {lineNumber: tokenList}
+    this.lineTokensIndex = {};
   }
 
-  visitArgumentsExpression(ctx) {
-    const tokenRule = ctx.singleExpression();
-    this.tokenContainer.push({
-      tokenTypeName: 'functionName',
-      column: tokenRule.getStart().getCharPositionInLine()
-    });
-    ctx.arguments().accept(this);
+  /**
+   * 根据当前位置获取最近的 token。
+   * @param {int} line - line=1..n
+   * @param {int} column - column=0..n
+   */
+  findTerminalNodeAtCaret(line, column) {
+    if (column < 0) {
+      return undefined;
+    }
+
+    if (this.lineTokensIndex.hasOwnProperty(line)) {
+      let tokenNodeList = this.lineTokensIndex[line];
+      if (tokenNodeList.length < 1) {
+        return undefined;
+      }
+
+      let currentNode = undefined;
+      for (let i = 0; i < tokenNodeList.length; i++) {
+        let n = tokenNodeList[i];
+        let token = n.getSymbol();
+        if (token) {
+          if (token.start <= column && token.stop >= column) {
+            currentNode = n;
+            break;
+          }
+        }
+      }
+      if (!currentNode) {
+        // 如果没有找到，找到左侧 token 集合中，最右侧的（距离 column 最近）
+        for (let i = tokenNodeList.length - 1; i >= 0; i--) {
+          const n = tokenNodeList[i];
+          const token = n.getSymbol();
+          if (token) {
+            if(token.stop <= column) {
+              return n;
+            }
+          }
+        }
+      }
+
+      return currentNode;
+    }
+
+    return undefined;
+  }
+  visitTerminal(node) {
+    let token = node.getSymbol();
+    if (token && token.type !== ReportFormulaParser.EOF) {
+      let nodes = [];
+      if (this.lineTokensIndex.hasOwnProperty(token.line)) {
+        nodes = this.lineTokensIndex[token.line];
+      } else {
+        this.lineTokensIndex[token.line] = nodes;
+      }
+
+      nodes.push(node);
+      this.tokenSink.push(token);
+    }
   }
 
-  visitNumericLiteralExpression(ctx) {
-    this.tokenContainer.push({
-      tokenTypeName: 'numberLiteral',
-      column: ctx.getStart().getCharPositionInLine()
-    });
+  visitErrorNode(node) {
+
   }
+
+
 }
 
 exports.EditorTokensVisitor = EditorTokensVisitor;

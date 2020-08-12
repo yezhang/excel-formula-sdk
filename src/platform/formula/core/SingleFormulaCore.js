@@ -2,8 +2,12 @@ const antlr4 = require('antlr4');
 
 const FormulaParser = require('../runtime/ReportFormulaParser').ReportFormulaParser;
 const FormulaLexer = require('../runtime/ReportFormulaLexer').ReportFormulaLexer;
+const ReportFormulaParserVisitor = require('../runtime/ReportFormulaParserVisitor').ReportFormulaParserVisitor;
+
 
 const ValueEvaluationVisitor = require('./ValueEvaluationVisitor').ValueEvaluationVisitor;
+const EditorTokensVisitor = require('./EditorTokensVisitor').EditorTokensVisitor;
+
 const ParserErrorListener = require('../error/ParserErrorListener');
 const LexerErrorListener = require('../error/LexerErrorListener');
 
@@ -13,6 +17,22 @@ const ParseException = FormulaErrs.ParseException;
 
 const EditorErrorHandler = require('../../contrib/errorHandler/EditorErrorHandler');
 
+function SingleFormulaState() {
+  this._tokenList = [];
+}
+
+SingleFormulaState.prototype.push = function (token) {
+  this._tokenList.push(token);
+}
+
+SingleFormulaState.prototype.clear = function () {
+  this._tokenList = [];
+}
+
+SingleFormulaState.prototype.getTokenList = function () {
+  return this._tokenList;
+}
+
 /**
  * 公式引擎核心，解析公式并计算
  */
@@ -21,6 +41,9 @@ function SingleFormulaCore(errorHandler, cellValueProvider) {
   this.formulaVisitor = new ValueEvaluationVisitor()
   this.setErrorHandler(errorHandler);
   this.setCellValueProvider(cellValueProvider);
+
+  this._tokenSink = new SingleFormulaState();
+  this.tokenVisitor = new EditorTokensVisitor(this._tokenSink);
 }
 
 SingleFormulaCore.FnTokenType = 'fnIdentifier';
@@ -79,77 +102,132 @@ SingleFormulaCore.prototype.evaluateCellAddress = function (cellAddress) {
   return 0;
 }
 
-SingleFormulaCore.prototype.collectTokens = function (input, context) {
-  const errorStartingColumns = [];
-  const EOF = -1;
+/**
+ * @param {caretColumn} - caretColumn = 0..n-1
+ */
+SingleFormulaCore.prototype.findTokenOnLeftOfPosition = function (line, caretColumn) {
+  // caret column 表示光标右侧的列，需要减 1。
+  return this.tokenVisitor.findTerminalNodeAtCaret(line, caretColumn - 1);
+}
 
-  class ErrorTokenListener extends antlr4.error.ErrorListener {
-    syntaxError(recognizer, offendingSymbol, line, column, msg, e) {
-      let token = offendingSymbol;
-      errorStartingColumns.push({
-        line: line,
-        text: token ? token.text : '<ERROR>',
-        startIndex: column,
-        stopIndex: token ? token.stopIndex : -1,
-        tokenTypeName: 'error'
-      })
-    }
+SingleFormulaCore.prototype.findArgumentRuleOnLeftOfPosition = function(line, caretColumn) {
+  let leftNode = this.findTokenOnLeftOfPosition(line, caretColumn);
+  let ret = leftNode;
+  if(!ret){
+    return undefined;
   }
-  const chars = new antlr4.InputStream(input);
-  const lexer = new FormulaLexer(chars);
 
-  lexer.removeErrorListeners();
-  lexer.addErrorListener(new ErrorTokenListener());
-
-  let tokenList = [];
-  do {
-    let token = lexer.nextToken();
-    if (!token || token.type == EOF) {
+  while(ret.parentCtx){
+    if(ret.getText() === ')') {
+      ret = ret.parentCtx;
+      continue;
+    }
+    if(ret.parentCtx instanceof FormulaParser.ArgumentsContext) {
       break;
     }
+    ret = ret.parentCtx;
+  }
 
-    let tokenTypeName = lexer.symbolicNames[token.type];;
-    // 处理单元格地址
-    // FormulaLexer.CellRangeLiteral
-    // FormulaLexer.CellAddressLiteral
-   
-    tokenList.push({ 
+  return ret.parentCtx ? ret : leftNode;
+}
+
+function getFunctionName(argumentsRule) {
+  let argumentsExpr = argumentsRule.parentCtx;
+  let fnName = argumentsExpr.singleExpression().getText();
+  return fnName;
+}
+function getArgumentList(argumentsRule) {
+  let argumentsList = argumentsRule.children;
+  let endIndex = argumentsList.length;
+  if(argumentsList[argumentsList.length-1].getText() === ')') {
+    endIndex--;
+  }
+  if(endIndex <= 1) {
+    return [];
+  }
+  // 第一个元素是“开括号”
+  return argumentsList.slice(1, endIndex);
+}
+
+// 查找 startingNode 左侧的逗号数量，根据非逗号数量，判断当前的活动参数
+function getArgumentIndex(argumentsList, node) {
+  var argumentIndex = 0;
+  for (var _i = 0, _a = argumentsList; _i < _a.length; _i++) {
+    var child = _a[_i];
+    if (child === node) {
+      break;
+    }
+    if (child.getText() !== ',' /* CommaToken */) {
+      argumentIndex++;
+    }
+  }
+  return argumentIndex;
+}
+
+// 根据解析树，一直向上查找，直到找到一个参数节点。
+function getArgumentsRule(startingNode) {
+  let n = startingNode;
+  do{
+    if(n instanceof FormulaParser.ArgumentsContext) {
+      return n;
+    }
+    n = n.parentCtx;
+  }while(n);
+
+  return undefined;
+}
+
+
+
+SingleFormulaCore.prototype.getContainingArgumentInfo = function (startingNode) {
+
+  let argumentsRuleNode = getArgumentsRule(startingNode);
+
+  if (argumentsRuleNode) {
+    let fnName = getFunctionName(argumentsRuleNode);
+    
+    
+    let argumentIndex = getArgumentIndex(getArgumentList(argumentsRuleNode), startingNode);
+    console.log('参数索引', argumentIndex);
+
+    return {
+      fnName: fnName,
+      argumentIndex: argumentIndex
+    };
+  }
+
+  return {
+    fnName: '<UNKNOWN>', //函数名称
+    argumentIndex: 0 //参数索引位置 0..n
+  };
+}
+
+/**
+ * 收集所有的 token，用于支持语法高亮。
+ * @param {SingleFormulaContext} ctx
+ * @return {{line,startIndex,stopIndex,text,tokenTypeName}[]} tokenList - token 清单
+ */
+SingleFormulaCore.prototype.collectTokens = function (input, ctx) {
+  let tokenTree = this.parse(input);
+  if (!tokenTree) {
+    return [];
+  }
+
+  this._tokenSink = new SingleFormulaState();
+  this.tokenVisitor = new EditorTokensVisitor(this._tokenSink);
+
+  let tokenList = this._tokenSink.getTokenList();
+  tokenTree.accept(this.tokenVisitor);
+
+  return tokenList.map(function (token) {
+    return {
       line: token.line,
-      text: token.text, 
+      text: token.text,
       startIndex: token.column,
       stopIndex: token.column + token.text.length - 1,
-      tokenTypeName 
-    });
-  } while (true);
-
-
-
-  // 处理函数调用的标识符
-  tokenList.forEach(function (token, index, allTokens) {
-    let lastIndex = allTokens.length;
-    let identifierName = lexer.symbolicNames[FormulaLexer.Identifier];
-    let openParenName = lexer.symbolicNames[FormulaLexer.OpenParen];
-    let whiteSpacesName = lexer.symbolicNames[FormulaLexer.WhiteSpaces]
-    if (token.tokenTypeName === identifierName) {
-      if (index + 1 < lastIndex) {
-        let tokenType = allTokens[index + 1].tokenTypeName;
-        if (tokenType === openParenName) {
-          token.tokenTypeName = SingleFormulaCore.FnTokenType;
-        } else if (tokenType === whiteSpacesName && index + 2 < lastIndex) {
-          tokenType = allTokens[index + 2].tokenTypeName;
-          if (tokenType === openParenName) {
-            token.tokenTypeName = SingleFormulaCore.FnTokenType;
-          }
-        }
-      }
+      tokenTypeName: FormulaLexer.prototype.symbolicNames[token.type]
     }
   });
-
-  errorStartingColumns.forEach(function (errToken) {
-    tokenList.push(errToken);
-  });
-
-  return tokenList;
 }
 
 SingleFormulaCore.prototype.parse = function parse(input, context) {
@@ -171,10 +249,10 @@ SingleFormulaCore.prototype.parse = function parse(input, context) {
 
   var tree = parser.formulaExpr(); // 启动公式解析，遇到错误会触发 ErrorListener。
   // 如果已经形成语法错误，则不再执行公式
-  if (errorListenerObj.lexerErrorListener.hasErrors()
-    || errorListenerObj.parserErrorListener.hasErrors()) {
-    return null;
-  }
+  // if (errorListenerObj.lexerErrorListener.hasErrors()
+  //   || errorListenerObj.parserErrorListener.hasErrors()) {
+  //   return null;
+  // }
 
   return tree;
 }

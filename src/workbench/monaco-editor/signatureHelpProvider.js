@@ -12,7 +12,7 @@ class SignatureHelpProvider {
   }
 
   provideSignatureHelp(model, position, cancellationToken, context) {
-    const offset = model.getOffsetAt(position);
+    // const offset = model.getOffsetAt(position);
 
     let info = langService.getSignatureHelpItems(model.getValue(), position);
 

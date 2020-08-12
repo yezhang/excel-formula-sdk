@@ -45,7 +45,9 @@ class CellDependencyVisitor extends ReportFormulaParserVisitor {
   */
   visitIdentifierCellAddressLiteral(ctx) {
     let addr = ctx.getText();
-    this.collectAddress(addr);
+    this.collectAddress({
+      
+    });
     return ctx.getText();
   }
 

@@ -18,36 +18,32 @@ class FormulaLanguageService {
   getSignatureHelpItems(input, position) {
     let tokens = this.provideTokensFromCache(input);
 
-    let token = this.findTokenOnLeftOfPosition(tokens, position.lineNumber, position.column - 1);
+    /// position.column = 1..n
+    let token = formulaCoreInst.findArgumentRuleOnLeftOfPosition(position.lineNumber, position.column - 1);
+    console.log('光标左侧的 token', token);
 
     // 如果没有参数信息，则返回 undefined。
-    if(token.text !== '(' && token.text !== ',') {
+    if(token.getText() === ')') {
       // 当返回 undefined 时，提示窗口消失。
       return undefined;
     }
 
+
+    let argumentInfo = formulaCoreInst.getContainingArgumentInfo(token);
+
+
     // token.tokenType = fnIdentifier
-    let fnName = this.findFnIdentifierToken(tokens, token);
+    let fnName = argumentInfo.fnName;
 
     const retItems = {
       selectedItemIndex: 0,
-      argumentIndex: 0,
+      argumentIndex: argumentInfo.argumentIndex,
       items: []
     };
 
-    // 计算逗号的数量
-    let argumentIndex = 0;
-
-    for(let i = fnName.tokenIndex; i <= token.tokenIndex; i++) {
-      if(tokens[i].text === ',') {
-        argumentIndex++;
-      }
-    }
-    retItems.argumentIndex = argumentIndex;
-
     // 查询函数的签名数据
-    if(FormulaSignatureList.hasOwnProperty(fnName.text)){
-      retItems.items.push(FormulaSignatureList[fnName.text]);
+    if(FormulaSignatureList.hasOwnProperty(fnName)){
+      retItems.items.push(FormulaSignatureList[fnName]);
     }
     
 
@@ -67,33 +63,14 @@ class FormulaLanguageService {
     return fnNameToken;
   }
 
-  findTokenOnLeftOfPosition(inputTokens, lineNumber, column) {
-    let tokensForLine = inputTokens.filter(function (token) {
-      return token.lineNumber <= lineNumber;
-    });
-
-    let precedingToken = null;
-    for (let i = tokensForLine.length - 1; i >= 0; i--) {
-      const token = tokensForLine[i];
-      if (token.stopColumn < column) {
-        precedingToken = token;
-        break;
-      }
-    }
-
-    if (precedingToken == null) {
-      return undefined;
-    }
-
-    console.log(precedingToken);
-    return precedingToken;
-  }
+  
 
   setCache(input, tokens) {
     this._inputTokensCache.input = input;
     this._inputTokensCache.tokens = tokens;
   }
   /**
+   * 用于语法高亮使用
    * 返回一个数组：[{
    *  tokenType,
    *  startColumn
