@@ -11,6 +11,11 @@
   <h2>公式编辑器（IntelliSense）</h2>
   <div>样例：</div>
   <div style="margin:10px 0 10px 0">=IF(C7&lt;E7,MIN(ABS(E7-C7),D7),0)</div>
+  <div style="margin:10px 0 10px 0">=MIN(ROUND($G$5*E14,2), D14)</div>
+  <div style="margin:10px 0 10px 0">=MAX(C33-D33,0)</div>
+  <div style="margin:10px 0 10px 0">=ROUNDUP(MIN(C19*0.6,A101010一般企业收入明细表!C4*0.005),2)</div>
+  <div style="margin:10px 0 10px 0">=IF(A105060广告费和业务宣传费跨年度纳税调整明细表!C15&gt;0, 0, ABS(A105060广告费和业务宣传费跨年度纳税调整明细表!C15)
+  </div>
   <div id="container" style="width:600px;height:38px;border:1px solid grey"></div>
   <script src="/formula-sdk.js"></script>
   <script src="/main.formula-sdk.js"></script>
@@ -32,22 +37,21 @@
       });
 
       monaco.languages.setTokensProvider(langId, new formulaSDK.FormulaTokensProvider());
-      let literalFg = '1155cc';
 
       monaco.editor.defineTheme(themeName, {
         base: 'vs',
         inherit: false,
         rules: [{
             token: 'basicnumberliteral.formula',
-            foreground: literalFg
+            foreground: '1155cc' //#1155cc
           },
           {
             token: 'unexpectedcharacter.formula',
-            foreground: 'ff0000'
+            foreground: 'ff0000' //#ff0000
           },
           {
             token: 'fnidentifier.formula',
-            foreground: '000000'
+            foreground: '000000' //#000000
           },
           {
             token: 'error.formula',
@@ -115,11 +119,10 @@
       monaco.languages.registerCompletionItemProvider(langId, new formulaSDK.FormulaSuggestionsProvider());
 
       // 配置上浮提示
-      monaco.languages.registerHoverProvider(langId, {
-        provideHover: function (model, position) {
+      monaco.languages.registerHoverProvider(langId, new formulaSDK.HoverInfoProvider());
 
-        }
-      });
+      monaco.languages.registerSignatureHelpProvider(langId, new formulaSDK.SignatureHelpProvider());
+
       formulaSDK.CellAddressTokensDecorator.registerDecorator(editor, monaco);
 
 

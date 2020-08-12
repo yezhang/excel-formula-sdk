@@ -1,13 +1,16 @@
 class HoverInfoProvider {
-  
+
   provideHover(model, position) {
-			return {
-				range: new monaco.Range(1, 1, model.getLineCount(), model.getLineMaxColumn(model.getLineCount())),
-				contents: [
-					{ value: '**SOURCE**' },
-					{ value: '```html\n' + res.responseText.substring(0, 200) + '\n```' }
-				]
-			};
+    let tokens = model.getLineTokens(position.lineNumber);
+    let word = model.getWordAtPosition(position);
+    console.log(word);
+    // 根据 provideHover 接口定义，返回结果如果没有 range，则使用当前 hover 的位置。
+    return {
+      contents: [
+        // { value: '**函数**' },
+        { value: word ? word.word : '' }
+      ]
+    };
   }
 }
 

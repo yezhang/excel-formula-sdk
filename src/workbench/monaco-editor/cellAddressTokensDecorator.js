@@ -1,3 +1,5 @@
+const debounce = require('../../base/debounce');
+
 const FormulaLanguageService = require('../../platform/formula/FormulaLanguageService').FormulaLanguageService;
 const langService = FormulaLanguageService.INSTANCE;
 
@@ -39,19 +41,21 @@ class CellAddressTokensDecorator {
         });
 
         let color = colorsProviderInst.pickOrCreateColor(colorIndex);
-        console.log('trigger cell address colors');
-        // TODO 触发单元格高亮事件
+        // TODO 保存使用的颜色
       }
     });
 
-  
+    // TODO 触发单元格高亮事件
+    console.log('trigger cell address colors');
     _this.decorations = editor.deltaDecorations(_this.decorations, decorationRangeList);
   }
   register(editor, monaco) {
     let _this = this;
     this.decorate(editor, monaco);
+
+    let decorateWithDebounce = debounce(_this.decorate.bind(this), 200);
     editor.onDidChangeModelContent(function (e) {
-      _this.decorate(editor, monaco);
+      decorateWithDebounce(editor, monaco);
     });
   }
 }

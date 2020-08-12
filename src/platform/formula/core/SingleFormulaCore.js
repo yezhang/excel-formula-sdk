@@ -23,6 +23,8 @@ function SingleFormulaCore(errorHandler, cellValueProvider) {
   this.setCellValueProvider(cellValueProvider);
 }
 
+SingleFormulaCore.FnTokenType = 'fnIdentifier';
+
 SingleFormulaCore.prototype.setErrorHandler = function setErrorHandler(errorHandler) {
   this.sharedErrorHandler = errorHandler;
 
@@ -132,11 +134,11 @@ SingleFormulaCore.prototype.collectTokens = function (input, context) {
       if (index + 1 < lastIndex) {
         let tokenType = allTokens[index + 1].tokenTypeName;
         if (tokenType === openParenName) {
-          token.tokenTypeName = 'fnIdentifier';
+          token.tokenTypeName = SingleFormulaCore.FnTokenType;
         } else if (tokenType === whiteSpacesName && index + 2 < lastIndex) {
           tokenType = allTokens[index + 2].tokenTypeName;
           if (tokenType === openParenName) {
-            token.tokenTypeName = 'fnIdentifier';
+            token.tokenTypeName = SingleFormulaCore.FnTokenType;
           }
         }
       }

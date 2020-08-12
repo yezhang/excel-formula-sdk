@@ -51,12 +51,13 @@ class ColorsProvider {
   let color = chroma.random();
   let channels = color.rgb();
   let contrast = colorTest(1, 1, 1, channels[0], channels[1], channels[2]);
-  let scale = 1.0;
-  if(contrast > 100) {
+  contrast = Math.abs(contrast);
+
+  if(contrast > 110) {
     color = color.darken();
   }
 
-  if(contrast < 80) {
+  if(contrast < 50) {
     color = color.darken();
   }
 

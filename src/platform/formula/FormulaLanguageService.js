@@ -1,4 +1,5 @@
 const FormulaCore = require('./core/SingleFormulaCore').SingleFormulaCore;
+const FormulaSignatureList = require('./formulaSignatureHelp').FormulaSignatureList;
 
 const formulaCoreInst = FormulaCore.INSTANCE;
 
@@ -8,6 +9,84 @@ const formulaCoreInst = FormulaCore.INSTANCE;
 class FormulaLanguageService {
   constructor() {
     this._inputTokensCache = {};
+  }
+
+  /**
+   * 根据当前光标位置，返回签名的提示信息：活动签名、活动参数等。
+   * @param {position} 光标位置
+   */
+  getSignatureHelpItems(input, position) {
+    let tokens = this.provideTokensFromCache(input);
+
+    let token = this.findTokenOnLeftOfPosition(tokens, position.lineNumber, position.column - 1);
+
+    // 如果没有参数信息，则返回 undefined。
+    if(token.text !== '(' && token.text !== ',') {
+      // 当返回 undefined 时，提示窗口消失。
+      return undefined;
+    }
+
+    // token.tokenType = fnIdentifier
+    let fnName = this.findFnIdentifierToken(tokens, token);
+
+    const retItems = {
+      selectedItemIndex: 0,
+      argumentIndex: 0,
+      items: []
+    };
+
+    // 计算逗号的数量
+    let argumentIndex = 0;
+
+    for(let i = fnName.tokenIndex; i <= token.tokenIndex; i++) {
+      if(tokens[i].text === ',') {
+        argumentIndex++;
+      }
+    }
+    retItems.argumentIndex = argumentIndex;
+
+    // 查询函数的签名数据
+    if(FormulaSignatureList.hasOwnProperty(fnName.text)){
+      retItems.items.push(FormulaSignatureList[fnName.text]);
+    }
+    
+
+    return retItems;
+  }
+
+  findFnIdentifierToken(inputTokens, siblingToken) {
+    let fnNameToken = undefined;
+    for (let i = siblingToken.tokenIndex; i >= 0; i--) {
+      const token = inputTokens[i];
+      if (token.tokenType === FormulaCore.FnTokenType) {
+        fnNameToken = token;
+        break;
+      }
+    }
+
+    return fnNameToken;
+  }
+
+  findTokenOnLeftOfPosition(inputTokens, lineNumber, column) {
+    let tokensForLine = inputTokens.filter(function (token) {
+      return token.lineNumber <= lineNumber;
+    });
+
+    let precedingToken = null;
+    for (let i = tokensForLine.length - 1; i >= 0; i--) {
+      const token = tokensForLine[i];
+      if (token.stopColumn < column) {
+        precedingToken = token;
+        break;
+      }
+    }
+
+    if (precedingToken == null) {
+      return undefined;
+    }
+
+    console.log(precedingToken);
+    return precedingToken;
   }
 
   setCache(input, tokens) {
@@ -22,11 +101,11 @@ class FormulaLanguageService {
    */
   provideTokens(input) {
     let tokens = formulaCoreInst.collectTokens(input);
-    
 
     let editorTokens = [];
-    tokens.forEach(function (token){
+    tokens.forEach(function (token, index) {
       editorTokens.push({
+        tokenIndex: index,
         lineNumber: token.line,
         tokenType: token.tokenTypeName,
         startColumn: token.startIndex,
@@ -40,7 +119,7 @@ class FormulaLanguageService {
   }
 
   provideTokensFromCache(input) {
-    if(this._inputTokensCache.input === input) {
+    if (this._inputTokensCache.input === input) {
       return this._inputTokensCache.tokens;
     }
 
