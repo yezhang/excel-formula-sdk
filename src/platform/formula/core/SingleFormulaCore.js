@@ -2,8 +2,6 @@ const antlr4 = require('antlr4');
 
 const FormulaParser = require('../runtime/ReportFormulaParser').ReportFormulaParser;
 const FormulaLexer = require('../runtime/ReportFormulaLexer').ReportFormulaLexer;
-const ReportFormulaParserVisitor = require('../runtime/ReportFormulaParserVisitor').ReportFormulaParserVisitor;
-
 
 const ValueEvaluationVisitor = require('./ValueEvaluationVisitor').ValueEvaluationVisitor;
 const EditorTokensVisitor = require('./EditorTokensVisitor').EditorTokensVisitor;
@@ -38,7 +36,7 @@ SingleFormulaState.prototype.getTokenList = function () {
  */
 
 function SingleFormulaCore(errorHandler, cellValueProvider) {
-  this.formulaVisitor = new ValueEvaluationVisitor()
+  this.evaluateVisitor = new ValueEvaluationVisitor()
   this.setErrorHandler(errorHandler);
   this.setCellValueProvider(cellValueProvider);
 
@@ -177,8 +175,6 @@ function getArgumentsRule(startingNode) {
   return undefined;
 }
 
-
-
 SingleFormulaCore.prototype.getContainingArgumentInfo = function (startingNode) {
 
   let argumentsRuleNode = getArgumentsRule(startingNode);
@@ -198,7 +194,7 @@ SingleFormulaCore.prototype.getContainingArgumentInfo = function (startingNode) 
 
   return {
     fnName: '<UNKNOWN>', //函数名称
-    argumentIndex: 0 //参数索引位置 0..n
+    argumentIndex: 0 //参数索引位置 0..n-1
   };
 }
 
@@ -231,48 +227,46 @@ SingleFormulaCore.prototype.collectTokens = function (input, ctx) {
   });
 }
 
+/**
+ * 生成的解析树中，允许包括错误。
+ */
 SingleFormulaCore.prototype.parse = function parse(input, context) {
-  var errorListenerObj = this.createErrorListener(this.sharedErrorHandler);
+  const errorListenerObj = this.createErrorListener(this.sharedErrorHandler);
 
-  var chars = new antlr4.InputStream(input);
-  var lexer = new FormulaLexer(chars);
-
+  const chars = new antlr4.InputStream(input);
+  const lexer = new FormulaLexer(chars);
   lexer.removeErrorListeners();
   lexer.addErrorListener(errorListenerObj.lexerErrorListener);
 
-  var tokens = new antlr4.CommonTokenStream(lexer);
-
-  var parser = new FormulaParser(tokens);
-
+  const tokens = new antlr4.CommonTokenStream(lexer);
+  const parser = new FormulaParser(tokens);
   // 在创建解析器后，执行解析器前定义错误监听。
   parser.removeErrorListeners(); // 移除默认的 ConsoleErrorListener
   parser.addErrorListener(errorListenerObj.parserErrorListener);
 
-  var tree = parser.formulaExpr(); // 启动公式解析，遇到错误会触发 ErrorListener。
-  // 如果已经形成语法错误，则不再执行公式
-  // if (errorListenerObj.lexerErrorListener.hasErrors()
-  //   || errorListenerObj.parserErrorListener.hasErrors()) {
-  //   return null;
-  // }
+  // 启动公式解析，遇到错误会触发 ErrorListener。
+  const tree = parser.formulaExpr(); 
 
   return tree;
 }
 
-
+/**
+ * 计算公式
+ * 
+ */
 SingleFormulaCore.prototype.calc = function calc(input, context) {
-
   var ast = this.parse(input);
   if (!ast) {
     return;
   }
 
   try {
-    return ast.accept(this.formulaVisitor);
+    return ast.accept(this.evaluateVisitor);
   } catch (e) {
     if (e instanceof ParseException) {
-      this.sharedErrorHandler.handle(e.input, e.line, e.column, e.message);
+      this.sharedErrorHandler.handleParseError(e.input, e.line, e.column, e.message);
     } else {
-      this.sharedErrorHandler.handleRuntimeError(e);
+      this.sharedErrorHandler.handleEvaluateError(e);
     }
   }
 }
@@ -281,7 +275,6 @@ SingleFormulaCore.createInstance = function () {
   return new SingleFormulaCore(new EditorErrorHandler());
 }
 
-const INSTANCE = new SingleFormulaCore(new EditorErrorHandler());
-SingleFormulaCore.INSTANCE = INSTANCE;
+SingleFormulaCore.INSTANCE = SingleFormulaCore.createInstance();
 
 exports.SingleFormulaCore = SingleFormulaCore;

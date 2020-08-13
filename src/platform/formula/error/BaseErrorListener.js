@@ -22,7 +22,10 @@ class BaseErrorListener extends antlr4.error.ErrorListener {
   }
 
   removeErrorHandler() {
-    this.errorHandler = function() {/** noop */};
+    this.errorHandler = {
+      handleParseError: function(){/** noop */},
+      handleEvaluateError: function(){/** noop */}
+    }
   }
 
   getErrorHandler() {
@@ -50,7 +53,7 @@ class BaseErrorListener extends antlr4.error.ErrorListener {
 
     var errHandler = this.getErrorHandler();
     if(errHandler && errHandler.handle instanceof Function) {
-      errHandler.handle(rawText, line, column, '无法识别的符号');
+      errHandler.handleParseError(rawText, line, column, '无法识别的符号');
     }
   }
 

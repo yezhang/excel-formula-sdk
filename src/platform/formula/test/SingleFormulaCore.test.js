@@ -20,23 +20,23 @@ describe('一般常量', function () {
    */
   function decorateCoreWithErrHandler(rawInput) {
 
-    var handleRuntimeErrorStub = sinon.spy(function (e) {
+    var handleEvaluateErrorStub = sinon.spy(function (e) {
 
     });
 
-    var handleStub = sinon.spy(function (input, line, column, message) {
+    var handleParseErrorStub = sinon.spy(function (input, line, column, message) {
       assert.equal(input, rawInput);
       assert.equal(message, '无法识别的符号');
     });
 
     // 测试错误的符号是否可以正确识别，并提供恰当充分的出错信息
-    core.removeErrorHandler().setErrorHandler({
-      handleRuntimeError: handleRuntimeErrorStub,
-      handle: handleStub
+    core.setErrorHandler({
+      handleEvaluateError: handleEvaluateErrorStub,
+      handleParseError: handleParseErrorStub
     });
     core.calc(rawInput);
 
-    assert.equal(handleStub.called, true); //验证语法错误必须识别
+    assert.equal(handleParseErrorStub.called, true); //验证语法错误必须识别
   }
 
   describe('字符串', function () {

@@ -21,7 +21,7 @@ class FormulaLanguageService {
     let token = formulaCoreInst.findArgumentRuleOnLeftOfPosition(position.lineNumber, position.column - 1);
 
     // 如果没有参数信息，则返回 undefined。
-    if(token.getText() === ')') {
+    if(!token || token.getText() === ')') {
       // 当返回 undefined 时，提示窗口消失。
       return undefined;
     }

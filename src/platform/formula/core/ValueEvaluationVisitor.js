@@ -66,7 +66,7 @@ class ValueEvaluationVisitor extends ReportFormulaParserVisitor {
    * 单元格地址：CellAddressLiteral
    */
   visitIdentifierCellAddressLiteral(ctx) {
-    //TODO evaluate address
+    // TODO: evaluate address
     return ctx.getText();
   }
 
@@ -74,7 +74,7 @@ class ValueEvaluationVisitor extends ReportFormulaParserVisitor {
    * 单元格范围：CellRangeLiteral
    */
   visitIdentifierCellRangeLiteral(ctx) {
-    //TODO evaluate address
+    // TODO: evaluate address
     return ctx.getText();
   }
 
