@@ -16,11 +16,9 @@ class FormulaLanguageService {
    * @param {position} 光标位置
    */
   getSignatureHelpItems(input, position) {
-    let tokens = this.provideTokensFromCache(input);
-
+    this.provideTokensFromCache(input);
     /// position.column = 1..n
     let token = formulaCoreInst.findArgumentRuleOnLeftOfPosition(position.lineNumber, position.column - 1);
-    console.log('光标左侧的 token', token);
 
     // 如果没有参数信息，则返回 undefined。
     if(token.getText() === ')') {
@@ -28,9 +26,7 @@ class FormulaLanguageService {
       return undefined;
     }
 
-
     let argumentInfo = formulaCoreInst.getContainingArgumentInfo(token);
-
 
     // token.tokenType = fnIdentifier
     let fnName = argumentInfo.fnName;
@@ -45,7 +41,6 @@ class FormulaLanguageService {
     if(FormulaSignatureList.hasOwnProperty(fnName)){
       retItems.items.push(FormulaSignatureList[fnName]);
     }
-    
 
     return retItems;
   }
