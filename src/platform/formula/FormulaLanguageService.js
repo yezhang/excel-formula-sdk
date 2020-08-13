@@ -13,11 +13,11 @@ class FormulaLanguageService {
 
   /**
    * 根据当前光标位置，返回签名的提示信息：活动签名、活动参数等。
-   * @param {position} 光标位置
+   * @param {position} - 光标位置。position.column = 1..n
    */
   getSignatureHelpItems(input, position) {
     this.provideTokensFromCache(input);
-    /// position.column = 1..n
+    
     let token = formulaCoreInst.findArgumentRuleOnLeftOfPosition(position.lineNumber, position.column - 1);
 
     // 如果没有参数信息，则返回 undefined。

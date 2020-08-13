@@ -204,6 +204,7 @@ SingleFormulaCore.prototype.getContainingArgumentInfo = function (startingNode) 
 
 /**
  * 收集所有的 token，用于支持语法高亮。
+ * 支持输入为多行文本。
  * @param {SingleFormulaContext} ctx
  * @return {{line,startIndex,stopIndex,text,tokenTypeName}[]} tokenList - token 清单
  */

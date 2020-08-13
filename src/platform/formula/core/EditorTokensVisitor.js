@@ -16,10 +16,11 @@ class EditorTokensVisitor extends ReportFormulaParserVisitor {
     this.lineTokensIndex = {};
   }
 
+
   /**
    * 根据当前位置获取最近的 token。
    * @param {int} line - line=1..n
-   * @param {int} column - column=0..n
+   * @param {int} column - column=0..n-1
    */
   findTerminalNodeAtCaret(line, column) {
     if (column < 0) {
@@ -37,7 +38,7 @@ class EditorTokensVisitor extends ReportFormulaParserVisitor {
         let n = tokenNodeList[i];
         let token = n.getSymbol();
         if (token) {
-          if (token.start <= column && token.stop >= column) {
+          if (token.column <= column && (token.column + token.text.length - 1) >= column) {
             currentNode = n;
             break;
           }
@@ -61,7 +62,7 @@ class EditorTokensVisitor extends ReportFormulaParserVisitor {
 
     return undefined;
   }
-  visitTerminal(node) {
+  tryCollect(node) {
     let token = node.getSymbol();
     if (token && token.type !== ReportFormulaParser.EOF) {
       let nodes = [];
@@ -75,9 +76,12 @@ class EditorTokensVisitor extends ReportFormulaParserVisitor {
       this.tokenSink.push(token);
     }
   }
+  visitTerminal(node) {
+    this.tryCollect(node);
+  }
 
   visitErrorNode(node) {
-
+    this.tryCollect(node);
   }
 
 
