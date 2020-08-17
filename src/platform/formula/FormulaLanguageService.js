@@ -3,12 +3,98 @@ const FormulaSignatureList = require('./formulaSignatureHelp').FormulaSignatureL
 
 const formulaCoreInst = FormulaCore.INSTANCE;
 
+class ILanguageService {
+  /**
+   * 获取句法诊断信息，包括错误。
+   */
+  getSyntacticDiagnostics() {}
+  /**
+   * 获取语义诊断信息，包括错误。
+   */
+  getSemanticDiagnostics() {}
+  /**
+   * 获取函数签名辅助信息
+   */
+  getSignatureHelpItems() {}
+  /**
+   * 获取自动补全信息
+   */
+  getCompletionsAtPosition() {}
+  /**
+   * 获取快速提示信息（Hover）
+   */
+  getQuickInfoAtPosition() {}
+
+  /**
+   * 获取所有的单元格地址/单元格范围的列表。
+   * 可用于支持单元格地址高亮。
+   */
+  getCellAddressHighlights() {}
+
+  /**
+   * 代码错误修复
+   */
+  getCodeFixesAtPosition() {}
+  dispose(){}
+}
+
+const DiagnosticCategory = {
+  Warning : 0,
+  Error : 1,
+  Suggestion : 2,
+  Message : 3
+};
+
 /**
  * 为公式编辑器提供语言服务：代码高亮、错误检查、自动补全。
  */
 class FormulaLanguageService {
   constructor() {
     this._inputTokensCache = {};
+  }
+
+  /**
+   * 获取句法诊断
+   * @return {Diagnostic}
+   * 
+   * Diagnostic {
+   * category: DiagnosticCategory;
+   * code: number;
+   * file: SourceFile | undefined;
+   * start: number | undefined;
+   * length: number | undefined;
+   * messageText: string | DiagnosticMessageChain;
+   * }
+   */
+  getSyntacticDiagnostics(model, position) {
+    const errors = [];
+    formulaCoreInst.setErrorHandler({
+      handleEvaluateError: function(e) {
+
+      },
+      handleParseError: function(rawInput, symbol, line, column, message){
+        let charOffset = symbol.start;
+        
+        errors.push({
+          category: DiagnosticCategory.Error,
+          start: charOffset,
+          length: symbol.text ? symbol.text.length : 0,
+          messageText: message
+        });
+      }
+    });
+    formulaCoreInst.parse(model.getValue());
+
+    return errors;
+  }
+
+  /**
+   * 获取语义诊断
+   * @param {*} input 
+   * @param {*} position 
+   */
+  getSemanticDiagnostics(input, position) {
+
   }
 
   /**
@@ -58,9 +144,7 @@ class FormulaLanguageService {
     return fnNameToken;
   }
 
-  
-
-  setCache(input, tokens) {
+  _setCache(input, tokens) {
     this._inputTokensCache.input = input;
     this._inputTokensCache.tokens = tokens;
   }
@@ -86,7 +170,7 @@ class FormulaLanguageService {
       });
     });
 
-    this.setCache(input, editorTokens);
+    this._setCache(input, editorTokens);
     return editorTokens;
   }
 

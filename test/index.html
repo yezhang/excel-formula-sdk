@@ -14,7 +14,7 @@
   <div style="margin:10px 0 10px 0">=MIN(ROUND($G$5*E14,2), D14)</div>
   <div style="margin:10px 0 10px 0">=MAX(C33-D33,0)</div>
   <div style="margin:10px 0 10px 0">=ROUNDUP(MIN(C19*0.6,A101010一般企业收入明细表!C4*0.005),2)</div>
-  <div style="margin:10px 0 10px 0">=IF(A105060广告费和业务宣传费跨年度纳税调整明细表!C15&gt;0, 0, ABS(A105060广告费和业务宣传费跨年度纳税调整明细表!C15)
+  <div style="margin:10px 0 10px 0">=IF(A105060广告费和业务宣传费跨年度纳税调整明细表!C15&gt;0, 0, ABS(A105060广告费和业务宣传费跨年度纳税调整明细表!C15))
   </div>
   <div id="container" style="width:600px;height:38px;border:1px solid grey"></div>
   <script src="/formula-sdk.js"></script>
@@ -116,15 +116,15 @@
       });
 
       // 配置自动补全
-      monaco.languages.registerCompletionItemProvider(langId, new formulaSDK.FormulaSuggestionsProvider());
+      monaco.languages.registerCompletionItemProvider(langId, new formulaSDK.language.FormulaSuggestionsProvider());
 
       // 配置上浮提示
-      monaco.languages.registerHoverProvider(langId, new formulaSDK.HoverInfoProvider());
+      monaco.languages.registerHoverProvider(langId, new formulaSDK.language.HoverInfoProvider());
 
       monaco.languages.registerSignatureHelpProvider(langId, new formulaSDK.SignatureHelpProvider());
 
       formulaSDK.CellAddressTokensDecorator.registerDecorator(editor, monaco);
-
+      new formulaSDK.language.DiagnosticsAdapter(langId);
 
     });
   </script>

@@ -12,6 +12,7 @@ BaseErrorHandler.prototype.handleEvaluateError = function handleEvaluateError(e)
 
 /**
  * 处理公式解析的语法错误
+ * TODO: 调整参数为 e
  */
 BaseErrorHandler.prototype.handleParseError = function handleParseError(input, line, column, message) {
   /** noop */

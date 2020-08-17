@@ -216,6 +216,7 @@ SingleFormulaCore.prototype.collectTokens = function (input, ctx) {
   let tokenList = this._tokenSink.getTokenList();
   tokenTree.accept(this.tokenVisitor);
 
+  
   return tokenList.map(function (token) {
     return {
       line: token.line,

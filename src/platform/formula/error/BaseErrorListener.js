@@ -52,8 +52,8 @@ class BaseErrorListener extends antlr4.error.ErrorListener {
     var rawText = tokens.tokenSource.inputStream.toString();
 
     var errHandler = this.getErrorHandler();
-    if(errHandler && errHandler.handle instanceof Function) {
-      errHandler.handleParseError(rawText, line, column, '无法识别的符号');
+    if(errHandler && errHandler.handleParseError instanceof Function) {
+      errHandler.handleParseError(rawText, symbol, line, column, message);
     }
   }
 

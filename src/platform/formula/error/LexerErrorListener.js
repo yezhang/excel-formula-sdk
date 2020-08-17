@@ -25,7 +25,7 @@ class LexerErrorListener extends BaseErrorListener {
 
     var errHandler = this.getErrorHandler();
     if(errHandler && errHandler.handle instanceof Function) {
-      errHandler.handle(rawText, line, column, '无法识别的符号');
+      errHandler.handle(rawText, symbol, line, column, '无法识别的符号');
     }
   }
 }

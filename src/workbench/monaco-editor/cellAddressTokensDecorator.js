@@ -49,11 +49,12 @@ class CellAddressTokensDecorator {
     console.log('trigger cell address colors');
     _this.decorations = editor.deltaDecorations(_this.decorations, decorationRangeList);
   }
+  
   register(editor, monaco) {
     let _this = this;
     this.decorate(editor, monaco);
 
-    let decorateWithDebounce = debounce(_this.decorate.bind(this), 200);
+    let decorateWithDebounce = debounce(_this.decorate.bind(this), 500);
     editor.onDidChangeModelContent(function (e) {
       decorateWithDebounce(editor, monaco);
     });

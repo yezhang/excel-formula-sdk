@@ -2,9 +2,13 @@ const FormulaLanguageService = require('../../platform/formula/FormulaLanguageSe
 
 const langService = FormulaLanguageService.INSTANCE;
 
-class FormulaLineState {
+/**
+ * 根据 https://microsoft.github.io/monaco-editor/api/interfaces/monaco.languages.istate.html 描述，
+ * state 可以用于多行记录。
+ */
+class FormulaTokensState {
   clone() {
-    return new FormulaLineState();
+    return new FormulaTokensState();
   }
 
   equals(other) {
@@ -20,8 +24,8 @@ class FormulaToken {
 }
 
 class FormulaLineTokens {
-  constructor(tokens) {
-    this.endState = new FormulaLineState();
+  constructor(tokens, state) {
+    this.endState = new FormulaTokensState();
     this.tokens = tokens;
   }
 }
@@ -32,11 +36,10 @@ class FormulaTokensProvider {
     this.lineTokens = null;
   }
   getInitialState() {
-    return new FormulaLineState();
+    return new FormulaTokensState();
   }
 
   tokenize(line, state) {
-    // 由于性能原因，忽略状态
     this.lineTokens = this.tokensForLine(line);
     return this.lineTokens;
   }

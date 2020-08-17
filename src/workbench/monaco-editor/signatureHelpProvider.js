@@ -8,7 +8,7 @@ const langService = FormulaLanguageService.INSTANCE;
 class SignatureHelpProvider {
   constructor() {
     this.signatureHelpTriggerCharacters = ['(', ','];
-
+    this.signatureHelpRetrieveCharacters = [')'];
   }
 
   provideSignatureHelp(model, position, cancellationToken, context) {
