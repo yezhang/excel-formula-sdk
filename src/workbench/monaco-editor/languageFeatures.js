@@ -3,10 +3,15 @@
  * 语言诊断、自动补全（代码补全、函数参数）、浮动提示（快速消息）、单元格高亮、文档格式化。
  */
 const formulajs = require('@formulajs/formulajs');
+
+const debounce = require('../../base/debounce');
 const FormulaLanguageService = require('../../platform/formula/FormulaLanguageService').FormulaLanguageService;
 const langService = FormulaLanguageService.INSTANCE;
+const ColorsProvider = require('./colorsProvider').ColorsProvider;
+const colorsProviderInst = ColorsProvider.INSTANCE;
 
 // --- 语言诊断 ------
+
 const DiagnosticCategory = {
   Warning: 0,
   Error: 1,
@@ -123,6 +128,7 @@ class DiagnosticsAdapter {
 exports.DiagnosticsAdapter = DiagnosticsAdapter;
 
 // --- 自动补全 ------
+
 const FnNames = Object.keys(formulajs);
 
 class FormulaSuggestionsProvider {
@@ -155,10 +161,67 @@ class FormulaSuggestionsProvider {
 exports.FormulaSuggestionsProvider = FormulaSuggestionsProvider;
 
 // --- 函数签名 ------
+/**
+ * 函数参数提醒。
+ */
+class SignatureHelpProvider {
+  constructor() {
+    this.signatureHelpTriggerCharacters = ['(', ','];
+    this.signatureHelpRetrieveCharacters = [')'];
+  }
 
+  provideSignatureHelp(model, position, cancellationToken, context) {
+    // const offset = model.getOffsetAt(position);
+
+    let info = langService.getSignatureHelpItems(model.getValue(), position);
+
+    if (!info || model.isDisposed()) {
+			return;
+		}
+
+    const ret = {
+			activeSignature: info.selectedItemIndex,
+			activeParameter: info.argumentIndex,
+			signatures: []
+    };
+
+    info.items.forEach(item => {
+
+			const signature = {
+				label: '',
+				parameters: []
+			};
+
+			signature.documentation = item.documentation;
+			signature.label += item.prefixDisplayParts;
+			item.parameters.forEach((p, i, a) => {
+				const label = p.displayParts;
+				const parameter = {
+					label: label,
+					documentation: p.documentation
+				};
+				signature.label += label;
+				signature.parameters.push(parameter);
+				if (i < a.length - 1) {
+					signature.label += item.separatorDisplayParts;
+				}
+			});
+			signature.label += item.suffixDisplayParts;
+			ret.signatures.push(signature);
+		});
+
+		return {
+			value: ret,
+			dispose() { }
+		};
+  }
+}
+
+exports.SignatureHelpProvider = SignatureHelpProvider;
 
 
 // --- 浮动提示 ------
+
 class HoverInfoProvider {
 
   provideHover(model, position) {
@@ -178,6 +241,127 @@ class HoverInfoProvider {
 exports.HoverInfoProvider = HoverInfoProvider;
 
 // --- 单元格高亮 ------
+/**
+ * 用于高亮单元格地址
+ */
+class CellAddressTokensDecorator {
+  constructor() {
+    this.decorations = [];
+  }
 
+  decorate(editor, monaco) {
+    let _this = this;
+    let allLinesContent = editor.getModel().getLinesContent().join('\n');
+    const tokens = langService.provideTokensFromCache(allLinesContent);
+
+    const cellAddressIndex = {
+      cursor: 1
+    };
+ 
+    const decorationRangeList = [];
+
+    tokens.forEach(function (token) {
+      if (token.tokenType === CellAddressTokensDecorator.CellAddressLiteral
+        || token.tokenType === CellAddressTokensDecorator.CellRangeLiteral) {
+        if (!cellAddressIndex[token.text]) {
+          cellAddressIndex[token.text] = cellAddressIndex.cursor++;
+        }
+        let colorIndex = cellAddressIndex[token.text];
+
+        decorationRangeList.push({
+          range: new monaco.Range(token.lineNumber, token.startColumn + 1, token.lineNumber, token.stopColumn + 1 + 1),
+          options: {
+            inlineClassName: 'ftc' + colorIndex
+          }
+        });
+
+        let color = colorsProviderInst.pickOrCreateColor(colorIndex);
+        // TODO: 保存使用的颜色
+      }
+    });
+
+    // TODO: 触发单元格高亮事件
+    console.log('trigger cell address colors');
+    _this.decorations = editor.deltaDecorations(_this.decorations, decorationRangeList);
+  }
+  
+  register(editor, monaco) {
+    let _this = this;
+    this.decorate(editor, monaco);
+
+    let decorateWithDebounce = debounce(_this.decorate.bind(this), 500);
+    editor.onDidChangeModelContent(function (e) {
+      decorateWithDebounce(editor, monaco);
+    });
+  }
+}
+
+CellAddressTokensDecorator.CellRangeLiteral = 'CellRangeLiteral';
+CellAddressTokensDecorator.CellAddressLiteral = 'CellAddressLiteral';
+
+
+CellAddressTokensDecorator.registerDecorator = function (editor, monaco) {
+  new CellAddressTokensDecorator().register(editor, monaco);
+}
+
+exports.CellAddressTokensDecorator = CellAddressTokensDecorator;
 
 // --- 文档格式化 ------
+
+
+// --- 词法高亮 ------
+
+/**
+ * 根据 https://microsoft.github.io/monaco-editor/api/interfaces/monaco.languages.istate.html 描述，
+ * state 可以用于多行记录。
+ */
+class FormulaTokensState {
+  clone() {
+    return new FormulaTokensState();
+  }
+
+  equals(other) {
+    return true;
+  }
+}
+
+class FormulaToken {
+  constructor(ruleName, startIndex) {
+    this.scopes = ruleName.toLowerCase() + ".formula";
+    this.startIndex = startIndex;
+  }
+}
+
+class FormulaLineTokens {
+  constructor(tokens, state) {
+    this.endState = new FormulaTokensState();
+    this.tokens = tokens;
+  }
+}
+
+
+class FormulaTokensProvider {
+  constructor() {
+    this.lineTokens = null;
+  }
+  getInitialState() {
+    return new FormulaTokensState();
+  }
+
+  tokenize(line, state) {
+    this.lineTokens = this.tokensForLine(line);
+    return this.lineTokens;
+  }
+
+  tokensForLine(input) {
+    let tokens = langService.provideTokensFromCache(input);
+    let lineTokenList = [];
+    tokens.forEach(function(token){
+      lineTokenList.push(new FormulaToken(token.tokenType + '.formula', token.startColumn));
+    });
+  
+    return new FormulaLineTokens(lineTokenList);
+  }
+}
+
+exports.FormulaTokensProvider = FormulaTokensProvider;

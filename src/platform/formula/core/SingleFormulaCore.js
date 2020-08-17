@@ -181,10 +181,7 @@ SingleFormulaCore.prototype.getContainingArgumentInfo = function (startingNode) 
 
   if (argumentsRuleNode) {
     let fnName = getFunctionName(argumentsRuleNode);
-    
-    
     let argumentIndex = getArgumentIndex(getArgumentList(argumentsRuleNode), startingNode);
-    console.log('参数索引', argumentIndex);
 
     return {
       fnName: fnName,

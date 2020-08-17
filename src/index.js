@@ -1,13 +1,8 @@
-const FormulaTokensProvider = require('./workbench/monaco-editor/formulaTokensProvider').FormulaTokensProvider;
-const ColorsProvider = require('./workbench/monaco-editor/colorsProvider').ColorsProvider;
-const CellAddressTokensDecorator = require('./workbench/monaco-editor/cellAddressTokensDecorator').CellAddressTokensDecorator;
-const SignatureHelpProvider = require('./workbench/monaco-editor/signatureHelpProvider').SignatureHelpProvider;
 
+const contrib = require('./workbench/monaco-editor/monaco.contribution');
+const ColorsProvider = require('./workbench/monaco-editor/colorsProvider').ColorsProvider;
 const language = require('./workbench/monaco-editor/languageFeatures');
 
-exports.FormulaTokensProvider = FormulaTokensProvider;
 exports.ColorsProvider = ColorsProvider;
-exports.CellAddressTokensDecorator = CellAddressTokensDecorator;
-exports.SignatureHelpProvider  = SignatureHelpProvider;
-
+exports.contrib = contrib;
 exports.language = language;

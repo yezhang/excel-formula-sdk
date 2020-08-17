@@ -31,12 +31,8 @@
     require(['vs/editor/editor.main'], function () {
       let langId = 'lang-formula';
       let themeName = langId + '-theme';
-
-      monaco.languages.register({
-        id: langId
-      });
-
-      monaco.languages.setTokensProvider(langId, new formulaSDK.FormulaTokensProvider());
+      formulaSDK.contrib.init(monaco);
+      
 
       monaco.editor.defineTheme(themeName, {
         base: 'vs',
@@ -78,53 +74,8 @@
         folding: false //关闭折叠占位符
       });
 
-      // 配置基本的编辑功能
-      monaco.languages.setLanguageConfiguration(langId, {
-        brackets: [
-          ['{', '}'],
-          ['[', ']'],
-          ['(', ')']
-        ],
-        autoClosingPairs: [{
-            open: '{',
-            close: '}'
-          },
-          {
-            open: '[',
-            close: ']'
-          },
-          {
-            open: '(',
-            close: ')'
-          },
-          {
-            open: '"',
-            close: '"',
-            notIn: ['string']
-          },
-          {
-            open: '\'',
-            close: '\'',
-            notIn: ['string', 'comment']
-          },
-          {
-            open: "/**",
-            close: " */",
-            notIn: ["string"]
-          }
-        ]
-      });
-
-      // 配置自动补全
-      monaco.languages.registerCompletionItemProvider(langId, new formulaSDK.language.FormulaSuggestionsProvider());
-
-      // 配置上浮提示
-      monaco.languages.registerHoverProvider(langId, new formulaSDK.language.HoverInfoProvider());
-
-      monaco.languages.registerSignatureHelpProvider(langId, new formulaSDK.SignatureHelpProvider());
-
-      formulaSDK.CellAddressTokensDecorator.registerDecorator(editor, monaco);
-      new formulaSDK.language.DiagnosticsAdapter(langId);
+      formulaSDK.contrib.initEditor(monaco, editor);
+      
 
     });
   </script>
