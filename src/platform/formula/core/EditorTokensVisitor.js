@@ -6,16 +6,35 @@
 const ReportFormulaParser = require('../runtime/ReportFormulaParser').ReportFormulaParser;
 const ReportFormulaParserVisitor = require('../runtime/ReportFormulaParserVisitor').ReportFormulaParserVisitor;
 
+function EditorTokensState() {
+  this._tokenList = [];
+}
+
+EditorTokensState.prototype.push = function (token) {
+  this._tokenList.push(token);
+}
+
+EditorTokensState.prototype.clear = function () {
+  this._tokenList = [];
+}
+
+EditorTokensState.prototype.getTokenList = function () {
+  return this._tokenList;
+}
+
 class EditorTokensVisitor extends ReportFormulaParserVisitor {
-  constructor(tokenSink) {
+  constructor() {
     super();
-    this.tokenSink = tokenSink;
+    this.tokenSink = new EditorTokensState();
 
     // token 缓存，用于支持根据坐标查询 token。
     // {lineNumber: tokenList}
     this.lineTokensIndex = {};
   }
 
+  getTokenList() {
+    return this.tokenSink.getTokenList();
+  }
 
   /**
    * 根据当前位置获取最近的 token。

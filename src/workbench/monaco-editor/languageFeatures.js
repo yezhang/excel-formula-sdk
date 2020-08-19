@@ -1,14 +1,20 @@
 /**
  * 语言特征：
- * 语言诊断、自动补全（代码补全、函数参数）、浮动提示（快速消息）、单元格高亮、文档格式化。
+ * 语言诊断（提示错误）、自动补全（代码补全、函数参数）、浮动提示（快速消息）、单元格高亮、文档格式化。
  */
 const formulajs = require('@formulajs/formulajs');
 
 const debounce = require('../../base/debounce');
-const FormulaLanguageService = require('../../platform/formula/FormulaLanguageService').FormulaLanguageService;
-const langService = FormulaLanguageService.INSTANCE;
+const FormulaLanguageService = require('../../platform/formula/FormulaLanguageService');
+const LangInputModel = FormulaLanguageService.LangInputModel;
+const langService = FormulaLanguageService.FormulaLanguageService.INSTANCE;
 const ColorsProvider = require('./colorsProvider').ColorsProvider;
 const colorsProviderInst = ColorsProvider.INSTANCE;
+
+
+function _convertEditModel(model) {
+  return new LangInputModel(model.getVersionId(), model.getValue());
+}
 
 // --- 语言诊断 ------
 
@@ -79,7 +85,7 @@ class DiagnosticsAdapter {
   }
 
   _doValidate(model) {
-    const diagnostics = langService.getSyntacticDiagnostics(model);
+    const diagnostics = langService.getSyntacticDiagnostics(_convertEditModel(model));
 
 		if (!diagnostics || model.isDisposed()) {
 			// model was disposed in the meantime
@@ -173,7 +179,7 @@ class SignatureHelpProvider {
   provideSignatureHelp(model, position, cancellationToken, context) {
     // const offset = model.getOffsetAt(position);
 
-    let info = langService.getSignatureHelpItems(model.getValue(), position);
+    let info = langService.getSignatureHelpItems(_convertEditModel(model), position);
 
     if (!info || model.isDisposed()) {
 			return;
@@ -238,12 +244,10 @@ class HoverInfoProvider {
   }
 }
 
-exports.HoverInfoProvider = HoverInfoProvider;
+exports.QuickInfoAdapter = HoverInfoProvider;
 
-// --- 单元格高亮 ------
-/**
- * 用于高亮单元格地址
- */
+// --- 单元格地址高亮 ------
+
 class CellAddressTokensDecorator {
   constructor() {
     this.decorations = [];
@@ -251,8 +255,10 @@ class CellAddressTokensDecorator {
 
   decorate(editor, monaco) {
     let _this = this;
-    let allLinesContent = editor.getModel().getLinesContent().join('\n');
-    const tokens = langService.provideTokensFromCache(allLinesContent);
+    let model = editor.getModel();
+    // 为了可以在语法解析过程中生成正确的行号，需要保留换行符 '\n'。此处不能使用 model.getValue()。
+    let allLinesContent = model.getLinesContent().join('\n');
+    const tokens = langService.provideTokensFromCache(LangInputModel.build(model.getVersionId(), allLinesContent));
 
     const cellAddressIndex = {
       cursor: 1
@@ -289,7 +295,7 @@ class CellAddressTokensDecorator {
     let _this = this;
     this.decorate(editor, monaco);
 
-    let decorateWithDebounce = debounce(_this.decorate.bind(this), 500);
+    let decorateWithDebounce = debounce(_this.decorate.bind(this), 300);
     editor.onDidChangeModelContent(function (e) {
       decorateWithDebounce(editor, monaco);
     });
@@ -354,7 +360,7 @@ class FormulaTokensProvider {
   }
 
   tokensForLine(input) {
-    let tokens = langService.provideTokensFromCache(input);
+    let tokens = langService.provideTokensFromCache(LangInputModel.build(null, input));
     let lineTokenList = [];
     tokens.forEach(function(token){
       lineTokenList.push(new FormulaToken(token.tokenType + '.formula', token.startColumn));

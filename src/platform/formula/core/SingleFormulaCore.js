@@ -15,21 +15,7 @@ const ParseException = FormulaErrs.ParseException;
 
 const EditorErrorHandler = require('../../contrib/errorHandler/EditorErrorHandler');
 
-function SingleFormulaState() {
-  this._tokenList = [];
-}
 
-SingleFormulaState.prototype.push = function (token) {
-  this._tokenList.push(token);
-}
-
-SingleFormulaState.prototype.clear = function () {
-  this._tokenList = [];
-}
-
-SingleFormulaState.prototype.getTokenList = function () {
-  return this._tokenList;
-}
 
 /**
  * 公式引擎核心，解析公式并计算
@@ -39,9 +25,6 @@ function SingleFormulaCore(errorHandler, cellValueProvider) {
   this.evaluateVisitor = new ValueEvaluationVisitor()
   this.setErrorHandler(errorHandler);
   this.setCellValueProvider(cellValueProvider);
-
-  this._tokenSink = new SingleFormulaState();
-  this.tokenVisitor = new EditorTokensVisitor(this._tokenSink);
 }
 
 SingleFormulaCore.FnTokenType = 'fnIdentifier';
@@ -103,13 +86,16 @@ SingleFormulaCore.prototype.evaluateCellAddress = function (cellAddress) {
 /**
  * @param {caretColumn} - caretColumn = 0..n-1
  */
-SingleFormulaCore.prototype.findTokenOnLeftOfPosition = function (line, caretColumn) {
+SingleFormulaCore.prototype.findTokenOnLeftOfPosition = function (tokenTree, line, caretColumn) {
+  let tokenVisitor = new EditorTokensVisitor();
+  tokenTree.accept(tokenVisitor);
+
   // caret column 表示光标右侧的列，需要减 1。
-  return this.tokenVisitor.findTerminalNodeAtCaret(line, caretColumn - 1);
+  return tokenVisitor.findTerminalNodeAtCaret(line, caretColumn - 1);
 }
 
-SingleFormulaCore.prototype.findArgumentRuleOnLeftOfPosition = function(line, caretColumn) {
-  let leftNode = this.findTokenOnLeftOfPosition(line, caretColumn);
+SingleFormulaCore.prototype.findArgumentRuleOnLeftOfPosition = function(tokenTree, line, caretColumn) {
+  let leftNode = this.findTokenOnLeftOfPosition(tokenTree, line, caretColumn);
   let ret = leftNode;
   if(!ret){
     return undefined;
@@ -201,17 +187,14 @@ SingleFormulaCore.prototype.getContainingArgumentInfo = function (startingNode) 
  * @param {SingleFormulaContext} ctx
  * @return {{line,startIndex,stopIndex,text,tokenTypeName}[]} tokenList - token 清单
  */
-SingleFormulaCore.prototype.collectTokens = function (input, ctx) {
-  let tokenTree = this.parse(input);
+SingleFormulaCore.prototype.collectTokens = function (tokenTree, ctx) {
   if (!tokenTree) {
     return [];
   }
+  let tokenVisitor = new EditorTokensVisitor();
 
-  this._tokenSink = new SingleFormulaState();
-  this.tokenVisitor = new EditorTokensVisitor(this._tokenSink);
-
-  let tokenList = this._tokenSink.getTokenList();
-  tokenTree.accept(this.tokenVisitor);
+  let tokenList = tokenVisitor.getTokenList();
+  tokenTree.accept(tokenVisitor);
 
   
   return tokenList.map(function (token) {
