@@ -192,11 +192,9 @@ SingleFormulaCore.prototype.collectTokens = function (tokenTree, ctx) {
     return [];
   }
   let tokenVisitor = new EditorTokensVisitor();
-
-  let tokenList = tokenVisitor.getTokenList();
   tokenTree.accept(tokenVisitor);
+  let tokenList = tokenVisitor.getTokenList();
 
-  
   return tokenList.map(function (token) {
     return {
       line: token.line,

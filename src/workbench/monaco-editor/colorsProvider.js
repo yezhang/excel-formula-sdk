@@ -2,7 +2,6 @@
  * 生成不同的颜色
  */
 const chroma = require('chroma-js');
-
 const colorTest = require('./colorTest').ColorTest;
 
 class ColorsProvider {
