@@ -2,7 +2,7 @@
  * 生成不同的颜色
  */
 const chroma = require('chroma-js');
-const colorTest = require('./colorTest').ColorTest;
+const colorTest = require('workbench/monaco-editor/colorTest').ColorTest;
 
 class ColorsProvider {
   constructor() {

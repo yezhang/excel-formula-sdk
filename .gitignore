@@ -4,3 +4,4 @@ out/
 mochawesome-report/
 dist/
 dist_dev/
+coverage/

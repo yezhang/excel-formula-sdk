@@ -3,7 +3,7 @@ const antlr4 = require('antlr4');
 const FormulaParser = require('../runtime/ReportFormulaParser').ReportFormulaParser;
 const FormulaLexer = require('../runtime/ReportFormulaLexer').ReportFormulaLexer;
 
-const ValueEvaluationVisitor = require('./ValueEvaluationVisitor').ValueEvaluationVisitor;
+const ValueEvaluationVisitor = require('../cellEvaluation/ValueEvaluationVisitor').ValueEvaluationVisitor;
 const EditorTokensVisitor = require('./EditorTokensVisitor').EditorTokensVisitor;
 
 const ParserErrorListener = require('../error/ParserErrorListener');
@@ -15,8 +15,12 @@ const ParseException = FormulaErrs.ParseException;
 
 const EditorErrorHandler = require('../../contrib/errorHandler/EditorErrorHandler');
 
+class NotImplementedError extends Error {
+  constructor(){
+    super('未实现的功能');
+  }
 
-
+}
 /**
  * 公式引擎核心，解析公式并计算
  */
@@ -184,10 +188,10 @@ SingleFormulaCore.prototype.getContainingArgumentInfo = function (startingNode) 
 /**
  * 收集所有的 token，用于支持语法高亮。
  * 支持输入为多行文本。
- * @param {SingleFormulaContext} ctx
+ * @param {*} tokenTree 解析树
  * @return {{line,startIndex,stopIndex,text,tokenTypeName}[]} tokenList - token 清单
  */
-SingleFormulaCore.prototype.collectTokens = function (tokenTree, ctx) {
+SingleFormulaCore.prototype.collectTokens = function (tokenTree) {
   if (!tokenTree) {
     return [];
   }
@@ -208,8 +212,9 @@ SingleFormulaCore.prototype.collectTokens = function (tokenTree, ctx) {
 
 /**
  * 生成的解析树中，允许包括错误。
+ * @return {Object} 解析树（ParseTree）
  */
-SingleFormulaCore.prototype.parse = function parse(input, context) {
+SingleFormulaCore.prototype.parse = function parse(input) {
   const errorListenerObj = this.createErrorListener(this.sharedErrorHandler);
 
   const chars = new antlr4.InputStream(input);
@@ -230,10 +235,17 @@ SingleFormulaCore.prototype.parse = function parse(input, context) {
 }
 
 /**
+ * 将所有单元格地址字面量提取出来。
+ * @return 单元格地址，或者单元格范围。
+ */
+SingleFormulaCore.prototype.collectCellAddresses = function(parseTree) {
+  throw new NotImplementedError();
+}
+/**
  * 计算公式
  * 
  */
-SingleFormulaCore.prototype.calc = function calc(input, context) {
+SingleFormulaCore.prototype.calc = function calc(input) {
   var ast = this.parse(input);
   if (!ast) {
     return;

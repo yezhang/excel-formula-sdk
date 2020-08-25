@@ -9,11 +9,28 @@ module.exports = {
     library: 'formulaSDK',
     libraryTarget: 'umd', 
   },
-  devtool: 'source-map',
+  devtool: 'inline-source-map',
+  module: {
+    rules: [
+      {
+        test: /\.js/,
+        include: /src/,
+        exclude: /node_modules|\.spec\.js$/,
+        use: "coverage-istanbul-loader"
+      }
+    ]
+  },
   optimization: {
     runtimeChunk: true
   },
   node: { module: "empty", net: "empty", fs: "empty" }, //配置 antlr4 不在 nodejs 环境工作。
+  resolve: {
+    alias: {
+      base: path.resolve(__dirname, '../src/base/'),
+      platform: path.resolve(__dirname, '../src/platform/'),
+      workbench: path.resolve(__dirname, '../src/workbench/')
+    }
+  },
   devServer: {
     contentBase: [path.join(__dirname, '../dist'),
       path.join(__dirname, '../test'),

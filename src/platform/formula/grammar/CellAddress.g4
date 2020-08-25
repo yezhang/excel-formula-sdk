@@ -5,11 +5,13 @@ cellAddressExpress
     | cellRangeExpr;
 
 // 单元格范围
-cellRangeExpr: cellAddressExpr ':' cellAddressExpr; 
+cellRangeExpr: SheetAddress? plainCellAddressExpr ':' plainCellAddressExpr; 
 
 // 单元格地址
 cellAddressExpr
-    : SheetAddress? cellColumnAddressExpr cellRowAddressExpr ;
+    : SheetAddress? plainCellAddressExpr ;
+
+plainCellAddressExpr: cellColumnAddressExpr cellRowAddressExpr;
 
 cellColumnAddressExpr: CellColumnAddress;
 cellRowAddressExpr: CellRowAddress;
@@ -25,6 +27,9 @@ SheetAddress
 CellColumnAddress: '$'? [A-Z] [A-Z]*;
 
 CellRowAddress: '$'? [1-9] [0-9]*;
+
+Colon:                          ':';
+ExclamationMark:                '!';
 
 // 用户可输入的字符串
 StringCharacter

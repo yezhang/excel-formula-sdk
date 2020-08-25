@@ -1,11 +1,10 @@
-const CellAddressVisitor = require('../runtime/CellAddressVisitor').CellAddressVisitor;
+const CellAddressVisitor = require('platform/formula/runtime/CellAddressVisitor').CellAddressVisitor;
 
 class CellAddressLiteralVisitor extends CellAddressVisitor {
+  // TODO: delete this ?
   constructor() {
     super();
-
   }
-
   visitCellAddressExpr(ctx) {
     const sheet = ctx.SheetAddress();
     

@@ -30,6 +30,12 @@ CellAddressVisitor.prototype.visitCellAddressExpr = function(ctx) {
 };
 
 
+// Visit a parse tree produced by CellAddressParser#plainCellAddressExpr.
+CellAddressVisitor.prototype.visitPlainCellAddressExpr = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
 // Visit a parse tree produced by CellAddressParser#cellColumnAddressExpr.
 CellAddressVisitor.prototype.visitCellColumnAddressExpr = function(ctx) {
   return this.visitChildren(ctx);

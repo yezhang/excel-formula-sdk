@@ -1,7 +1,7 @@
 const assert = require('assert').strict;
 const sinon = require('sinon');
 
-const CellAddress = require('../cellAddress/CellAddress').CellAddress;
+const CellAddress = require('../common/CellAddressParts').CellAddress;
 
 
 describe('单元格地址', function (){

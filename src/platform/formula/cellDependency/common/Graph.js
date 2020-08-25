@@ -78,4 +78,6 @@ class Graph {
   }
 }
 
-module.exports.Graph = Graph;
+exports.Node = Node;
+exports.Graph = Graph;
+

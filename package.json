@@ -10,7 +10,7 @@
   "author": "zhangyef@yonyou.com",
   "license": "MIT",
   "scripts": {
-    "test": "mocha --config test/.mocharc.js --reporter mochawesome",
+    "test": "npx karma start karma.conf.js",
     "start": "webpack-dev-server --config build/webpack.config.dev.js",
     "build": "webpack --config build/webpack.config.js"
   },
@@ -19,21 +19,31 @@
     "antlr4": "^4.8.0",
     "chroma-js": "^2.1.0",
     "core-js": "^3.6.5",
+    "lodash": "^4.17.20",
     "lodash.debounce": "^4.0.8",
-    "mocha": "^8.0.1",
     "monaco-editor-core": "^0.20.0",
-    "punycode": "^2.1.1",
-    "sinon": "^9.0.2"
+    "punycode": "^2.1.1"
   },
   "peerDependencies": {
     "monaco-editor-core": "^0.20.0"
   },
   "devDependencies": {
     "bufferutil": "^4.0.1",
+    "coverage-istanbul-loader": "^3.0.4",
     "gulp": "^4.0.2",
+    "karma": "^5.1.1",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-coverage": "^2.0.3",
+    "karma-coverage-istanbul-reporter": "^3.0.3",
+    "karma-mocha": "^2.0.1",
+    "karma-mocha-reporter": "^2.2.5",
+    "karma-sourcemap-loader": "^0.3.8",
+    "karma-webpack": "^4.0.2",
+    "mocha": "^8.1.1",
     "mochawesome": "^6.1.1",
     "puppeteer": "^5.2.1",
     "rimraf": "^3.0.2",
+    "sinon": "^9.0.2",
     "utf-8-validate": "^5.0.2",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12",

@@ -4,11 +4,11 @@
  */
 const formulajs = require('@formulajs/formulajs');
 
-const debounce = require('../../base/debounce');
-const FormulaLanguageService = require('../../platform/formula/FormulaLanguageService');
+const debounce = require('base/debounce');
+const FormulaLanguageService = require('platform/formula/FormulaLanguageService');
 const LangInputModel = FormulaLanguageService.LangInputModel;
 const langService = FormulaLanguageService.FormulaLanguageService.INSTANCE;
-const ColorsProvider = require('./colorsProvider').ColorsProvider;
+const ColorsProvider = require('workbench/monaco-editor/colorsProvider').ColorsProvider;
 const colorsProviderInst = ColorsProvider.INSTANCE;
 
 

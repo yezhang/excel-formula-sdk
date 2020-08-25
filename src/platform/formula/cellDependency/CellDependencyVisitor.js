@@ -8,16 +8,20 @@ class CellDependencyVisitor extends ReportFormulaParserVisitor {
   constructor() {
     super();
 
-    this.cellAddressList = [];
+    this._cellAddressList = [];
   }
 
   collectAddress(address) {
-    this.cellAddressList.push(address);
+    this._cellAddressList.push(address);
+  }
+
+  getCellAddressList() {
+    return this._cellAddressList;
   }
 
   visitFormulaExpr(ctx) {
     ctx.expressionStatement().accept(this);
-    return this.cellAddressList;
+    return this._cellAddressList;
   }
 
   visitExpressionStatement(ctx) {
@@ -40,23 +44,23 @@ class CellDependencyVisitor extends ReportFormulaParserVisitor {
     }
   }
 
+  collectCellAddrLiteral(ctx) {
+    let addr = ctx.getText();
+    this.collectAddress(addr);
+  }
+
   /**
   * 单元格地址：CellAddressLiteral
   */
   visitIdentifierCellAddressLiteral(ctx) {
-    let addr = ctx.getText();
-    this.collectAddress({
-
-    });
-    return ctx.getText();
+    this.collectCellAddrLiteral(ctx);
   }
 
   /**
    * 单元格范围：CellRangeLiteral
    */
   visitIdentifierCellRangeLiteral(ctx) {
-    // TODO: evaluate address
-    return ctx.getText();
+    this.collectCellAddrLiteral(ctx);
   }
 
 }

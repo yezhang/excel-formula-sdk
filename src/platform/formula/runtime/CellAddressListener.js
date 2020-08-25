@@ -38,6 +38,15 @@ CellAddressListener.prototype.exitCellAddressExpr = function(ctx) {
 };
 
 
+// Enter a parse tree produced by CellAddressParser#plainCellAddressExpr.
+CellAddressListener.prototype.enterPlainCellAddressExpr = function(ctx) {
+};
+
+// Exit a parse tree produced by CellAddressParser#plainCellAddressExpr.
+CellAddressListener.prototype.exitPlainCellAddressExpr = function(ctx) {
+};
+
+
 // Enter a parse tree produced by CellAddressParser#cellColumnAddressExpr.
 CellAddressListener.prototype.enterCellColumnAddressExpr = function(ctx) {
 };
