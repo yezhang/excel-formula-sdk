@@ -13,6 +13,7 @@ class CellRef {
 
 class SimpleCellAddress extends CellRef {
   constructor(sheet, row, column) {
+    super();
     this.sheet = sheet;
     this.row = row;
     this.column = column;
@@ -36,6 +37,8 @@ class SimpleCellAddress extends CellRef {
  */
 class CellAddress extends CellRef {
   constructor(workingSheetName, cellAddressString) {
+    super();
+
     this.workingSheet = workingSheetName;
     const chars = new antlr4.InputStream(cellAddressString);
     const lexer = new CellAddressLexer(chars);
@@ -60,7 +63,7 @@ class CellAddress extends CellRef {
  */
 class CellRange extends CellRef {
   constructor(workingSheetName, cellRangeString) {
-
+    super();
   }
 }
 

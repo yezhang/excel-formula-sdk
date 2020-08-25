@@ -15,7 +15,7 @@ module.exports = {
       {
         test: /\.js/,
         include: /src/,
-        exclude: /node_modules|\.spec\.js$/,
+        exclude: /node_modules|\.test\.js$/,
         use: "coverage-istanbul-loader"
       }
     ]

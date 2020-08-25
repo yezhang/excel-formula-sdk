@@ -24,7 +24,7 @@
       "type": "node",
       "request": "launch",
       "name": "调试当前文件",
-      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+      "program": "${workspaceFolder}/test/require-alias/loader.js", //${workspaceFolder}/node_modules/mocha/bin/_mocha
       "args": [
         "--timeout",
         "999999",

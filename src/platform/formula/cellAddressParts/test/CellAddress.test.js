@@ -5,6 +5,9 @@ const CellAddress = require('../common/CellAddressParts').CellAddress;
 
 
 describe('单元格地址', function (){
+  it('正确的语法', function() {
+    
+  })
   it('正确获取Sheet名称', function (){
     let addr = new CellAddress('sheet1', 'A1');
 

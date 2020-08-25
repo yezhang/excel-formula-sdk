@@ -17,6 +17,7 @@
   "dependencies": {
     "@formulajs/formulajs": "^2.4.3",
     "antlr4": "^4.8.0",
+    "cd": "^0.3.3",
     "chroma-js": "^2.1.0",
     "core-js": "^3.6.5",
     "lodash": "^4.17.20",

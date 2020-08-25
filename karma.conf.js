@@ -6,6 +6,12 @@ module.exports = function (config) {
   config.set({
     basePath: '.',
     frameworks: ['mocha'],
+    client: {
+      mocha: {
+        // change Karma's debug.html to the mocha web reporter
+        reporter: 'html'
+      }
+    },
     files: [
       'test/**/*.test.js',
       'src/**/*.test.js',
@@ -53,20 +59,12 @@ module.exports = function (config) {
     browsers: ['Chrome'], //ChromeHeadless
 
     // 开启或禁用持续集成模式
-    singleRun: false, // true，执行后退出
+    singleRun: true, // true，执行后退出
     // coverage reporter generates the coverage
-    reporters: ['mocha', 'coverage-istanbul'],
+    reporters: ['coverage-istanbul', 'mocha'], //, 'coverage-istanbul'
     coverageIstanbulReporter: {
       dir: "coverage/%browser%",
-      reports: ["text-summary", "lcovonly"]
-    },
-    // optionally, configure the reporter
-    coverageReporter: {
-      type: 'html',
-      dir: 'coverage/',
-      instrumenterOptions: {
-        istanbul: { noCompact: true }
-      }
-    },
+      reports: ["html"]
+    }
   });
 };
