@@ -59,6 +59,10 @@ browsers: ['Chrome'], //ChromeHeadless
 为了在 NodeJS 中运行 mocha，需要在 NodeJS 中配置相对路径别名。
 实现自定义 require：test/require-alias/loader.js。
 
+## 配置单元测试的调试环境
+使用 VSCode 的 launch.json 配置。
+
+
 ## 技术选型关注点
 代码中使用了 Map 类型，注意对于浏览器的兼容性。
 

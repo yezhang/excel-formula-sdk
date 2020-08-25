@@ -42,6 +42,7 @@
     "karma-webpack": "^4.0.2",
     "mocha": "^8.1.1",
     "mochawesome": "^6.1.1",
+    "nyc": "^15.1.0",
     "puppeteer": "^5.2.1",
     "rimraf": "^3.0.2",
     "sinon": "^9.0.2",
