@@ -19,19 +19,19 @@ karma 配置方式：https://www.meziantou.net/test-javascript-code-using-karma-
 
 1. 执行基本的测试
 package.json
----
+```javascript
 npx karma start karma.conf.js
----
+```
 
 
 karma.conf.js
----
+```json
 plugins: [
       require('karma-mocha'),
       require('karma-chrome-launcher'),
       require('karma-webpack'),
     ],
----
+```
 
 2. 添加 sourcemap
 
@@ -61,6 +61,44 @@ browsers: ['Chrome'], //ChromeHeadless
 
 ## 配置单元测试的调试环境
 使用 VSCode 的 launch.json 配置。
+
+## 配置编辑器
+Go To Defination (Ctrl + Click)，在配置相对目录后，无法识别。但是 vscode 的源码，则可以识别。
+
+在 src 文件夹下，新建 jsconfig.json 配置文件。
+配置 jsconfig.json 中的 paths 参数。
+配置内容如下：
+```json
+{
+  "compilerOptions": {
+    "module": "amd",
+    "target": "es2017",
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "base/*": [
+        "./base/*",
+      ],
+      "platform/*": [
+        "./platform/*",
+      ],
+      "workbench/*": [
+        "./workbench/*",
+      ]
+    }
+  },
+  "include": [
+    "./base",
+    "./platform",
+    "./workbench"
+  ]
+}
+```
+具体配置方法，参考 [vscode jsconfg.json](https://code.visualstudio.com/docs/languages/jsconfig)。
+
+配置完成后，重新打开文件夹，使得相对路径生效。
+
+
 
 
 ## 技术选型关注点

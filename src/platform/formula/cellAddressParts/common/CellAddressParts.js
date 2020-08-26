@@ -65,6 +65,10 @@ class CellRange extends CellRef {
   constructor(workingSheetName, cellRangeString) {
     super();
   }
+
+  toSimpleAddress(){
+    
+  }
 }
 
 function buildCellRef(sheetName, cellAddressOrCellRange) {
