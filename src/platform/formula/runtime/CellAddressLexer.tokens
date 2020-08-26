@@ -1,8 +1,9 @@
-SheetAddress=1
+WorkSheetPrefix=1
 CellColumnAddress=2
 CellRowAddress=3
 Colon=4
-ExclamationMark=5
-StringCharacter=6
+Dollar=5
+ExclamationMark=6
 ':'=4
-'!'=5
+'$'=5
+'!'=6

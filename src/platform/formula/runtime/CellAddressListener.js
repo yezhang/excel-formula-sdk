@@ -11,57 +11,84 @@ function CellAddressListener() {
 CellAddressListener.prototype = Object.create(antlr4.tree.ParseTreeListener.prototype);
 CellAddressListener.prototype.constructor = CellAddressListener;
 
-// Enter a parse tree produced by CellAddressParser#cellAddressExpress.
-CellAddressListener.prototype.enterCellAddressExpress = function(ctx) {
+// Enter a parse tree produced by CellAddressParser#CellAddress.
+CellAddressListener.prototype.enterCellAddress = function(ctx) {
 };
 
-// Exit a parse tree produced by CellAddressParser#cellAddressExpress.
-CellAddressListener.prototype.exitCellAddressExpress = function(ctx) {
-};
-
-
-// Enter a parse tree produced by CellAddressParser#cellRangeExpr.
-CellAddressListener.prototype.enterCellRangeExpr = function(ctx) {
-};
-
-// Exit a parse tree produced by CellAddressParser#cellRangeExpr.
-CellAddressListener.prototype.exitCellRangeExpr = function(ctx) {
+// Exit a parse tree produced by CellAddressParser#CellAddress.
+CellAddressListener.prototype.exitCellAddress = function(ctx) {
 };
 
 
-// Enter a parse tree produced by CellAddressParser#cellAddressExpr.
-CellAddressListener.prototype.enterCellAddressExpr = function(ctx) {
+// Enter a parse tree produced by CellAddressParser#CellRange.
+CellAddressListener.prototype.enterCellRange = function(ctx) {
 };
 
-// Exit a parse tree produced by CellAddressParser#cellAddressExpr.
-CellAddressListener.prototype.exitCellAddressExpr = function(ctx) {
-};
-
-
-// Enter a parse tree produced by CellAddressParser#plainCellAddressExpr.
-CellAddressListener.prototype.enterPlainCellAddressExpr = function(ctx) {
-};
-
-// Exit a parse tree produced by CellAddressParser#plainCellAddressExpr.
-CellAddressListener.prototype.exitPlainCellAddressExpr = function(ctx) {
+// Exit a parse tree produced by CellAddressParser#CellRange.
+CellAddressListener.prototype.exitCellRange = function(ctx) {
 };
 
 
-// Enter a parse tree produced by CellAddressParser#cellColumnAddressExpr.
-CellAddressListener.prototype.enterCellColumnAddressExpr = function(ctx) {
+// Enter a parse tree produced by CellAddressParser#a1Reference.
+CellAddressListener.prototype.enterA1Reference = function(ctx) {
 };
 
-// Exit a parse tree produced by CellAddressParser#cellColumnAddressExpr.
-CellAddressListener.prototype.exitCellColumnAddressExpr = function(ctx) {
+// Exit a parse tree produced by CellAddressParser#a1Reference.
+CellAddressListener.prototype.exitA1Reference = function(ctx) {
 };
 
 
-// Enter a parse tree produced by CellAddressParser#cellRowAddressExpr.
-CellAddressListener.prototype.enterCellRowAddressExpr = function(ctx) {
+// Enter a parse tree produced by CellAddressParser#a1Column.
+CellAddressListener.prototype.enterA1Column = function(ctx) {
 };
 
-// Exit a parse tree produced by CellAddressParser#cellRowAddressExpr.
-CellAddressListener.prototype.exitCellRowAddressExpr = function(ctx) {
+// Exit a parse tree produced by CellAddressParser#a1Column.
+CellAddressListener.prototype.exitA1Column = function(ctx) {
+};
+
+
+// Enter a parse tree produced by CellAddressParser#a1Row.
+CellAddressListener.prototype.enterA1Row = function(ctx) {
+};
+
+// Exit a parse tree produced by CellAddressParser#a1Row.
+CellAddressListener.prototype.exitA1Row = function(ctx) {
+};
+
+
+// Enter a parse tree produced by CellAddressParser#a1RelativeColumn.
+CellAddressListener.prototype.enterA1RelativeColumn = function(ctx) {
+};
+
+// Exit a parse tree produced by CellAddressParser#a1RelativeColumn.
+CellAddressListener.prototype.exitA1RelativeColumn = function(ctx) {
+};
+
+
+// Enter a parse tree produced by CellAddressParser#a1AbsoluteColumn.
+CellAddressListener.prototype.enterA1AbsoluteColumn = function(ctx) {
+};
+
+// Exit a parse tree produced by CellAddressParser#a1AbsoluteColumn.
+CellAddressListener.prototype.exitA1AbsoluteColumn = function(ctx) {
+};
+
+
+// Enter a parse tree produced by CellAddressParser#a1RelativeRow.
+CellAddressListener.prototype.enterA1RelativeRow = function(ctx) {
+};
+
+// Exit a parse tree produced by CellAddressParser#a1RelativeRow.
+CellAddressListener.prototype.exitA1RelativeRow = function(ctx) {
+};
+
+
+// Enter a parse tree produced by CellAddressParser#a1AbsoluteRow.
+CellAddressListener.prototype.enterA1AbsoluteRow = function(ctx) {
+};
+
+// Exit a parse tree produced by CellAddressParser#a1AbsoluteRow.
+CellAddressListener.prototype.exitA1AbsoluteRow = function(ctx) {
 };
 
 

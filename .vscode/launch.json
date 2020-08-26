@@ -40,9 +40,9 @@
       "type": "antlr-debug",
       "request": "launch",
       "input": "test/input/formula1.txt",
-      "grammar": "src/platform/formula/grammar/ReportFormulaParser.g4",
+      "grammar": "src/platform/formula/grammar/CellAddress.g4",
       // "actionFile": "grammars/exampleActions.js",
-      "startRule": "formulaExpr",
+      "startRule": "cellReference",
       "printParseTree": true,
       "visualParseTree": true
   }

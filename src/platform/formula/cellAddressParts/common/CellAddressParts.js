@@ -4,12 +4,34 @@ const CellAddressLexer = require('platform/formula/runtime/CellAddressLexer').Ce
 const CellAddressParser = require('platform/formula/runtime/CellAddressParser').CellAddressParser;
 const CellAddressLiteralVisitor = require('platform/formula/cellAddressParts/common/CellAddressPartsLiteralVisitor').CellAddressLiteralVisitor;
 
+
+class AbsoluteColumn {
+
+}
+
+class RelativeColumn {
+  
+}
+
+class AbsoluteRow {
+
+}
+
+class RelativeRow {
+
+}
+
+
+
+
 /**
  * 所有单元格引用的基类。
  */
 class CellRef {
 
 }
+
+
 
 class SimpleCellAddress extends CellRef {
   constructor(sheet, row, column) {

@@ -1,39 +1,61 @@
 grammar CellAddress;
 
-cellAddressExpress
-    : cellAddressExpr
-    | cellRangeExpr;
+cellReference
+    : WorkSheetPrefix? a1Reference  EOF                    #CellAddress
+    | WorkSheetPrefix? a1Reference ':' a1Reference EOF     #CellRange
+    ;
 
-// 单元格范围
-cellRangeExpr: SheetAddress? plainCellAddressExpr ':' plainCellAddressExpr; 
+// 不包括 sheet 名称的单元格地址
+a1Reference: a1Column a1Row;
 
-// 单元格地址
-cellAddressExpr
-    : SheetAddress? plainCellAddressExpr ;
+a1Column: a1RelativeColumn | a1AbsoluteColumn;
+a1Row: a1RelativeRow | a1AbsoluteRow;
 
-plainCellAddressExpr: cellColumnAddressExpr cellRowAddressExpr;
+a1RelativeColumn: CellColumnAddress;
+a1AbsoluteColumn: '$' CellColumnAddress;
 
-cellColumnAddressExpr: CellColumnAddress;
-cellRowAddressExpr: CellRowAddress;
+a1RelativeRow: CellRowAddress;
+a1AbsoluteRow: '$' CellRowAddress;
+
+WorkSheetPrefix
+    : SheetName '!'
+    ;
+
+CellColumnAddress: [A-Z] [A-Z]*;
+CellRowAddress: [1-9] [0-9]*;
+
+Colon:                          ':';
+Dollar:                         '$';   
+ExclamationMark:                '!';
 
 
 // 表格名称
-SheetAddress
-    : StringCharacter+ '!'
+fragment SheetName
+    : SheetNameCharacter+
+    | StringLiteral
     ;
 
-  
+/// String Literals
+fragment StringLiteral
+    :'"' DoubleStringCharacter* '"'       
+    |'\'' SingleStringCharacter* '\''
+    ;
 
-CellColumnAddress: '$'? [A-Z] [A-Z]*;
+fragment DoubleStringCharacter
+    : ~["\\\r\n]
+    | '\\' EscapeSequence
+    | LineContinuation
+    ;
 
-CellRowAddress: '$'? [1-9] [0-9]*;
-
-Colon:                          ':';
-ExclamationMark:                '!';
+fragment SingleStringCharacter
+    : ~['\\\r\n]
+    | '\\' EscapeSequence
+    | LineContinuation
+    ;
 
 // 用户可输入的字符串
-StringCharacter
-    : ~[\\\r\n]
+fragment SheetNameCharacter
+    : ~('\\' | '\r' | '\n' | '+' | '-' | '*' | '/' | '[' | ']' | '!' | '\'' | '"')
     | '\\' EscapeSequence
     | LineContinuation
     ;

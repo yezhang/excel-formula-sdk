@@ -5,6 +5,15 @@ class CellAddressLiteralVisitor extends CellAddressVisitor {
   constructor() {
     super();
   }
+
+  visitCellAddress(ctx) {
+
+  }
+
+  visitCellRange(ctx) {
+
+  }
+  
   visitCellAddressExpr(ctx) {
     const sheet = ctx.SheetAddress();
     
