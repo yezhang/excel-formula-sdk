@@ -241,6 +241,7 @@ SingleFormulaCore.prototype.parse = function parse(input) {
 SingleFormulaCore.prototype.collectCellAddresses = function(parseTree) {
   throw new NotImplementedError();
 }
+
 /**
  * 计算公式
  * 

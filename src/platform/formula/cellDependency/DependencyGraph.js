@@ -18,14 +18,36 @@ function convertToAst(tree) {
 }
 
 /**
- * 图的顶点数据
+ * 依赖图的顶点数据。
+ * 当前顶点所表示的地址。
+ * 本单元格的公式文本。
+ * 本单元格的解析树。
+ * 本单元格的语法树。
  */
 class CellData {
-  constructor(cellAddress, formula, formulaParseTree) {
+  constructor(cellAddress, formulaParseTree) {
     this.cellAddress = cellAddress; //单元格的地址对象
-    this.f = formula; //原始公式文本
+    this.f = formulaParseTree.getText(); //原始公式文本
     this.parseTree = formulaParseTree;//公式的解析树
     this.ast = convertToAst(formulaparseTree);
+  }
+
+  /**
+   * 使用变更后的单元格地址，更新原有单元格地址。
+   * 更新语法树；更新单元格公式文本；更新解析树。
+   */
+  updateReferences(oldCellRef, cellRef) {
+
+  }
+}
+
+/**
+ * 单元格依赖边的数据。
+ * 本边的 from 节点所持有的单元格引用。单元格引用使用语法树节点数组表示。
+ */
+class DependencyEdgeData {
+  constructor(deps) {
+    this.references = deps;
   }
 }
 

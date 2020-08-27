@@ -26,12 +26,12 @@ class CellDependencyBuilder {
    * 
    * 如果传入重复的 workingCellAddress，则执行覆盖，并更新图的关系。
    */
-  updateDependencies(activeSheetName, workingCellRef, dependenciesList){
+  addOrUpdateDependencies(activeSheetName, workingCellRefAddr, dependenciesList){
     const _this = this;
-    let workingCell = this._normalizeCellAddress(activeSheetName, workingCellRef);
+    let workingCell = this._buildCellAddress(activeSheetName, workingCellRefAddr);
     let simpleCellAddress = workingCell.toSimpleAddress();
     let simpleDependencies = dependenciesList.map(function(dep){
-      return _this._normalizeCellAddress(activeSheetName, dep).toSimpleAddress();
+      return _this._buildCellAddress(activeSheetName, dep).toSimpleAddress();
     });
 
     let distinctDependencies = ArrayUtils.uniqueArray(simpleDependencies, function(dep) {
@@ -52,7 +52,7 @@ class CellDependencyBuilder {
   }
 
   // 将单元格地址转化为标准对象
-  _normalizeCellAddress(sheetName, cellAddressOrCellRange) {
+  _buildCellAddress(sheetName, cellAddressOrCellRange) {
     return new CellAddress(sheetName, cellAddressOrCellRange);
   }
 

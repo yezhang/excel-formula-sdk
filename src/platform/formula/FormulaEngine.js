@@ -19,8 +19,22 @@ class WorkBookContext {
 class FormulaEngine {
   constructor() {
     this.depGraph = new DependencyGraph();
+
+    // 存储单元格的所有设置的公式
+    // key: cellAddress
+    // value: formula 文本
+    this.formulas = {}; 
   }
+
   /**
+   * 用户删除一个公式时调用。
+   */
+  clearCellFormula(workBookContext, cellAddr) {
+
+  }
+
+  /**
+   * 用户输入一个公式后调用。
    * @param {WorkBookContext} workBookContext 工作簿上下文，包含当前激活的工作表sheet。
    */
   setCellFormula(workBookContext, cellAddr, formula) {
@@ -37,6 +51,44 @@ class FormulaEngine {
     const finder = new CellDependencyFinder(this.depGraph);
     return finder.getCellFormula(activeSheetName, cellAddr);
   }
+ 
+  /**
+   * 用户调整表结构：增加行
+   */
+  addRow(sheetName, columnRowIndex) {
 
+  }
 
+  /**
+   * 用户调整表结构：删除行
+   */
+  removeRow(sheetName, columnRowIndex) {
+
+  }
+
+  /**
+   * 用户调整表结构：增加列
+   */
+  addColumn(sheetName, columnRowIndex) {
+
+  }
+
+  /**
+   * 用户调整表结构：删除列
+   */
+  removeColumn(sheetName, columnRowIndex) {
+
+  }
+  /**
+   * 用户调整表结构：移动列
+   */
+  moveColumn(sheetName, column, toColumn) {
+
+  }
+  /**
+   * 用户调整表结构：移动行
+   */
+  moveRow(sheetName, row, toRow) {
+
+  }
 }

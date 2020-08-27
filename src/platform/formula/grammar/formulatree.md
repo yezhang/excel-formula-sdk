@@ -1,4 +1,6 @@
-本文档描述了核心的公式语法树（FTree）节点类型。
+本文档描述了核心的公式语法树（FTree AST）节点类型。
+
+基本的定义符合 [ESTree 语法规范](https://github.com/estree/estree/blob/master/es5.md)。
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -11,6 +13,9 @@
   - [单元格范围](#%E5%8D%95%E5%85%83%E6%A0%BC%E8%8C%83%E5%9B%B4)
   - [一般标识符](#%E4%B8%80%E8%88%AC%E6%A0%87%E8%AF%86%E7%AC%A6)
 - [字面量](#%E5%AD%97%E9%9D%A2%E9%87%8F)
+- [公式](#%E5%85%AC%E5%BC%8F)
+- [语句](#%E8%AF%AD%E5%8F%A5)
+  - [表达式语句](#%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%AD%E5%8F%A5)
 - [表达式](#%E8%A1%A8%E8%BE%BE%E5%BC%8F)
   - [数组表达式](#%E6%95%B0%E7%BB%84%E8%A1%A8%E8%BE%BE%E5%BC%8F)
   - [对象表达式](#%E5%AF%B9%E8%B1%A1%E8%A1%A8%E8%BE%BE%E5%BC%8F)
@@ -87,15 +92,15 @@ interface CellRef <:Identifier {}
 ```js
 interface CellAddressIdentifier <: CellRef {
     type: "CellAddressIdentifier";
-    sheetName: SheetName;
-    a1Reference: A1Reference;
+    sheetName: SheetNameIdentifier;
+    a1Reference: A1ReferenceIdentifier;
 }
 ```
 
 表格的引用.
 
 ```js
-interface SheetName <:Identifier {
+interface SheetNameIdentifier <:Identifier {
   type: "SheetNameIdentifier";
   name: string;
 }
@@ -103,7 +108,7 @@ interface SheetName <:Identifier {
 
 单元格地址的引用方式。
 ```js
-interface A1Reference {
+interface A1ReferenceIdentifier {
   type: "A1ReferenceIdentifier";
   columnRef: AbsoluteColumn | RelativeColumn;
   rowRef: AbsoluteRow | RelativeRow;
@@ -117,13 +122,13 @@ interface CellColumn {
 ```
 
 ```js
-interface AbsoluteColumn <: CellColumn {
+interface AbsoluteColumnIdentifier <: CellColumn {
   type: "AbsoluteColumnIdentifier";
 }
 ```
 
 ```js
-interface RelativeColumn <: CellColumn {
+interface RelativeColumnIdentifier <: CellColumn {
   type: "RelativeColumnIdentifier";
 }
 ```
@@ -134,12 +139,12 @@ interface CellRow {
 }
 ```
 ```js
-interface AbsoluteRow <:CellRow {
+interface AbsoluteRowIdentifier <:CellRow {
   type: "AbsoluteRowIdentifier";
 }
 ```
 ```js
-interface RelativeRow <:CellRow {
+interface RelativeRowIdentifier <:CellRow {
   type: "RelativeRowIdentifier";
 }
 ```
@@ -161,8 +166,8 @@ startRef 字段表示其实单元格地址的引用；endRef 表示结束单元�
 ## 一般标识符
 
 ```js
-interface Identifier <: Expression, Pattern {
-    type: "Identifier";
+interface PlainTextIdentifier <: Expression {
+    type: "PlainTextIdentifier";
     name: string;
 }
 ```
@@ -176,9 +181,34 @@ interface Literal <: Expression {
 }
 ```
 
+# 公式
+```js
+interface FormulaProgram <: FNode {
+    type: "FormulaProgram";
+    body: [ Statement ];
+}
+```
+
+# 语句
+
+```js
+interface Statement <: FNode { }
+```
+
+## 表达式语句
+
+```js
+interface ExpressionStatement <: Statement {
+    type: "ExpressionStatement";
+    expression: Expression;
+}
+```
+
+一个表达式语句，包含一个表达式。
+
 # 表达式
 ```js
-interface Expression <: Node { }
+interface Expression <: FNode { }
 ```
 任一的表达式节点。
 
