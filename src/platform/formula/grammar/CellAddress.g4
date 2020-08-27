@@ -1,8 +1,8 @@
 grammar CellAddress;
 
 cellReference
-    : WorkSheetPrefix? a1Reference  EOF                    #CellAddress
-    | WorkSheetPrefix? a1Reference ':' a1Reference EOF     #CellRange
+    : WorkSheetPrefix? a1Reference  EOF                                     #CellAddress
+    | WorkSheetPrefix? startRef=a1Reference ':' endRef=a1Reference EOF      #CellRange
     ;
 
 // 不包括 sheet 名称的单元格地址
