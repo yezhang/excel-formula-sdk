@@ -161,6 +161,8 @@ CellAddressContext.prototype.accept = function(visitor) {
 
 function CellRangeContext(parser, ctx) {
 	CellReferenceContext.call(this, parser);
+    this.startRef = null; // A1ReferenceContext;
+    this.endRef = null; // A1ReferenceContext;
     CellReferenceContext.prototype.copyFrom.call(this, ctx);
     return this;
 }
@@ -169,6 +171,14 @@ CellRangeContext.prototype = Object.create(CellReferenceContext.prototype);
 CellRangeContext.prototype.constructor = CellRangeContext;
 
 CellAddressParser.CellRangeContext = CellRangeContext;
+
+CellRangeContext.prototype.Colon = function() {
+    return this.getToken(CellAddressParser.Colon, 0);
+};
+
+CellRangeContext.prototype.EOF = function() {
+    return this.getToken(CellAddressParser.EOF, 0);
+};
 
 CellRangeContext.prototype.a1Reference = function(i) {
     if(i===undefined) {
@@ -179,14 +189,6 @@ CellRangeContext.prototype.a1Reference = function(i) {
     } else {
         return this.getTypedRuleContext(A1ReferenceContext,i);
     }
-};
-
-CellRangeContext.prototype.Colon = function() {
-    return this.getToken(CellAddressParser.Colon, 0);
-};
-
-CellRangeContext.prototype.EOF = function() {
-    return this.getToken(CellAddressParser.EOF, 0);
 };
 
 CellRangeContext.prototype.WorkSheetPrefix = function() {
@@ -255,11 +257,11 @@ CellAddressParser.prototype.cellReference = function() {
             }
 
             this.state = 25;
-            this.a1Reference();
+            localctx.startRef = this.a1Reference();
             this.state = 26;
             this.match(CellAddressParser.Colon);
             this.state = 27;
-            this.a1Reference();
+            localctx.endRef = this.a1Reference();
             this.state = 28;
             this.match(CellAddressParser.EOF);
             break;

@@ -29,12 +29,13 @@ class Graph {
     return ret;
   }
 
-  insertEdge(from, to) {
+  // 边上可以携带属性 props 对象。
+  insertEdge(from, to, props) {
     const fromNode = this.lookupOrInsertNode(from);
     const toNode = this.lookupOrInsertNode(to);
 
-    fromNode.outgoing.set(this._hashFn(to), toNode);
-    toNode.incoming.set(this._hashFn(from), fromNode);
+    fromNode.outgoing.set(this._hashFn(to), {toNode, props});
+    toNode.incoming.set(this._hashFn(from), {fromNode, props});
   }
 
   removeNode(data) {

@@ -11,6 +11,13 @@ class TopologicalSortStrategy{
 }
 
 /**
+ * 将解析树转换为语法树
+ */
+function convertToAst(tree) {
+
+}
+
+/**
  * 图的顶点数据
  */
 class CellData {
@@ -18,9 +25,14 @@ class CellData {
     this.cellAddress = cellAddress; //单元格的地址对象
     this.f = formula; //原始公式文本
     this.parseTree = formulaParseTree;//公式的解析树
+    this.ast = convertToAst(formulaparseTree);
   }
 }
 
+/**
+ * 如果单元格 A1 依赖单元格 B1，则存在一条从 A1 指向 B1 边。
+ * 此时，B1 为根节点。
+ */
 class DependencyGraph {
   constructor() {
     this.graph = new Graph();
