@@ -1,12 +1,233 @@
-const Syntax = require('./syntax').Syntax;
+const antlr4 = require('antlr4');
+const CellAddressLexer = require('platform/formula/runtime/CellAddressParser').CellAddressLexer;
+const CellAddressParser = require('platform/formula/runtime/CellAddressParser').CellAddressParser;
+const CellAddressVisitor = require('platform/formula/cellAddressParts/common/CelladdressPartsVisitor').CellAddressLiteralVisitor;
 
+const Syntax = require('./syntax').Syntax;
+const ReportFormulaParserVisitor = require('platform/formula/runtime/ReportFormulaParserVisitor').ReportFormulaParserVisitor;
+
+const CellAddressVisitor = require('platform/formula/runtime/CellAddressVisitor').CellAddressVisitor;
+
+class CellAddressLiteralVisitor extends CellAddressVisitor {
+  constructor() {
+    super();
+  }
+
+  // 规则入口 1
+  visitCellAddress(ctx) {
+    let prefix = ctx.WorkSheetPrefix();
+    let sheetName = null;
+    if(prefix) {
+      sheetName = new SheetNameIdentifier(prefix.substring(0, -1));
+    }
+    let a1Reference = ctx.a1Reference().accept(this);
+
+    return new CellAddressIdentifier(sheetName, a1Reference);
+  }
+
+  // 规则入口 2
+  visitCellRange(ctx) {
+    let prefix = ctx.WorkSheetPrefix();
+    let sheetName = null;
+    if(prefix) {
+      sheetName = new SheetNameIdentifier(prefix.substring(0, -1));
+    }
+    let startRef = ctx.startRef().accept(this);
+    let endRef = ctx.endRef().accept(this);
+
+    return new CellRangeIdentifier(sheetName, startRef, endRef);
+  }
+
+  visitA1Reference(ctx) {
+    let col = ctx.a1Column().accept(this);
+    let row = ctx.a1Row().accept(this);
+
+    return new A1ReferenceIdentifier(col, row);
+  }
+
+  visitA1Column(ctx) {
+    return ctx.children(0).accept(this);
+  }
+
+  visitA1Row(ctx) {
+    return ctx.children(0).accept(this);
+  }
+
+  visitA1RelativeColumn(ctx) {
+    let text = ctx.CellColumnAddress().text;
+    return new RelativeColumnIdentifier(text);
+  }
+
+  visitA1AbsoluteColumn(ctx) {
+    let text = ctx.CellColumnAddress().text;
+    return new AbsoluteColumnIdentifier(text);
+  }
+
+  visitA1RelativeRow(ctx) {
+    let line = ctx.CellRowAddress().text;
+    return new RelativeRowIdentifier(parseInt(line));
+  }
+
+  visitA1AbsoluteRow(ctx) {
+    let line = ctx.CellRowAddress().text;
+    return new AbsoluteRowIdentifier(parseInt(line));
+  }
+}
+
+function buildCellAddress(input) {
+  class ErrorTokenListener extends antlr4.error.ErrorListener {
+    syntaxError(recognizer, offendingSymbol, line, column, msg, e) {
+      
+    }
+  }
+  
+  const chars = new antlr4.InputStream(input);
+  const lexer = new CellAddressLexer(chars);
+
+  lexer.removeErrorListeners();
+  lexer.addErrorListener(new ErrorTokenListener());
+
+  const tokens = new antlr4.CommonTokenStream(lexer);
+  const parser = new CellAddressParser(tokens);
+
+  parser.removeErrorListeners(); // 移除默认的 ConsoleErrorListener
+  parser.addErrorListener(new ErrorTokenListener());
+
+  var tree = parser.cellReference(); // 启动公式解析，遇到错误会触发 ErrorListener。
+
+  return tree.accept(new CellAddressVisitor());
+}
+
+
+class ASTVisitor extends ReportFormulaParserVisitor {
+  visitFormulaExpr(ctx) {
+    let body = ctx.expressionStatement().accept(this);
+    return new FormulaProgram(body);
+  }
+
+  visitExpressionStatement(ctx) {
+    let sequence = ctx.expressionSequence().accept(this);
+    return new ExpressionStatement(sequence);
+  }
+
+  visitExpressionSequence(ctx) {
+    let singleExpression = ctx.singleExpression().accept(this);
+    return new SequenceExpression([singleExpression]);
+  }
+
+  visitArgumentsExpression(ctx) {
+    let fnName = ctx.singleExpression().accept(this);
+    let args = ctx.arguments().accept(this);
+    return new CallExpression(fnName, args);
+  }
+
+  visitIdentifierExpression(ctx) {
+    return ctx.identifier().accept(this);
+  }
+
+  visitIdentifierPlainText(ctx) {
+    let name = ctx.getText();
+    return new PlainTextIdentifier(name);
+  }
+
+  visitIdentifierRefItemCode(ctx) {
+    return ctx.refItemCode().accept(this);
+  }
+
+  visitRefItemCode(ctx) {
+    let name = ctx.Identifier().text;
+    return new RefItemIdentifier(name);
+  }
+
+  visitIdentifierCellAddress(ctx) {
+    let addr = ctx.getText();
+    return buildCellAddress(addr);
+  }
+
+  visitIdentifierCellRange(ctx) {
+    let rangeAddr = ctx.getText();
+    return buildCellAddress(rangeAddr);
+  }
+
+
+
+  // 返回数组
+  visitArguments(ctx) {
+    super.visitArguments(ctx);
+  }
+
+  visitArgument(ctx) {
+    return ctx.children[0].accept(this);
+  }
+
+  visitUnaryPlusExpression(ctx) {
+    let arg = ctx.singleExpression().accept(this);
+    return new UnaryExpression('+', arg);
+  }
+
+  visitUnaryMinusExpression(ctx) {
+    let arg = ctx.singleExpression().accept(this);
+    return new UnaryExpression('-', arg);
+  }
+
+  _makeBinaryExpression(ctx) {
+    let op = ctx.op.text;
+    let left = ctx.singleExpression(0).accept(this);
+    let right = ctx.singleExpression(1).accept(this);
+    return new BinaryExpression(op, left, right);
+  }
+  visitPowerExpression(ctx) {
+    return this._makeBinaryExpression(ctx);
+  }
+
+  visitMultiplicativeExpression(ctx) {
+    return this._makeBinaryExpression(ctx);
+  }
+
+  visitAdditiveExpression(ctx) {
+    return this._makeBinaryExpression(ctx);
+  }
+
+  visitRelationalExpression(ctx){
+    return this._makeBinaryExpression(ctx);
+  }
+
+  visitEqualityExpression(ctx) {
+    return this._makeBinaryExpression(ctx);
+  }
+
+  visitLogicalAndExpression(ctx) {
+    let left = ctx.singleExpression(0).accept(this);
+    let right = ctx.singleExpression(1).accept(this);
+    return new LogicalExpression('&&', left, right);
+  }
+
+  visitLogicalOrExpression(ctx) {
+    let left = ctx.singleExpression(0).accept(this);
+    let right = ctx.singleExpression(1).accept(this);
+    return new LogicalExpression('||', left, right);
+  }
+
+  visitTernaryExpression(ctx) {
+    let test = ctx.singleExpression(0).accept(this);
+    let consequent = ctx.singleExpression(1).accept(this);
+    let alternate = ctx.singleExpression(2).accept(this);
+    return new ConditionalExpression(test, consequent, alternate);
+  }
+
+  visitAssignmentExpression(ctx) {
+    let left = ctx.singleExpression(0).accept(this);
+    let right = ctx.singleExpression(1).accept(this);
+    return new AssignmentExpression('=', left, right);
+  }
+
+
+}
 /**
  * 语法树
  */
-class SingleFormulaAST {
-  constructor(parseTree) {
+function SingleFormulaAST(parseTree) {
 
-  }
 }
 
 class FormulaProgram {
@@ -180,7 +401,7 @@ class ConditionalExpression {
 }
 
 class CallExpression {
-  constructor(callee, args){
+  constructor(callee, args) {
     this.type = Syntax.CallExpression;
     this.callee = callee;
     this.arguments = args;

@@ -76,8 +76,8 @@ identifierName
 
 identifier
     : refItemCode           #IdentifierRefItemCode
-    | CellAddressLiteral    #IdentifierCellAddressLiteral
-    | CellRangeLiteral      #IdentifierCellRangeLiteral
+    | CellAddressLiteral    #IdentifierCellAddress
+    | CellRangeLiteral      #IdentifierCellRange
     | Identifier            #IdentifierPlainText
     ;
 

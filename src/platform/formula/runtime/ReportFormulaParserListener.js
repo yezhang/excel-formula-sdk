@@ -290,21 +290,21 @@ ReportFormulaParserListener.prototype.exitIdentifierRefItemCode = function(ctx) 
 };
 
 
-// Enter a parse tree produced by ReportFormulaParser#IdentifierCellAddressLiteral.
-ReportFormulaParserListener.prototype.enterIdentifierCellAddressLiteral = function(ctx) {
+// Enter a parse tree produced by ReportFormulaParser#IdentifierCellAddress.
+ReportFormulaParserListener.prototype.enterIdentifierCellAddress = function(ctx) {
 };
 
-// Exit a parse tree produced by ReportFormulaParser#IdentifierCellAddressLiteral.
-ReportFormulaParserListener.prototype.exitIdentifierCellAddressLiteral = function(ctx) {
+// Exit a parse tree produced by ReportFormulaParser#IdentifierCellAddress.
+ReportFormulaParserListener.prototype.exitIdentifierCellAddress = function(ctx) {
 };
 
 
-// Enter a parse tree produced by ReportFormulaParser#IdentifierCellRangeLiteral.
-ReportFormulaParserListener.prototype.enterIdentifierCellRangeLiteral = function(ctx) {
+// Enter a parse tree produced by ReportFormulaParser#IdentifierCellRange.
+ReportFormulaParserListener.prototype.enterIdentifierCellRange = function(ctx) {
 };
 
-// Exit a parse tree produced by ReportFormulaParser#IdentifierCellRangeLiteral.
-ReportFormulaParserListener.prototype.exitIdentifierCellRangeLiteral = function(ctx) {
+// Exit a parse tree produced by ReportFormulaParser#IdentifierCellRange.
+ReportFormulaParserListener.prototype.exitIdentifierCellRange = function(ctx) {
 };
 
 

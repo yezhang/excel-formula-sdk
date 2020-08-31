@@ -2601,6 +2601,41 @@ IdentifierContext.prototype.copyFrom = function(ctx) {
 };
 
 
+function IdentifierCellAddressContext(parser, ctx) {
+	IdentifierContext.call(this, parser);
+    IdentifierContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+IdentifierCellAddressContext.prototype = Object.create(IdentifierContext.prototype);
+IdentifierCellAddressContext.prototype.constructor = IdentifierCellAddressContext;
+
+ReportFormulaParser.IdentifierCellAddressContext = IdentifierCellAddressContext;
+
+IdentifierCellAddressContext.prototype.CellAddressLiteral = function() {
+    return this.getToken(ReportFormulaParser.CellAddressLiteral, 0);
+};
+IdentifierCellAddressContext.prototype.enterRule = function(listener) {
+    if(listener instanceof ReportFormulaParserListener ) {
+        listener.enterIdentifierCellAddress(this);
+	}
+};
+
+IdentifierCellAddressContext.prototype.exitRule = function(listener) {
+    if(listener instanceof ReportFormulaParserListener ) {
+        listener.exitIdentifierCellAddress(this);
+	}
+};
+
+IdentifierCellAddressContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof ReportFormulaParserVisitor ) {
+        return visitor.visitIdentifierCellAddress(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
+};
+
+
 function IdentifierRefItemCodeContext(parser, ctx) {
 	IdentifierContext.call(this, parser);
     IdentifierContext.prototype.copyFrom.call(this, ctx);
@@ -2630,6 +2665,41 @@ IdentifierRefItemCodeContext.prototype.exitRule = function(listener) {
 IdentifierRefItemCodeContext.prototype.accept = function(visitor) {
     if ( visitor instanceof ReportFormulaParserVisitor ) {
         return visitor.visitIdentifierRefItemCode(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
+};
+
+
+function IdentifierCellRangeContext(parser, ctx) {
+	IdentifierContext.call(this, parser);
+    IdentifierContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+IdentifierCellRangeContext.prototype = Object.create(IdentifierContext.prototype);
+IdentifierCellRangeContext.prototype.constructor = IdentifierCellRangeContext;
+
+ReportFormulaParser.IdentifierCellRangeContext = IdentifierCellRangeContext;
+
+IdentifierCellRangeContext.prototype.CellRangeLiteral = function() {
+    return this.getToken(ReportFormulaParser.CellRangeLiteral, 0);
+};
+IdentifierCellRangeContext.prototype.enterRule = function(listener) {
+    if(listener instanceof ReportFormulaParserListener ) {
+        listener.enterIdentifierCellRange(this);
+	}
+};
+
+IdentifierCellRangeContext.prototype.exitRule = function(listener) {
+    if(listener instanceof ReportFormulaParserListener ) {
+        listener.exitIdentifierCellRange(this);
+	}
+};
+
+IdentifierCellRangeContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof ReportFormulaParserVisitor ) {
+        return visitor.visitIdentifierCellRange(this);
     } else {
         return visitor.visitChildren(this);
     }
@@ -2671,76 +2741,6 @@ IdentifierPlainTextContext.prototype.accept = function(visitor) {
 };
 
 
-function IdentifierCellAddressLiteralContext(parser, ctx) {
-	IdentifierContext.call(this, parser);
-    IdentifierContext.prototype.copyFrom.call(this, ctx);
-    return this;
-}
-
-IdentifierCellAddressLiteralContext.prototype = Object.create(IdentifierContext.prototype);
-IdentifierCellAddressLiteralContext.prototype.constructor = IdentifierCellAddressLiteralContext;
-
-ReportFormulaParser.IdentifierCellAddressLiteralContext = IdentifierCellAddressLiteralContext;
-
-IdentifierCellAddressLiteralContext.prototype.CellAddressLiteral = function() {
-    return this.getToken(ReportFormulaParser.CellAddressLiteral, 0);
-};
-IdentifierCellAddressLiteralContext.prototype.enterRule = function(listener) {
-    if(listener instanceof ReportFormulaParserListener ) {
-        listener.enterIdentifierCellAddressLiteral(this);
-	}
-};
-
-IdentifierCellAddressLiteralContext.prototype.exitRule = function(listener) {
-    if(listener instanceof ReportFormulaParserListener ) {
-        listener.exitIdentifierCellAddressLiteral(this);
-	}
-};
-
-IdentifierCellAddressLiteralContext.prototype.accept = function(visitor) {
-    if ( visitor instanceof ReportFormulaParserVisitor ) {
-        return visitor.visitIdentifierCellAddressLiteral(this);
-    } else {
-        return visitor.visitChildren(this);
-    }
-};
-
-
-function IdentifierCellRangeLiteralContext(parser, ctx) {
-	IdentifierContext.call(this, parser);
-    IdentifierContext.prototype.copyFrom.call(this, ctx);
-    return this;
-}
-
-IdentifierCellRangeLiteralContext.prototype = Object.create(IdentifierContext.prototype);
-IdentifierCellRangeLiteralContext.prototype.constructor = IdentifierCellRangeLiteralContext;
-
-ReportFormulaParser.IdentifierCellRangeLiteralContext = IdentifierCellRangeLiteralContext;
-
-IdentifierCellRangeLiteralContext.prototype.CellRangeLiteral = function() {
-    return this.getToken(ReportFormulaParser.CellRangeLiteral, 0);
-};
-IdentifierCellRangeLiteralContext.prototype.enterRule = function(listener) {
-    if(listener instanceof ReportFormulaParserListener ) {
-        listener.enterIdentifierCellRangeLiteral(this);
-	}
-};
-
-IdentifierCellRangeLiteralContext.prototype.exitRule = function(listener) {
-    if(listener instanceof ReportFormulaParserListener ) {
-        listener.exitIdentifierCellRangeLiteral(this);
-	}
-};
-
-IdentifierCellRangeLiteralContext.prototype.accept = function(visitor) {
-    if ( visitor instanceof ReportFormulaParserVisitor ) {
-        return visitor.visitIdentifierCellRangeLiteral(this);
-    } else {
-        return visitor.visitChildren(this);
-    }
-};
-
-
 
 ReportFormulaParser.IdentifierContext = IdentifierContext;
 
@@ -2759,13 +2759,13 @@ ReportFormulaParser.prototype.identifier = function() {
             this.refItemCode();
             break;
         case ReportFormulaParser.CellAddressLiteral:
-            localctx = new IdentifierCellAddressLiteralContext(this, localctx);
+            localctx = new IdentifierCellAddressContext(this, localctx);
             this.enterOuterAlt(localctx, 2);
             this.state = 198;
             this.match(ReportFormulaParser.CellAddressLiteral);
             break;
         case ReportFormulaParser.CellRangeLiteral:
-            localctx = new IdentifierCellRangeLiteralContext(this, localctx);
+            localctx = new IdentifierCellRangeContext(this, localctx);
             this.enterOuterAlt(localctx, 3);
             this.state = 199;
             this.match(ReportFormulaParser.CellRangeLiteral);

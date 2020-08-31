@@ -198,14 +198,14 @@ ReportFormulaParserVisitor.prototype.visitIdentifierRefItemCode = function(ctx) 
 };
 
 
-// Visit a parse tree produced by ReportFormulaParser#IdentifierCellAddressLiteral.
-ReportFormulaParserVisitor.prototype.visitIdentifierCellAddressLiteral = function(ctx) {
+// Visit a parse tree produced by ReportFormulaParser#IdentifierCellAddress.
+ReportFormulaParserVisitor.prototype.visitIdentifierCellAddress = function(ctx) {
   return this.visitChildren(ctx);
 };
 
 
-// Visit a parse tree produced by ReportFormulaParser#IdentifierCellRangeLiteral.
-ReportFormulaParserVisitor.prototype.visitIdentifierCellRangeLiteral = function(ctx) {
+// Visit a parse tree produced by ReportFormulaParser#IdentifierCellRange.
+ReportFormulaParserVisitor.prototype.visitIdentifierCellRange = function(ctx) {
   return this.visitChildren(ctx);
 };
 
