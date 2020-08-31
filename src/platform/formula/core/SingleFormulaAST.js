@@ -1,12 +1,12 @@
 const antlr4 = require('antlr4');
-const CellAddressLexer = require('platform/formula/runtime/CellAddressParser').CellAddressLexer;
+const CellAddressLexer = require('platform/formula/runtime/CellAddressLexer').CellAddressLexer;
 const CellAddressParser = require('platform/formula/runtime/CellAddressParser').CellAddressParser;
-const CellAddressVisitor = require('platform/formula/cellAddressParts/common/CelladdressPartsVisitor').CellAddressLiteralVisitor;
+const CellAddressVisitor = require('platform/formula/runtime/CellAddressVisitor').CellAddressVisitor;
+// const CellAddressVisitor = require('platform/formula/cellAddressParts/common/CelladdressPartsVisitor').CellAddressLiteralVisitor;
 
 const Syntax = require('./syntax').Syntax;
 const ReportFormulaParserVisitor = require('platform/formula/runtime/ReportFormulaParserVisitor').ReportFormulaParserVisitor;
 
-const CellAddressVisitor = require('platform/formula/runtime/CellAddressVisitor').CellAddressVisitor;
 
 class CellAddressLiteralVisitor extends CellAddressVisitor {
   constructor() {
@@ -46,30 +46,30 @@ class CellAddressLiteralVisitor extends CellAddressVisitor {
   }
 
   visitA1Column(ctx) {
-    return ctx.children(0).accept(this);
+    return ctx.children[0].accept(this);
   }
 
   visitA1Row(ctx) {
-    return ctx.children(0).accept(this);
+    return ctx.children[0].accept(this);
   }
 
   visitA1RelativeColumn(ctx) {
-    let text = ctx.CellColumnAddress().text;
+    let text = ctx.CellColumnAddress().getText();
     return new RelativeColumnIdentifier(text);
   }
 
   visitA1AbsoluteColumn(ctx) {
-    let text = ctx.CellColumnAddress().text;
+    let text = ctx.CellColumnAddress().getText();
     return new AbsoluteColumnIdentifier(text);
   }
 
   visitA1RelativeRow(ctx) {
-    let line = ctx.CellRowAddress().text;
+    let line = ctx.CellRowAddress().getText();
     return new RelativeRowIdentifier(parseInt(line));
   }
 
   visitA1AbsoluteRow(ctx) {
-    let line = ctx.CellRowAddress().text;
+    let line = ctx.CellRowAddress().getText();
     return new AbsoluteRowIdentifier(parseInt(line));
   }
 }
@@ -95,7 +95,7 @@ function buildCellAddress(input) {
 
   var tree = parser.cellReference(); // 启动公式解析，遇到错误会触发 ErrorListener。
 
-  return tree.accept(new CellAddressVisitor());
+  return tree.accept(new CellAddressLiteralVisitor());
 }
 
 
@@ -111,8 +111,8 @@ class ASTVisitor extends ReportFormulaParserVisitor {
   }
 
   visitExpressionSequence(ctx) {
-    let singleExpression = ctx.singleExpression().accept(this);
-    return new SequenceExpression([singleExpression]);
+    return ctx.singleExpression().accept(this);
+    // return new SequenceExpression([singleExpression]);
   }
 
   visitArgumentsExpression(ctx) {
@@ -149,11 +149,12 @@ class ASTVisitor extends ReportFormulaParserVisitor {
     return buildCellAddress(rangeAddr);
   }
 
-
-
   // 返回数组
   visitArguments(ctx) {
-    super.visitArguments(ctx);
+    const that = this;
+    return ctx.argument().map(function(arg){
+      return arg.accept(that);
+    });
   }
 
   visitArgument(ctx) {
@@ -227,7 +228,10 @@ class ASTVisitor extends ReportFormulaParserVisitor {
  * 语法树
  */
 function SingleFormulaAST(parseTree) {
+  this.parseTree = parseTree;
+  this.content = parseTree.accept(new ASTVisitor());
 
+  return this;
 }
 
 class FormulaProgram {
@@ -415,3 +419,4 @@ class SequenceExpression {
   }
 }
 
+exports.SingleFormulaAST = SingleFormulaAST;
