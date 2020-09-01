@@ -11,6 +11,7 @@ exports.Syntax = {
   CellRangeIdentifier: 'CellRangeIdentifier',
   PlainTextIdentifier: 'PlainTextIdentifier',
   Literal: 'Literal',
+  PercentageLiteral: 'PercentageLiteral',
   FormulaProgram: 'FormulaProgram',
   ExpressionStatement: 'ExpressionStatement',
   ArrayExpression: 'ArrayExpression',

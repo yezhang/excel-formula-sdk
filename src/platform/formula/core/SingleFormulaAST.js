@@ -7,30 +7,53 @@ const CellAddressVisitor = require('platform/formula/runtime/CellAddressVisitor'
 const Syntax = require('./syntax').Syntax;
 const ReportFormulaParserVisitor = require('platform/formula/runtime/ReportFormulaParserVisitor').ReportFormulaParserVisitor;
 
+/**
+ * 语法树的遍历。
+ */
+function traverse(node, func) {
+  func(node);
+  for (var key in node) {
+    if (node.hasOwnProperty(key)) {
+      var child = node[key];
+      if (typeof child === 'object' && child !== null) {
+
+        if (Array.isArray(child)) {
+          child.forEach(function (node) {
+            traverse(node, func);
+          });
+        } else {
+          traverse(child, func);
+        }
+      }
+    }
+  }
+}
 
 class CellAddressLiteralVisitor extends CellAddressVisitor {
   constructor() {
     super();
   }
 
-  // 规则入口 1
+  // 规则入口 1 - 单元格地址
   visitCellAddress(ctx) {
     let prefix = ctx.WorkSheetPrefix();
     let sheetName = null;
-    if(prefix) {
-      sheetName = new SheetNameIdentifier(prefix.substring(0, -1));
+    if (prefix) {
+      let prefixStr = prefix.getText();
+      sheetName = new SheetNameIdentifier(prefixStr.substring(0, prefixStr.length-1));
     }
     let a1Reference = ctx.a1Reference().accept(this);
 
     return new CellAddressIdentifier(sheetName, a1Reference);
   }
 
-  // 规则入口 2
+  // 规则入口 2 - 单元格范围
   visitCellRange(ctx) {
     let prefix = ctx.WorkSheetPrefix();
     let sheetName = null;
-    if(prefix) {
-      sheetName = new SheetNameIdentifier(prefix.substring(0, -1));
+    if (prefix) {
+      let prefixStr = prefix.getText();
+      sheetName = new SheetNameIdentifier(prefixStr.substring(0, prefixStr.length-1));
     }
     let startRef = ctx.startRef().accept(this);
     let endRef = ctx.endRef().accept(this);
@@ -77,10 +100,10 @@ class CellAddressLiteralVisitor extends CellAddressVisitor {
 function buildCellAddress(input) {
   class ErrorTokenListener extends antlr4.error.ErrorListener {
     syntaxError(recognizer, offendingSymbol, line, column, msg, e) {
-      
+
     }
   }
-  
+
   const chars = new antlr4.InputStream(input);
   const lexer = new CellAddressLexer(chars);
 
@@ -152,7 +175,7 @@ class ASTVisitor extends ReportFormulaParserVisitor {
   // 返回数组
   visitArguments(ctx) {
     const that = this;
-    return ctx.argument().map(function(arg){
+    return ctx.argument().map(function (arg) {
       return arg.accept(that);
     });
   }
@@ -189,7 +212,7 @@ class ASTVisitor extends ReportFormulaParserVisitor {
     return this._makeBinaryExpression(ctx);
   }
 
-  visitRelationalExpression(ctx){
+  visitRelationalExpression(ctx) {
     return this._makeBinaryExpression(ctx);
   }
 
@@ -222,7 +245,32 @@ class ASTVisitor extends ReportFormulaParserVisitor {
     return new AssignmentExpression('=', left, right);
   }
 
+  visitNullLiteralExpression(ctx) {
+    return new Literal(null);
+  }
 
+  visitBooleanLiteralExpression(ctx) {
+    let value = ctx.getText() === 'true';
+    return new Literal(value);
+  }
+
+  visitStringLiteralExpression(ctx) {
+    return new Literal(ctx.getText());
+  }
+
+  visitNumericLiteralExpression(ctx) {
+    return ctx.children[0].accept(this);
+  }
+
+  visitPercentageLiteralExpression(ctx) {
+    return new PercentageLiteral(ctx.getText());
+  }
+
+  visitBasicNumberLiteralExpression(ctx) {
+    return new Literal(Number(ctx.getText()));
+  }
+
+  
 }
 /**
  * 语法树
@@ -239,6 +287,10 @@ class FormulaProgram {
     this.type = Syntax.FormulaProgram;
     this.body = body;
   }
+
+  toString() {
+    return '=' + this.body.toString();
+  }
 }
 
 class Identifier {
@@ -246,12 +298,20 @@ class Identifier {
     this.type = Syntax.Identifier;
     this.name = name;
   }
+
+  toString() {
+    return this.name;
+  }
 }
 
 class RefItemIdentifier {
   constructor(name) {
     this.type = Syntax.RefItemIdentifier;
     this.name = name;
+  }
+
+  toString() {
+    return '@' + this.name;
   }
 }
 
@@ -261,12 +321,21 @@ class CellAddressIdentifier {
     this.sheetName = sheetName;
     this.a1Reference = a1Reference;
   }
+
+  toString() {
+    let sheetName = this.sheetName ? this.sheetName.toString() + '!' : '';
+    return `${sheetName}${this.a1Reference.toString()}`;
+  }
 }
 
 class SheetNameIdentifier {
   constructor(sheetName) {
     this.type = Syntax.SheetNameIdentifier;
     this.name = sheetName;
+  }
+
+  toString() {
+    return this.name;
   }
 }
 
@@ -276,12 +345,20 @@ class A1ReferenceIdentifier {
     this.columnRef = columnRef;
     this.rowRef = rowRef;
   }
+
+  toString() {
+    return `${this.columnRef.toString()}${this.rowRef.toString()}`;
+  }
 }
 
 class AbsoluteColumnIdentifier {
   constructor(text) {
     this.type = Syntax.AbsoluteColumnIdentifier;
     this.text = text;
+  }
+
+  toString() {
+    return '$' + this.text;
   }
 }
 
@@ -290,6 +367,10 @@ class RelativeColumnIdentifier {
     this.type = Syntax.RelativeColumnIdentifier;
     this.text = text;
   }
+
+  toString() {
+    return this.text;
+  }
 }
 
 class AbsoluteRowIdentifier {
@@ -297,12 +378,20 @@ class AbsoluteRowIdentifier {
     this.type = Syntax.AbsoluteRowIdentifier;
     this.line = line;
   }
+
+  toString() {
+    return '$' + this.line;
+  }
 }
 
 class RelativeRowIdentifier {
   constructor(line) {
     this.type = Syntax.RelativeRowIdentifier;
     this.line = line;
+  }
+
+  toString() {
+    return `${this.line}`;
   }
 }
 
@@ -313,12 +402,21 @@ class CellRangeIdentifier {
     this.startRef = startRef;
     this.endRef = endRef;
   }
+
+  toString() {
+    let sheetName = this.sheetName ? this.sheetName.toString() + '!' : '';
+    return `${sheetName}${this.startRef.toString()}:${this.endRef.toString()}`;
+  }
 }
 
 class PlainTextIdentifier {
   constructor(name) {
     this.type = Syntax.PlainTextIdentifier;
     this.name = name;
+  }
+
+  toString() {
+    return this.name;
   }
 }
 
@@ -327,12 +425,31 @@ class Literal {
     this.type = Syntax.Literal;
     this.value = value;
   }
+
+  toString() {
+    return this.value;
+  }
+}
+
+class PercentageLiteral {
+  constructor(value) {
+    this.type = Syntax.PercentageLiteral;
+    this.value = value;
+  }
+
+  toString() {
+    return this.value + '%';
+  }
 }
 
 class ExpressionStatement {
   constructor(expression) {
     this.type = Syntax.ExpressionStatement;
     this.expression = expression;
+  }
+
+  toString() {
+    return this.expression.toString();
   }
 }
 
@@ -341,12 +458,31 @@ class ArrayExpression {
     this.type = Syntax.ArrayExpression;
     this.elements = elements;
   }
+
+  toString() {
+    let arrStr = undefined;
+    arrStr = this.elements.map(function (e) {
+      return e.toString();
+    });
+
+    return `[${arrStr.join(',')}]`;
+  }
 }
 
 class ObjectExpression {
   constructor(properties) {
     this.type = Syntax.ObjectExpression;
     this.properties = properties;
+  }
+
+  toString() {
+    let obj = {};
+
+    this.properties.forEach(function (p) {
+      obj[p.key] = p.value;
+    });
+
+    return JSON.stringify(obj);
   }
 }
 
@@ -366,6 +502,10 @@ class UnaryExpression {
     this.operator = operator;
     this.argument = argument;
   }
+
+  toString() {
+    return this.operator + this.argument.toString();
+  }
 }
 
 class BinaryExpression {
@@ -374,6 +514,10 @@ class BinaryExpression {
     this.operator = operator;
     this.left = left;
     this.right = right;
+  }
+
+  toString() {
+    return this.left.toString() + this.operator.toString() + this.right.toString();
   }
 }
 
@@ -384,6 +528,10 @@ class AssignmentExpression {
     this.left = left;
     this.right = right;
   }
+
+  toString() {
+    return this.left.toString() + this.operator.toString() + this.right.toString();
+  }
 }
 
 class LogicalExpression {
@@ -392,6 +540,10 @@ class LogicalExpression {
     this.operator = operator;
     this.left = left;
     this.right = right;
+  }
+
+  toString() {
+    return this.left.toString() + this.operator.toString() + this.right.toString();
   }
 }
 
@@ -402,6 +554,12 @@ class ConditionalExpression {
     this.consequent = consequent;
     this.alternate = alternate;
   }
+
+  toString() {
+    return this.test.toString() + '?'
+      + this.consequent.toString() + ':'
+      + this.alternate.toString();
+  }
 }
 
 class CallExpression {
@@ -410,12 +568,31 @@ class CallExpression {
     this.callee = callee;
     this.arguments = args;
   }
+
+  toString() {
+    let argsStr = undefined;
+    argsStr = this.arguments.map(function (arg) {
+      return arg.toString();
+    });
+
+    argsStr = '(' + argsStr.join(',') + ')';
+
+    return this.callee.toString() + argsStr;
+  }
 }
 
 class SequenceExpression {
   constructor(expressions) {
     this.type = Syntax.SequenceExpression;
     this.expressions = expressions;
+  }
+
+  toString() {
+    let exprList = this.expressions.forEach(function (expr) {
+      return expr.toString();
+    })
+
+    return exprList.join(',');
   }
 }
 
