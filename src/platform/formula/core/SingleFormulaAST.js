@@ -55,8 +55,8 @@ class CellAddressLiteralVisitor extends CellAddressVisitor {
       let prefixStr = prefix.getText();
       sheetName = new SheetNameIdentifier(prefixStr.substring(0, prefixStr.length-1));
     }
-    let startRef = ctx.startRef().accept(this);
-    let endRef = ctx.endRef().accept(this);
+    let startRef = ctx.startRef.accept(this);
+    let endRef = ctx.endRef.accept(this);
 
     return new CellRangeIdentifier(sheetName, startRef, endRef);
   }

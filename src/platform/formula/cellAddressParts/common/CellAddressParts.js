@@ -3,7 +3,62 @@ const assert = require('base/common/assert');
 const types = require('base/common/types');
 const CellAddressLexer = require('platform/formula/runtime/CellAddressLexer').CellAddressLexer;
 const CellAddressParser = require('platform/formula/runtime/CellAddressParser').CellAddressParser;
-const CellAddressLiteralVisitor = require('platform/formula/cellAddressParts/common/CellAddressPartsVisitor').CellAddressLiteralVisitor;
+
+
+function isInt(value) {
+  var x;
+  if (isNaN(value)) {
+    return false;
+  }
+  x = parseFloat(value);
+  return (x | 0) === x;
+}
+
+function convertNumberToColumnLetters(number) {
+  if(!isInt(number)) {
+    throw new Error('无效是数字。有效的数字是整数');
+  }
+  if(number <= 0) {
+    throw new Error('无效是数字。有效的数字范围是 1..n');
+  }
+
+  let column = [];
+  let n = number;
+
+  let modulus = 26;
+  while(n > 0) {
+    let remainder = n % modulus;
+    if(remainder === 0) {
+      remainder = 26;
+    }
+
+    let letter = String.fromCharCode(65 /* A */+ remainder - 1);
+    column.push(letter);
+
+    n = (n - remainder) / modulus;
+  }
+
+  column.reverse();
+  return column.join('');
+}
+
+function convertColumnLettersToNumber(column) {
+  function _convertLetter(char) {
+    const c = char.charCodeAt(0);
+    return c - 65 /* A */ + 1;
+  }
+  let sum = 0;
+  let len = column.length;
+  for(let i = 0; i < len; i++) {
+    let n = _convertLetter(column.charAt(i));
+    sum += n * Math.pow(26, len - i - 1);
+  }
+
+  return sum;
+}
+
+exports.convertColumnLettersToNumber = convertColumnLettersToNumber;
+exports.convertNumberToColumnLetters = convertNumberToColumnLetters;
 
 class CellColumn {
   constructor(text) {
@@ -14,19 +69,7 @@ class CellColumn {
   // 字母表示法，转换为数字表示法。
   // 1..n
   toNumber() {
-    let sum = 0;
-    let len = this.text.length;
-    for(let i = 0; i < len; i++) {
-      let n = this._convertLetter(this.text.charAt(i));
-      sum += n * Math.pow(26, len - i - 1);
-    }
-
-    return sum;
-  }
-
-  _convertLetter(char) {
-    const c = char.charCodeAt(0);
-    return c - 65 /* A */ + 1;
+    return convertColumnLettersToNumber(this.text);
   }
 }
 
@@ -52,7 +95,7 @@ class CellRow {
    * 1..n
    */
   toNumber() {
-
+    return Number(this.number);
   }
 }
 class AbsoluteRow extends CellRow {
@@ -68,7 +111,7 @@ class RelativeRow extends CellRow{
 }
 
 /**
- * 不包括表明的单元格地址引用
+ * 不包括表名的单元格地址引用
  */
 class A1Reference {
   constructor(columnRef, rowRef) {
