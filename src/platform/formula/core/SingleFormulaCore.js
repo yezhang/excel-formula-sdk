@@ -212,6 +212,7 @@ SingleFormulaCore.prototype.collectTokens = function (tokenTree) {
 
 /**
  * 生成的解析树中，允许包括错误。
+ * @param {String} input 输入字符串
  * @return {Object} 解析树（ParseTree）
  */
 SingleFormulaCore.prototype.parse = function parse(input) {
@@ -244,7 +245,7 @@ SingleFormulaCore.prototype.collectCellAddresses = function(parseTree) {
 
 /**
  * 计算公式
- * 
+ * @param {String} input 输入字符串
  */
 SingleFormulaCore.prototype.calc = function calc(input) {
   var ast = this.parse(input);

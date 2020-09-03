@@ -28,6 +28,15 @@ function isObject(obj) {
     && !(obj instanceof Date);
 }
 
+function isInt(value) {
+  var x;
+  if (isNaN(value)) {
+    return false;
+  }
+  x = parseFloat(value);
+  return (x | 0) === x;
+}
+
 /**
  * In **contrast** to just checking `typeof` this will return `false` for `NaN`.
  * @returns whether the provided parameter is a JavaScript Number or not.
@@ -36,6 +45,7 @@ function isNumber(obj){
 	return (typeof obj === 'number' && !isNaN(obj));
 }
 
+exports.isInt = isInt;
 exports.isArray = isArray;
 exports.isString = isString;
 exports.isObject = isObject;

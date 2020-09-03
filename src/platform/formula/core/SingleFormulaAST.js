@@ -7,27 +7,8 @@ const CellAddressVisitor = require('platform/formula/runtime/CellAddressVisitor'
 const Syntax = require('./syntax').Syntax;
 const ReportFormulaParserVisitor = require('platform/formula/runtime/ReportFormulaParserVisitor').ReportFormulaParserVisitor;
 
-/**
- * 语法树的遍历。
- */
-function traverse(node, func) {
-  func(node);
-  for (var key in node) {
-    if (node.hasOwnProperty(key)) {
-      var child = node[key];
-      if (typeof child === 'object' && child !== null) {
+const ASTWalker = require('platform/formula/core/ASTWalker');
 
-        if (Array.isArray(child)) {
-          child.forEach(function (node) {
-            traverse(node, func);
-          });
-        } else {
-          traverse(child, func);
-        }
-      }
-    }
-  }
-}
 
 class CellAddressLiteralVisitor extends CellAddressVisitor {
   constructor() {
@@ -40,7 +21,7 @@ class CellAddressLiteralVisitor extends CellAddressVisitor {
     let sheetName = null;
     if (prefix) {
       let prefixStr = prefix.getText();
-      sheetName = new SheetNameIdentifier(prefixStr.substring(0, prefixStr.length-1));
+      sheetName = new SheetNameIdentifier(prefixStr.substring(0, prefixStr.length - 1));
     }
     let a1Reference = ctx.a1Reference().accept(this);
 
@@ -53,7 +34,7 @@ class CellAddressLiteralVisitor extends CellAddressVisitor {
     let sheetName = null;
     if (prefix) {
       let prefixStr = prefix.getText();
-      sheetName = new SheetNameIdentifier(prefixStr.substring(0, prefixStr.length-1));
+      sheetName = new SheetNameIdentifier(prefixStr.substring(0, prefixStr.length - 1));
     }
     let startRef = ctx.startRef.accept(this);
     let endRef = ctx.endRef.accept(this);
@@ -100,7 +81,7 @@ class CellAddressLiteralVisitor extends CellAddressVisitor {
 function buildCellAddress(input) {
   class ErrorTokenListener extends antlr4.error.ErrorListener {
     syntaxError(recognizer, offendingSymbol, line, column, msg, e) {
-
+      // noop
     }
   }
 
@@ -270,8 +251,9 @@ class ASTVisitor extends ReportFormulaParserVisitor {
     return new Literal(Number(ctx.getText()));
   }
 
-  
+
 }
+
 /**
  * 语法树
  */
@@ -280,6 +262,30 @@ function SingleFormulaAST(parseTree) {
   this.content = parseTree.accept(new ASTVisitor());
 
   return this;
+}
+
+SingleFormulaAST.prototype.toString = function toString() {
+  return this.content.toString();
+}
+
+
+/**
+ * 查找全部的单元格引用节点
+ */
+SingleFormulaAST.prototype.findAllCellRefNodes = function () {
+  let cellRefNodes = [];
+  ASTWalker.traverse(this.content, function (node) {
+    switch (node.type) {
+      case Syntax.CellAddressIdentifier:
+      case Syntax.CellRangeIdentifier:
+        cellRefNodes.push(node);
+        return ASTWalker.OPTIONS.BREAK;
+      default:
+        return ASTWalker.OPTIONS.CONTINUE;
+    }
+  });
+
+  return cellRefNodes;
 }
 
 class FormulaProgram {
@@ -596,4 +602,6 @@ class SequenceExpression {
   }
 }
 
+exports.CellAddressIdentifier = CellAddressIdentifier;
+exports.CellRangeIdentifier = CellRangeIdentifier;
 exports.SingleFormulaAST = SingleFormulaAST;
