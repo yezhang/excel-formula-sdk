@@ -114,7 +114,7 @@ describe('语法树测试', function () {
       });
     } catch (e) {
       if (typeof expected === "string") {
-        assert.strictEqual(expected, e.message);
+        assert.strictEqual(e.message, expected);
       } else if (typeof expected === "function") {
         expected(e);
       }
@@ -125,7 +125,7 @@ describe('语法树测试', function () {
     let update = ast.toString();
 
     if (typeof expected === "string") {
-      assert.strictEqual(expected, update);
+      assert.strictEqual(update, expected);
     }
 
     if (typeof expected === "function") {
@@ -214,11 +214,58 @@ describe('语法树测试', function () {
     });
 
     it('插入行：在范围之间插入行', function () {
+
+      //           A         B           C
+      //      ┌─────────┬─────────┬─────────────┐
+      //   1  │    *    │    *    │             │
+      //      ├─────────┼─────────┼─────────────┤
+      //   2  │    *    │    *    │ =SUM(A1:B3) │
+      // ────▶├─────────┼─────────┼─────────────┤
+      //   3  │    *    │    *    │             │
+      //      └─────────┴─────────┴─────────────┘
+      //
+      //           A         B           C
+      //      ┌─────────┬─────────┬─────────────┐
+      //   1  │    *    │    *    │             │
+      //      ├─────────┼─────────┼─────────────┤
+      //   2  │    *    │    *    │ =SUM(A1:B4) │
+      //      ├─────────┼─────────┼─────────────┤
+      //   3* │   ***   │   ***   │             │
+      //      ├─────────┼─────────┼─────────────┤
+      //   4  │    *    │    *    │             │
+      //      └─────────┴─────────┴─────────────┘
       // 移动范围的右下角单元格引用
-      transform('=A1:B3', '=A1:B5', 'insertRows', [3, 2]);
+      transform('=A1:B3', '=A1:B4', 'insertRows', [3, 1]);
+
+      transform('=A1:B3', '=A1:B5', 'insertRows', [2, 2]);
     });
 
     it('删除行：在左上角之前删除行', function () {
+      //         A         B           C
+      //    ┌─────────┬─────────┬─────────────┐
+      // 1  │         │         │             │
+      //    ├─────────┼─────────┼─────────────┤
+      // 2  │    *    │    *    │             │
+      //    ├─────────┼─────────┼─────────────┤
+      // 3  │    *    │    *    │             │
+      //    ├─────────┼─────────┼─────────────┤
+      // 4  │    *    │    *    │             │
+      //    ├─────────┼─────────┼─────────────┤
+      // 5  │         │         │ =SUM(A2:B4) │
+      //    └─────────┴─────────┴─────────────┘
+
+      // 移除范围 [startRow = 1, num = 1]
+      transform('=SUM(A2:B4)', '=SUM(A1:B3)', 'removeRows', [1, 1]);
+      // 移除范围 [startRow = 2, num = 1]
+      transform('=SUM(A2:B4)', '=SUM(A2:B3)', 'removeRows', [2, 1]);
+      // 移除范围 [startRow = 3, num = 1]
+      transform('=SUM(A2:B4)', '=SUM(A2:B3)', 'removeRows', [3, 1]);
+      // 移除范围 [startRow = 4, num = 1]
+      transform('=SUM(A2:B4)', '=SUM(A2:B3)', 'removeRows', [4, 1]);
+      
+      // 移除范围 [startRow = 1, num = 2]
+      transform('=SUM(A2:B4', '=SUM(A1:B2)', 'removeRows', [1, 2]);
+
 
     });
 

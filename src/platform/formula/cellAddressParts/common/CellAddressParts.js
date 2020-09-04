@@ -220,20 +220,31 @@ class A1ReferenceTranslator {
    */
   removeRows(startRow, numberOfRows){
     if(startRow <= this.rowRefTranslator.toNumber()) {
-      this.translateUp(numberOfRows); // 可能会由于坐标位移不够，抛出异常
+      this.translateUp(numberOfRows); // 可能会由于可移动空间不够，抛出异常
     }
   }
 
   /**
    * 在 CellRange 引用中使用。
+   * 
+   * @param {Boolean} isStopedInsideOfDeletion 在删除范围内停止单元格。
+   * 当删除范围很大，包括了当前单元格时，执行删除动作后，本单元格引用的地址需要调整为新地址。
+   * 新地址可以为删除范围的起点或删除范围起点的前一个单元格位置。
+   * 当 isStopedInsideOfDeletion == true, 停在删除范围起点。
+   * 当 isStopedInsideOfDeletion === false，停在删除范围起点之前。
+   * 
+   * isStopedInsideOfDeletion 默认值是：false
    */
-  removeRowsByProperSteps(startRow, numberOfRows) {
+  removeRowsByProperSteps(startRow, numberOfRows, isStopedInsideOfDeletion) {
     const rowNumber = this.rowRefTranslator.toNumber()
     if(startRow <= rowNumber) {
-      let propSteps = Math.min(rowNumber - startRow, numberOfRows);
-      this.translateUp(propSteps); // 可能会由于坐标位移不够，抛出异常
+      let fixStep = isStopedInsideOfDeletion ? 0 : 1;
+      let propSteps = Math.min(rowNumber - startRow + fixStep, numberOfRows);
+      this.translateUp(propSteps); // 可能会由于可移动空间不够，抛出异常
     }
   }
+
+
 
   /**
    * @param {String | Number} beforeWhich 列序号, A..Z, 1..n
@@ -258,10 +269,11 @@ class A1ReferenceTranslator {
   /**
    * 在 CellRange 引用中使用。
    */
-  removeColumnsByProperSteps(startColumn, numberOfColumns){
+  removeColumnsByProperSteps(startColumn, numberOfColumns, isStopedInsideOfDeletion){
     const columnNumber = this.columnRefTranslator.toNumber();
     if(startColumn <= columnNumber){
-      const propSteps = Math.min(columnNumber - startColumn, numberOfColumns);
+      let fixStep = isStopedInsideOfDeletion ? 0 : 1;
+      const propSteps = Math.min(columnNumber - startColumn + fixStep, numberOfColumns);
       this.translateLeft(propSteps); // 可能会由于坐标空间不够，抛出异常
     }
   }
@@ -542,7 +554,8 @@ class CellRangeDecorator extends CellRefDecorator {
     if(startRow <= this.top() && this.bottom() <= startRow + numberOfRows - 1) {
       throw new TranslateError('单元格范围将被删除');
     }
-    this.cellRangeTranslator.removeRowsByProperSteps(startRow, numberOfRows);
+    this.startRefTranslator.removeRowsByProperSteps(startRow, numberOfRows, true);
+    this.endRefTranslator.removeRowsByProperSteps(startRow, numberOfRows, false);
   }
 
   /**
@@ -561,7 +574,8 @@ class CellRangeDecorator extends CellRefDecorator {
     if(startColumn <= this.left() && this.right() <= startColumn + numberOfColumns - 1) {
       throw new TranslateError('单元格范围将被删除');
     }
-    this.cellRangeTranslator.removeColumnsByProperSteps(startColumn, numberOfColumns);
+    this.startRefTranslator.removeColumnsByProperSteps(startColumn, numberOfColumns, true);
+    this.endRefTranslator.removeColumnsByProperSteps(startColumn, numberOfColumns, false);
   }
 
   toString() {
