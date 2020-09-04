@@ -105,12 +105,12 @@ describe('语法树测试', function () {
     // 此处，假设所有单元格都需要更新。
     try {
       translatorList.forEach(function (translator) {
-        if(Array.isArray(args)){
+        if (Array.isArray(args)) {
           translator[operation].apply(translator, args);
-        }else {
+        } else {
           translator[operation](args);
         }
-        
+
       });
     } catch (e) {
       if (typeof expected === "string") {
@@ -137,7 +137,7 @@ describe('语法树测试', function () {
     /**
      * @param {String} operator 'translateUp', 'translateDown', 'translateLeft', 'translateRight'
      */
-    
+
     // 测试行地址的增加、删除
     // 测试目的：验证单元格地址可以正确执行对应的移动。
     // 注意：对于某个单元格地址是否应发生变化，本测试用例不验证。假设公式中的所有单元格地址都收到影响并发生移动。
@@ -174,7 +174,7 @@ describe('语法树测试', function () {
       transform('=A2', '=A1', 'translateUp', 1);
 
       transform('=A1', function (err) {
-        assert.throws(function() {
+        assert.throws(function () {
           throw err;
         }, {
           name: 'TranslateError',
@@ -191,8 +191,8 @@ describe('语法树测试', function () {
     it('remove 列地址', function () {
       transform('=B2', '=A2', 'translateLeft', 1);
 
-      transform('=A2', function(err) {
-        assert.throws(function() {
+      transform('=A2', function (err) {
+        assert.throws(function () {
           throw err;
         }, {
           name: 'TranslateError',
@@ -204,7 +204,7 @@ describe('语法树测试', function () {
 
 
   describe('正确变更单元格范围', function () {
-   
+
     it('插入行：在左上角之前插入行', function () {
       transform('=A1:B3', '=A2:B4', 'translateDown', 1);
     });
@@ -240,7 +240,7 @@ describe('语法树测试', function () {
       transform('=A1:B3', '=A1:B5', 'insertRows', [2, 2]);
     });
 
-    it('删除行：在左上角之前删除行', function () {
+    it('删除行', function () {
       //         A         B           C
       //    ┌─────────┬─────────┬─────────────┐
       // 1  │         │         │             │
@@ -262,31 +262,91 @@ describe('语法树测试', function () {
       transform('=SUM(A2:B4)', '=SUM(A2:B3)', 'removeRows', [3, 1]);
       // 移除范围 [startRow = 4, num = 1]
       transform('=SUM(A2:B4)', '=SUM(A2:B3)', 'removeRows', [4, 1]);
-      
+      // 移除范围 [startRow = 5, num = 1], 单元格范围不受影响
+      transform('=SUM(A2:B4)', '=SUM(A2:B4)', 'removeRows', [5, 1]);
+
       // 移除范围 [startRow = 1, num = 2]
-      transform('=SUM(A2:B4', '=SUM(A1:B2)', 'removeRows', [1, 2]);
+      transform('=SUM(A2:B4)', '=SUM(A1:B2)', 'removeRows', [1, 2]);
+      // 移除范围 [startRow = 2, num = 2]
+      transform('=SUM(A2:B4)', '=SUM(A2:B2)', 'removeRows', [2, 2]);
+      // 移除范围 [startRow = 3, num = 2]
+      transform('=SUM(A2:B4)', '=SUM(A2:B2)', 'removeRows', [3, 2]);
+      // 移除范围 [startRow = 4, num = 2]
+      transform('=SUM(A2:B4)', '=SUM(A2:B3)', 'removeRows', [4, 2]);
 
 
-    });
+      // 移除范围 [startRow = 1, num = 3]
+      transform('=SUM(A2:B4)', '=SUM(A1:B1)', 'removeRows', [1, 3]);
+      // 移除范围 [startRow = 2, num = 3]
+      transform('=SUM(A2:B4)', function(excep){
+        assert.throws(function() {throw excep;}, {
+          name: 'TranslateError',
+          message: '单元格范围将被删除'
+        });
+      }, 'removeRows', [2, 3]);
 
-    it('删除行：在范围内删除行', function(){
-
+      // 移除范围 [startRow = 3, num = 3]
+      transform('=SUM(A2:B4)', '=SUM(A2:B2)', 'removeRows', [3, 3]);
+      // 移除范围 [startRow = 4, num = 3]
+      transform('=SUM(A2:B4)', '=SUM(A2:B3)', 'removeRows', [4, 3]);
+      // 移除范围 [startRow = 5, num = 3], 单元格范围不受影响
+      transform('=SUM(A2:B4)', '=SUM(A2:B4)', 'removeRows', [5, 3]);
     });
 
     it('插入列：在左上角之前插入列', function () {
+      //
+      //    │
+      //    │
+      //    ▼    A         B           C
+      //    ┌─────────┬─────────┬─────────────┐
+      // 1  │    *    │    *    │             │
+      //    ├─────────┼─────────┼─────────────┤
+      // 2  │    *    │    *    │ =SUM(A1:B3) │
+      //    ├─────────┼─────────┼─────────────┤
+      // 3  │    *    │    *    │             │
+      //    └─────────┴─────────┴─────────────┘
+      //
 
-    });
+      // 插入范围 [beforeWhich='A', num=1]
+      transform('=SUM(A1:B3)', '=SUM(B1:C3)', 'insertColumns', [1, 1]);
+      transform('=SUM(A1:B3)', '=SUM(B1:C3)', 'insertColumns', ['A', 1]);
 
-    it('插入列：在右下角之后插入列', function () {
+      // 插入范围 [beforeWhich='A', num=3]
+      transform('=SUM(A1:B3)', '=SUM(D1:E3)', 'insertColumns', [1, 3]);
+      transform('=SUM(A1:B3)', '=SUM(D1:E3)', 'insertColumns', ['A', 3]);
 
-    });
+      // 插入范围 [beforeWhich='B', num=1]
+      transform('=SUM(A1:B3)', '=SUM(A1:C3)', 'insertColumns', [2, 1]);
+      transform('=SUM(A1:B3)', '=SUM(A1:C3)', 'insertColumns', ['B', 1]);
 
-    it('插入列：在范围之间插入列', function () {
+      // 插入范围 [beforeWhich='B', num=2]
+      transform('=SUM(A1:B3)', '=SUM(A1:D3)', 'insertColumns', [2, 2]);
+      transform('=SUM(A1:B3)', '=SUM(A1:D3)', 'insertColumns', ['B', 2]);
 
+      // 插入范围 [beforeWhich='C', num=1], 没有影响
+      transform('=SUM(A1:B3)', '=SUM(A1:B3)', 'insertColumns', [3, 1]);
+      transform('=SUM(A1:B3)', '=SUM(A1:B3)', 'insertColumns', ['C', 1]);
     });
 
     it('删除列', function () {
+      //
+      //         A         B         C           D
+      //    ┌─────────┬─────────┬─────────┬─────────────┐
+      // 1  │         │         │         │             │
+      //    ├─────────┼─────────┼─────────┼─────────────┤
+      // 2  │         │    *    │    *    │             │
+      //    ├─────────┼─────────┼─────────┼─────────────┤
+      // 3  │         │    *    │    *    │             │
+      //    ├─────────┼─────────┼─────────┼─────────────┤
+      // 4  │         │    *    │    *    │             │
+      //    ├─────────┼─────────┼─────────┼─────────────┤
+      // 5  │         │         │         │ =SUM(B2:C4) │
+      //    └─────────┴─────────┴─────────┴─────────────┘
+      //
 
+      // 插入范围 [startColumn='A', num=1]
+      transform('=SUM(B2:C4)', '=SUM(A2:B4)', 'removeColumns', [1, 1]);
+      transform('=SUM(B2:C4)', '=SUM(A2:B4)', 'removeColumns', ['A', 1]);
     });
   })
 

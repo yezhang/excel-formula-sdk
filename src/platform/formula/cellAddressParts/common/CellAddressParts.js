@@ -90,19 +90,13 @@ class CellColumnTranslator {
       throw new TranslateError('已经是最左侧列，无法向左移动');
     }
 
-    if(num <= step) {
+    if (num <= step) {
       throw new TranslateError(`无法向做移动[当前列序号${num}-${this.toLabel()}, 期望向左移动${step}列]`);
     }
 
     this.columnIdentifier.text = convertNumberToColumnLetters(num - step);
   }
 
-  /**
-   * 尽最大努力左移，
-   */
-  translateLeftAsBest(step) {
-
-  }
   translateRight(step) {
     assert.ok(types.isInt(step) && step >= 0, 'step 参数需要是 0 或正整数');
     if (step === 0) {
@@ -142,24 +136,11 @@ class CellRowTranslator {
       throw new TranslateError('已经是第一行，无法向上移动');
     }
 
-    if(num <= step) {
+    if (num <= step) {
       throw new TranslateError(`无法向上移动[当前行号${num}, 期望向上移动${step}行]`);
     }
 
     this.rowIdentifier.line = num - step;
-  }
-
-  /**
-   * 尽最大努力上移，如果移动空间不够，则移动到第一个位置。
-   */
-  translateUpAtBest(step) {
-    let num = this.toNumber();
-    let stopLine = num - step;
-    if(stopLine < 1) {
-      stopLine = 1;
-    }
-
-    this.translateUp(num - stopLine);
   }
 
   translateDown(step) {
@@ -204,12 +185,12 @@ class A1ReferenceTranslator {
     this.columnRefTranslator.translateRight(step);
   }
 
-    /**
-   * @param {Number} beforeWhich 行序号, 1..n
-   * @param {Number} numberOfRows 行数量
-   */
+  /**
+ * @param {Number} beforeWhich 行序号, 1..n
+ * @param {Number} numberOfRows 行数量
+ */
   insertRows(beforeWhich, numberOfRows) {
-    if(beforeWhich <= this.rowRefTranslator.toNumber()) {
+    if (beforeWhich <= this.rowRefTranslator.toNumber()) {
       this.translateDown(numberOfRows);
     }
   }
@@ -218,8 +199,8 @@ class A1ReferenceTranslator {
    * @param {Number} startRow 行序号, 1..n
    * @param {Number} numberOfRows 行数量
    */
-  removeRows(startRow, numberOfRows){
-    if(startRow <= this.rowRefTranslator.toNumber()) {
+  removeRows(startRow, numberOfRows) {
+    if (startRow <= this.rowRefTranslator.toNumber()) {
       this.translateUp(numberOfRows); // 可能会由于可移动空间不够，抛出异常
     }
   }
@@ -237,21 +218,36 @@ class A1ReferenceTranslator {
    */
   removeRowsByProperSteps(startRow, numberOfRows, isStopedInsideOfDeletion) {
     const rowNumber = this.rowRefTranslator.toNumber()
-    if(startRow <= rowNumber) {
+    if (startRow <= rowNumber) {
       let fixStep = isStopedInsideOfDeletion ? 0 : 1;
       let propSteps = Math.min(rowNumber - startRow + fixStep, numberOfRows);
       this.translateUp(propSteps); // 可能会由于可移动空间不够，抛出异常
     }
   }
 
-
+  /**
+   * 将列序号或者列名称转换为数字。
+   */
+  _convertColumnIndex(column) {
+    let beforeWhichNum = 0;
+    if (types.isString(column)) {
+      beforeWhichNum = convertColumnLettersToNumber(column);
+    }else if (types.isNumber(column)){
+      beforeWhichNum = column;
+    }else {
+      throw new TypeError('beforeWhich 参数需要为 String 或 Number 类型');
+    }
+    return beforeWhichNum;
+  }
 
   /**
    * @param {String | Number} beforeWhich 列序号, A..Z, 1..n
    * @param {Number} numberOfColumns 列数量
    */
   insertColumns(beforeWhich, numberOfColumns) {
-    if(beforeWhich <= this.columnRefTranslator.toNumber()) {
+    let beforeWhichNum = this._convertColumnIndex(beforeWhich);
+
+    if (beforeWhichNum <= this.columnRefTranslator.toNumber()) {
       this.translateRight(numberOfColumns);
     }
   }
@@ -260,8 +256,9 @@ class A1ReferenceTranslator {
    * @param {String | Number} startColumn 列序号, A..Z, 1..n
    * @param {Number} numberOfColumns 列数量
    */
-  removeColumns(startColumn, numberOfColumns){
-    if(startColumn <= this.columnRefTranslator.toNumber()){
+  removeColumns(startColumn, numberOfColumns) {
+    let startColumnNum = this._convertColumnIndex(startColumn);
+    if (startColumnNum <= this.columnRefTranslator.toNumber()) {
       this.translateLeft(numberOfColumns); // 可能会由于坐标空间不够，抛出异常
     }
   }
@@ -269,11 +266,12 @@ class A1ReferenceTranslator {
   /**
    * 在 CellRange 引用中使用。
    */
-  removeColumnsByProperSteps(startColumn, numberOfColumns, isStopedInsideOfDeletion){
+  removeColumnsByProperSteps(startColumn, numberOfColumns, isStopedInsideOfDeletion) {
+    let startColumnNum = this._convertColumnIndex(startColumn);
     const columnNumber = this.columnRefTranslator.toNumber();
-    if(startColumn <= columnNumber){
+    if (startColumnNum <= columnNumber) {
       let fixStep = isStopedInsideOfDeletion ? 0 : 1;
-      const propSteps = Math.min(columnNumber - startColumn + fixStep, numberOfColumns);
+      const propSteps = Math.min(columnNumber - startColumnNum + fixStep, numberOfColumns);
       this.translateLeft(propSteps); // 可能会由于坐标空间不够，抛出异常
     }
   }
@@ -289,34 +287,34 @@ class CompositeA1ReferenceTranslator {
   }
 
   translateUp(step) {
-    this.a1TranslatorList.forEach(function(t){
+    this.a1TranslatorList.forEach(function (t) {
       t.translateUp(step);
     })
   }
 
   translateDown(step) {
-    this.a1TranslatorList.forEach(function(t){
+    this.a1TranslatorList.forEach(function (t) {
       t.translateDown(step);
     })
   }
 
   translateLeft(step) {
-    this.a1TranslatorList.forEach(function(t){
+    this.a1TranslatorList.forEach(function (t) {
       t.translateLeft(step);
     })
   }
   translateRight(step) {
-    this.a1TranslatorList.forEach(function(t){
+    this.a1TranslatorList.forEach(function (t) {
       t.translateRight(step);
     })
   }
 
-    /**
-   * @param {Number} beforeWhich 行序号, 1..n
-   * @param {Number} numberOfRows 行数量
-   */
+  /**
+ * @param {Number} beforeWhich 行序号, 1..n
+ * @param {Number} numberOfRows 行数量
+ */
   insertRows(beforeWhich, numberOfRows) {
-    this.a1TranslatorList.forEach(function(t){
+    this.a1TranslatorList.forEach(function (t) {
       t.insertRows(beforeWhich, numberOfRows);
     })
   }
@@ -325,14 +323,14 @@ class CompositeA1ReferenceTranslator {
    * @param {Number} startRow 行序号, 1..n
    * @param {Number} numberOfRows 行数量
    */
-  removeRows(startRow, numberOfRows){
-    this.a1TranslatorList.forEach(function(t){
+  removeRows(startRow, numberOfRows) {
+    this.a1TranslatorList.forEach(function (t) {
       t.removeRows(startRow, numberOfRows);
     })
   }
 
-  removeRowsByProperSteps(startRow, numberOfRows){
-    this.a1TranslatorList.forEach(function(t){
+  removeRowsByProperSteps(startRow, numberOfRows) {
+    this.a1TranslatorList.forEach(function (t) {
       t.removeRowsByProperSteps(startRow, numberOfRows);
     })
   }
@@ -342,7 +340,7 @@ class CompositeA1ReferenceTranslator {
    * @param {Number} numberOfColumns 列数量
    */
   insertColumns(beforeWhich, numberOfColumns) {
-    this.a1TranslatorList.forEach(function(t){
+    this.a1TranslatorList.forEach(function (t) {
       t.insertColumns(beforeWhich, numberOfColumns);
     })
   }
@@ -351,14 +349,14 @@ class CompositeA1ReferenceTranslator {
    * @param {String | Number} startColumn 列序号, A..Z, 1..n
    * @param {Number} numberOfColumns 列数量
    */
-  removeColumns(startColumn, numberOfColumns){
-    this.a1TranslatorList.forEach(function(t){
+  removeColumns(startColumn, numberOfColumns) {
+    this.a1TranslatorList.forEach(function (t) {
       t.removeColumns(startColumn, numberOfColumns);
     })
   }
 
-  removeColumnsByProperSteps(startColumn, numberOfColumns){
-    this.a1TranslatorList.forEach(function(t){
+  removeColumnsByProperSteps(startColumn, numberOfColumns) {
+    this.a1TranslatorList.forEach(function (t) {
       t.removeColumnsByProperSteps(startColumn, numberOfColumns);
     })
   }
@@ -454,7 +452,7 @@ class CellAddressDecorator extends CellRefDecorator {
    * @param {Number} startRow 行序号, 1..n
    * @param {Number} numberOfRows 行数量
    */
-  removeRows(startRow, numberOfRows){
+  removeRows(startRow, numberOfRows) {
     this.a1RefTranslator.removeRows(startRow, numberOfRows);
   }
 
@@ -470,7 +468,7 @@ class CellAddressDecorator extends CellRefDecorator {
    * @param {String | Number} startColumn 列序号, A..Z, 1..n
    * @param {Number} numberOfColumns 列数量
    */
-  removeColumns(startColumn, numberOfColumns){
+  removeColumns(startColumn, numberOfColumns) {
     this.a1RefTranslator.removeColumns(startColumn, numberOfColumns);
   }
 }
@@ -538,10 +536,10 @@ class CellRangeDecorator extends CellRefDecorator {
     this.cellRangeTranslator.translateRight(step);
   }
 
-    /**
-   * @param {Number} beforeWhich 行序号, 1..n
-   * @param {Number} numberOfRows 行数量
-   */
+  /**
+ * @param {Number} beforeWhich 行序号, 1..n
+ * @param {Number} numberOfRows 行数量
+ */
   insertRows(beforeWhich, numberOfRows) {
     this.cellRangeTranslator.insertRows(beforeWhich, numberOfRows);
   }
@@ -550,8 +548,8 @@ class CellRangeDecorator extends CellRefDecorator {
    * @param {Number} startRow 行序号, 1..n
    * @param {Number} numberOfRows 行数量
    */
-  removeRows(startRow, numberOfRows){
-    if(startRow <= this.top() && this.bottom() <= startRow + numberOfRows - 1) {
+  removeRows(startRow, numberOfRows) {
+    if (startRow <= this.top() && this.bottom() <= startRow + numberOfRows - 1) {
       throw new TranslateError('单元格范围将被删除');
     }
     this.startRefTranslator.removeRowsByProperSteps(startRow, numberOfRows, true);
@@ -570,8 +568,8 @@ class CellRangeDecorator extends CellRefDecorator {
    * @param {String | Number} startColumn 列序号, A..Z, 1..n
    * @param {Number} numberOfColumns 列数量
    */
-  removeColumns(startColumn, numberOfColumns){
-    if(startColumn <= this.left() && this.right() <= startColumn + numberOfColumns - 1) {
+  removeColumns(startColumn, numberOfColumns) {
+    if (startColumn <= this.left() && this.right() <= startColumn + numberOfColumns - 1) {
       throw new TranslateError('单元格范围将被删除');
     }
     this.startRefTranslator.removeColumnsByProperSteps(startColumn, numberOfColumns, true);
