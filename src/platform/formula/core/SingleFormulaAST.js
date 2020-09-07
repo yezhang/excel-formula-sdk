@@ -34,6 +34,8 @@ class CellAddressLiteralVisitor extends CellAddressVisitor {
     let sheetName = null;
     if (prefix) {
       let prefixStr = prefix.getText();
+
+      // 移除 "!" 后缀，例如 "sheet!" 修正为 "sheet"。
       sheetName = new SheetNameIdentifier(prefixStr.substring(0, prefixStr.length - 1));
     }
     let startRef = ctx.startRef.accept(this);
@@ -329,8 +331,17 @@ class CellAddressIdentifier {
   }
 
   toString() {
+    if (this.a1Reference.isLost()) {
+      return Syntax.REF_ERROR;
+    }
     let sheetName = this.sheetName ? this.sheetName.toString() + '!' : '';
     return `${sheetName}${this.a1Reference.toString()}`;
+  }
+
+  clone() {
+    let a1ReferenceID = this.a1Reference.clone();
+    let sheetNameID = this.sheetName ? this.sheetName.clone() : undefined;
+    return new CellAddressIdentifier(sheetNameID, a1ReferenceID);
   }
 }
 
@@ -343,6 +354,10 @@ class SheetNameIdentifier {
   toString() {
     return this.name;
   }
+
+  clone() {
+    return new SheetNameIdentifier(this.name.slice());
+  }
 }
 
 class A1ReferenceIdentifier {
@@ -352,8 +367,28 @@ class A1ReferenceIdentifier {
     this.rowRef = rowRef;
   }
 
+  /**
+   * 标记本单元格引用的位置的值发生丢失
+   */
+  lost() {
+    this._isLost = true;
+  }
+
+  isLost() {
+    return this._isLost === true;
+  }
+
   toString() {
+    if (this.isLost()) {
+      return Syntax.REF_ERROR;
+    }
     return `${this.columnRef.toString()}${this.rowRef.toString()}`;
+  }
+
+  clone() {
+    let columnRefID = this.columnRef.clone();
+    let rowRefID = this.rowRef.clone();
+    return new A1ReferenceIdentifier(columnRefID, rowRefID);
   }
 }
 
@@ -366,6 +401,10 @@ class AbsoluteColumnIdentifier {
   toString() {
     return '$' + this.text;
   }
+
+  clone() {
+    return new AbsoluteColumnIdentifier(this.text.slice());
+  }
 }
 
 class RelativeColumnIdentifier {
@@ -376,6 +415,10 @@ class RelativeColumnIdentifier {
 
   toString() {
     return this.text;
+  }
+
+  clone() {
+    return new RelativeColumnIdentifier(this.text.slice());
   }
 }
 
@@ -388,6 +431,10 @@ class AbsoluteRowIdentifier {
   toString() {
     return '$' + this.line;
   }
+
+  clone() {
+    return new AbsoluteRowIdentifier(this.line);
+  }
 }
 
 class RelativeRowIdentifier {
@@ -399,6 +446,10 @@ class RelativeRowIdentifier {
   toString() {
     return `${this.line}`;
   }
+
+  clone() {
+    return new AbsoluteRowIdentifier(this.line);
+  }
 }
 
 class CellRangeIdentifier {
@@ -409,7 +460,19 @@ class CellRangeIdentifier {
     this.endRef = endRef;
   }
 
+  lost() {
+    this._isLost = true;
+  }
+
+  isLost() {
+    return this._isLost === true;
+  }
+
   toString() {
+    if (this.isLost()) {
+      return Syntax.REF_ERROR;
+    }
+
     let sheetName = this.sheetName ? this.sheetName.toString() + '!' : '';
     return `${sheetName}${this.startRef.toString()}:${this.endRef.toString()}`;
   }
@@ -602,6 +665,14 @@ class SequenceExpression {
   }
 }
 
+exports.A1ReferenceIdentifier = A1ReferenceIdentifier;
+
+exports.AbsoluteColumnIdentifier = AbsoluteColumnIdentifier;
+exports.RelativeColumnIdentifier = RelativeColumnIdentifier;
+exports.AbsoluteRowIdentifier = AbsoluteRowIdentifier;
+exports.RelativeRowIdentifier = RelativeRowIdentifier;
+
 exports.CellAddressIdentifier = CellAddressIdentifier;
 exports.CellRangeIdentifier = CellRangeIdentifier;
 exports.SingleFormulaAST = SingleFormulaAST;
+exports.buildCellAddress = buildCellAddress;

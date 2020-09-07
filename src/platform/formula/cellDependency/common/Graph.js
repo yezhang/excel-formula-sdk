@@ -6,7 +6,7 @@ class Node {
   constructor(data) {
     this.data = data;
 
-    this.incoming = new Map();
+    this.incoming = new Map(); //TODO: 考虑 Map 类型的兼容性
     this.outgoing = new Map();
   }
 }
@@ -20,10 +20,19 @@ class Graph {
 
   roots() {
     const ret = [];
-    for(let node of this._nodes.values()) {
-      if(node.outgoing.size === 0) {
+    for (let node of this._nodes.values()) {
+      if (node.outgoing.size === 0) {
         ret.push(node);
       }
+    }
+
+    return ret;
+  }
+
+  nodes() {
+    const ret = [];
+    for (let node of this._nodes.values()) {
+      ret.push(node);
     }
 
     return ret;
@@ -34,8 +43,8 @@ class Graph {
     const fromNode = this.lookupOrInsertNode(from);
     const toNode = this.lookupOrInsertNode(to);
 
-    fromNode.outgoing.set(this._hashFn(to), {toNode, props});
-    toNode.incoming.set(this._hashFn(from), {fromNode, props});
+    fromNode.outgoing.set(this._hashFn(to), { toNode, props });
+    toNode.incoming.set(this._hashFn(from), { fromNode, props });
   }
 
   removeNode(data) {
@@ -51,7 +60,7 @@ class Graph {
     const key = this._hashFn(data);
     let node = this._nodes.get(key);
 
-    if(!node) {
+    if (!node) {
       node = new Node(data);
       this._nodes.set(key, node);
     }

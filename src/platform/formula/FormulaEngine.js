@@ -1,4 +1,5 @@
 const SingleFormulaCoreInst = require('./core/SingleFormulaCore').INSTANCE;
+const SingleFormulaAST = require('platform/formula/core/SingleFormulaAST').SingleFormulaAST;
 const CellDependencyBuilder = require('./cellDependency/DependencyBuilder');
 const CellDependencyFinder = require('./cellDependency/DependencyFinder');
 const DependencyGraph = require('./cellDependency/DependencyGraph').DependencyGraph;
@@ -36,14 +37,18 @@ class FormulaEngine {
   /**
    * 用户输入一个公式后调用。
    * @param {WorkBookContext} workBookContext 工作簿上下文，包含当前激活的工作表sheet。
+   * @param {Object} cellAddr 单元格地址对象 {column:<1..n>, row:<1..n>}, 
    */
   setCellFormula(workBookContext, cellAddr, formula) {
     const activeSheetName = workBookContext.activeSheetName;
     const formulaParseTree = SingleFormulaCoreInst.parse(formula);
-    const dependencies = SingleFormulaCoreInst.collectCellAddresses(formulaParseTree);
+    const ast = new SingleFormulaAST(formulaParseTree);
 
+    // 收集受影响的单元格
+    let cellRefNodes = ast.findAllCellRefNodes();
+    
     const builder = new CellDependencyBuilder(this.depGraph);
-    builder.updateDependencies(activeSheetName, cellAddr, dependencies);
+    builder.addOrUpdateDependencies(activeSheetName, cellAddr, cellRefNodes);
   }
 
   getCellFormula(workBookContext, cellAddr) {

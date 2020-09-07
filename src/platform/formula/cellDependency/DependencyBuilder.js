@@ -1,10 +1,11 @@
-const ArrayUtils = require('../../../base/ArrayUtils');
-const CellAddress = require('../cellAddressParts/common/CellAddressParts').CellAddress;
+
+const buildCellRefDecorator = require('../cellAddressParts/common/CellAddressParts').buildCellRefDecorator;
+const SimpleCellAddress = require('platform/formula/cellAddressParts/common/CellAddressParts').SimpleCellAddress;
+const SingleFormulaContext = require('platform/formula/core/SingleFormulaContext').SingleFormulaContext;
+
 /**
  * 单元格依赖关系收集，生成依赖图。
  */
-
-
 class CyclicDependencyError extends Error {
   constructor(graph) {
     super('单元格之间发生了循环依赖');
@@ -13,6 +14,9 @@ class CyclicDependencyError extends Error {
 }
 
 class CellDependencyBuilder {
+  /**
+   * @param {DependencyGraph} depGraph 依赖关系图
+   */
   constructor(depGraph) {
     this.depGraph = depGraph;
   }
@@ -25,39 +29,64 @@ class CellDependencyBuilder {
    * 对单元格地址格式进行规范化处理。
    * 
    * 如果传入重复的 workingCellAddress，则执行覆盖，并更新图的关系。
+   * 
+   * @param {Array[ CellAddressIdentifier|CellRangeIdentifier] } dependenciesList cellRefNodes
    */
-  addOrUpdateDependencies(activeSheetName, workingCellRefAddr, dependenciesList){
+  addOrUpdateDependencies(activeSheetName, workingCellRefAddr, dependenciesList) {
     const _this = this;
-    let workingCell = this._buildCellAddress(activeSheetName, workingCellRefAddr);
-    let simpleCellAddress = workingCell.toSimpleAddress();
-    let simpleDependencies = dependenciesList.map(function(dep){
-      return _this._buildCellAddress(activeSheetName, dep).toSimpleAddress();
-    });
+    let simpleCellAddress = new SimpleCellAddress(activeSheetName, workingCellRefAddr.column, workingCellRefAddr.row);
 
-    let distinctDependencies = ArrayUtils.uniqueArray(simpleDependencies, function(dep) {
-      return dep.hashcode();
+    // 包括单元格地址和单元格范围
+    const depMap = {};
+    dependenciesList.forEach(function (dep) {
+      let cellCarry = _this._buildCellAddress(activeSheetName, dep);
+      let simpleCell = cellCarry.toSimpleAddress();
+      let hashcode = simpleCell.hashcode();
+
+      if (depMap.hasOwnProperty(hashcode)) {
+        let depDetail = depMap[hashcode];
+        let depListValue = depDetail.deps;
+        
+        depListValue.push(cellCarry);
+      } else {
+        let depDetail = {
+          simple: simpleCell,
+          deps: [cellCarry]
+        };
+        depMap[hashcode] = depDetail;
+      }
     });
 
     this._removeDependencies(simpleCellAddress);
-    this._addDependencies(simpleCellAddress, distinctDependencies);
+    this._addDependencies(simpleCellAddress, depMap);
   }
 
+  /**
+   * 移除从 cellAddress 发出的有向边。
+   */
   _removeDependencies(cellAddress) {
-
+    this.depGraph.removeCellAddress(cellAddress);
   }
 
 
-  _addDependencies(cellAddress, simpleDependencies) {
-
+  /**
+   * 建立从 cellAddress 指向 dependencyMap.keys() 的有向边。
+   */
+  _addDependencies(cellAddress, dependencyMap) {
+    this.depGraph.addCellDependencies(cellAddress, dependencyMap);
   }
 
   // 将单元格地址转化为标准对象
   _buildCellAddress(sheetName, cellAddressOrCellRange) {
-    return new CellAddress(sheetName, cellAddressOrCellRange);
+    let cellRef = buildCellRefDecorator(cellAddressOrCellRange);
+    let context = new SingleFormulaContext();
+    context.activeSheetName = sheetName;
+    cellRef.setWorkingContext(context);
+    return cellRef;
   }
 
   getDependencyGraph() {
-
+    return this.depGraph;
   }
 
 }

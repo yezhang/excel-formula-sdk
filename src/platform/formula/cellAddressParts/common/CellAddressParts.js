@@ -1,10 +1,12 @@
 
 const assert = require('base/common/assert');
 const types = require('base/common/types');
+const { endsWith } = require('lodash');
 
 const CellAddressNode = require('platform/formula/core/SingleFormulaAST').CellAddressIdentifier;
 const CellRangeNode = require('platform/formula/core/SingleFormulaAST').CellRangeIdentifier;
 const Syntax = require('platform/formula/core/syntax').Syntax;
+const SingleFormulaContext = require('platform/formula/core/SingleFormulaContext').SingleFormulaContext;
 
 class TranslateError extends Error {
   constructor(message) {
@@ -56,6 +58,22 @@ function convertColumnLettersToNumber(column) {
   return sum;
 }
 
+/**
+ * 将列序号或者列名称转换为数字。
+ */
+function _convertColumnIndex(column) {
+  let beforeWhichNum = 0;
+  if (types.isNumber(column)) {
+    beforeWhichNum = column;
+  }
+  else if (types.isString(column)) {
+    beforeWhichNum = convertColumnLettersToNumber(column);
+  } else {
+    throw new TypeError('列 参数需要为 String 或 Number 类型');
+  }
+  return beforeWhichNum;
+}
+
 exports.convertColumnLettersToNumber = convertColumnLettersToNumber;
 exports.convertNumberToColumnLetters = convertNumberToColumnLetters;
 
@@ -86,7 +104,7 @@ class CellColumnTranslator {
     }
     let num = this.toNumber();
     const startColumn = 1;
-    if (num - 1 < startColumn) {
+    if (num <= startColumn) {
       throw new TranslateError('已经是最左侧列，无法向左移动');
     }
 
@@ -170,19 +188,51 @@ class A1ReferenceTranslator {
     return this.a1Reference.toString();
   }
 
+  getColumnNumber() {
+    return this.columnRefTranslator.toNumber();
+  }
+
+  getRowNumber() {
+    return this.rowRefTranslator.toNumber();
+  }
+
   translateUp(step) {
-    this.rowRefTranslator.translateUp(step);
+    try {
+      this.rowRefTranslator.translateUp(step);
+    } catch (error) {
+      this.a1Reference.lost();
+      throw error;
+    }
+
   }
 
   translateDown(step) {
-    this.rowRefTranslator.translateDown(step);
+    try {
+      this.rowRefTranslator.translateDown(step);
+    } catch (error) {
+      this.a1Reference.lost();
+      throw error;
+    }
+
   }
 
   translateLeft(step) {
-    this.columnRefTranslator.translateLeft(step);
+    try {
+      this.columnRefTranslator.translateLeft(step);
+    } catch (error) {
+      this.a1Reference.lost();
+      throw error;
+    }
+
   }
   translateRight(step) {
-    this.columnRefTranslator.translateRight(step);
+    try {
+      this.columnRefTranslator.translateRight(step);
+    } catch (error) {
+      this.a1Reference.lost();
+      throw error;
+    }
+
   }
 
   /**
@@ -190,7 +240,7 @@ class A1ReferenceTranslator {
  * @param {Number} numberOfRows 行数量
  */
   insertRows(beforeWhich, numberOfRows) {
-    if (beforeWhich <= this.rowRefTranslator.toNumber()) {
+    if (beforeWhich <= this.getRowNumber()) {
       this.translateDown(numberOfRows);
     }
   }
@@ -200,7 +250,7 @@ class A1ReferenceTranslator {
    * @param {Number} numberOfRows 行数量
    */
   removeRows(startRow, numberOfRows) {
-    if (startRow <= this.rowRefTranslator.toNumber()) {
+    if (startRow <= this.getRowNumber()) {
       this.translateUp(numberOfRows); // 可能会由于可移动空间不够，抛出异常
     }
   }
@@ -217,7 +267,7 @@ class A1ReferenceTranslator {
    * isStopedInsideOfDeletion 默认值是：false
    */
   removeRowsByProperSteps(startRow, numberOfRows, isStopedInsideOfDeletion) {
-    const rowNumber = this.rowRefTranslator.toNumber()
+    const rowNumber = this.getRowNumber();
     if (startRow <= rowNumber) {
       let fixStep = isStopedInsideOfDeletion ? 0 : 1;
       let propSteps = Math.min(rowNumber - startRow + fixStep, numberOfRows);
@@ -225,29 +275,16 @@ class A1ReferenceTranslator {
     }
   }
 
-  /**
-   * 将列序号或者列名称转换为数字。
-   */
-  _convertColumnIndex(column) {
-    let beforeWhichNum = 0;
-    if (types.isString(column)) {
-      beforeWhichNum = convertColumnLettersToNumber(column);
-    }else if (types.isNumber(column)){
-      beforeWhichNum = column;
-    }else {
-      throw new TypeError('beforeWhich 参数需要为 String 或 Number 类型');
-    }
-    return beforeWhichNum;
-  }
+
 
   /**
    * @param {String | Number} beforeWhich 列序号, A..Z, 1..n
    * @param {Number} numberOfColumns 列数量
    */
   insertColumns(beforeWhich, numberOfColumns) {
-    let beforeWhichNum = this._convertColumnIndex(beforeWhich);
+    let beforeWhichNum = _convertColumnIndex(beforeWhich);
 
-    if (beforeWhichNum <= this.columnRefTranslator.toNumber()) {
+    if (beforeWhichNum <= this.getColumnNumber()) {
       this.translateRight(numberOfColumns);
     }
   }
@@ -257,8 +294,8 @@ class A1ReferenceTranslator {
    * @param {Number} numberOfColumns 列数量
    */
   removeColumns(startColumn, numberOfColumns) {
-    let startColumnNum = this._convertColumnIndex(startColumn);
-    if (startColumnNum <= this.columnRefTranslator.toNumber()) {
+    let startColumnNum = _convertColumnIndex(startColumn);
+    if (startColumnNum <= this.getColumnNumber()) {
       this.translateLeft(numberOfColumns); // 可能会由于坐标空间不够，抛出异常
     }
   }
@@ -267,8 +304,8 @@ class A1ReferenceTranslator {
    * 在 CellRange 引用中使用。
    */
   removeColumnsByProperSteps(startColumn, numberOfColumns, isStopedInsideOfDeletion) {
-    let startColumnNum = this._convertColumnIndex(startColumn);
-    const columnNumber = this.columnRefTranslator.toNumber();
+    let startColumnNum = _convertColumnIndex(startColumn);
+    const columnNumber = this.getColumnNumber();
     if (startColumnNum <= columnNumber) {
       let fixStep = isStopedInsideOfDeletion ? 0 : 1;
       const propSteps = Math.min(columnNumber - startColumnNum + fixStep, numberOfColumns);
@@ -366,14 +403,17 @@ class CompositeA1ReferenceTranslator {
  * 简单单元格地址表示法
  */
 class SimpleCellAddress {
-  constructor(cellAddress) {
-    this._cellAddress = cellAddress;
 
-    const a1Reference = cellAddress.a1Reference;
-
-    this.sheet = cellAddress.sheetName;
-    this.row = a1Reference.rowRef.toNumber();
-    this.column = a1Reference.columnRef.toNumber();
+  /**
+   * 
+   * @param {String} sheetName 当前表格名称
+   * @param {Number} columnNumber 1..n
+   * @param {Number} rowNumber 1..n
+   */
+  constructor(sheetName, columnNumber, rowNumber) {
+    this.sheet = sheetName;
+    this.row = columnNumber;
+    this.column = rowNumber;
   }
 
   getDescription() {
@@ -389,32 +429,45 @@ class SimpleCellAddress {
   }
 }
 
-
 /**
  * 简单单元格范围表示法
  */
 class SimpleCellRange {
+  /**
+   * 
+   */
+  constructor(sheetName, startSimpleAddress, endSimpleAddress) {
+    this.sheet = sheetName;
+    this.start = {
+      column: startSimpleAddress.column,
+      row: startSimpleAddress.row
+    };
+
+    this.end = {
+      column: endSimpleAddress.column,
+      row: endSimpleAddress.row
+    }
+  }
+
 
 }
 
 /**
  * 所有单元格引用的基类。
  */
-class CellRefDecorator {
-
-}
-
-
+class CellRefDecorator { }
 
 /**
- * 单元格地址
+ * 单元格搬运器，用于移动单元格地址。
+ * 
+ * 根据语法树中的节点构造。
  */
-class CellAddressDecorator extends CellRefDecorator {
+class CellAddressCarrier extends CellRefDecorator {
   constructor(cellAddressIdentifier) {
     super();
     this.cellAddress = cellAddressIdentifier;
-
     this.a1RefTranslator = new A1ReferenceTranslator(this.cellAddress.a1Reference);
+    this._workingContext = undefined; //工作单元格的上下文，包括当前的工作表，活动单元格等界面操作信息。
   }
 
   toString() {
@@ -422,7 +475,24 @@ class CellAddressDecorator extends CellRefDecorator {
   }
 
   toSimpleAddress() {
-    return new SimpleCellAddress(this);
+    let sheetName = this.cellAddress.sheetName;
+    if(!sheetName) {
+      sheetName = this.getWorkingContext().activeSheetName;
+    }
+
+    let column = this.a1RefTranslator.getColumnNumber();
+    let row = this.a1RefTranslator.getRowNumber();
+    return new SimpleCellAddress(sheetName, column, row);
+  }
+
+  setWorkingContext(context) {
+    if(context instanceof SingleFormulaContext){
+      this._workingContext = context;
+    }
+  }
+
+  getWorkingContext() {
+    return this._workingContext;
   }
 
   translateUp(step) {
@@ -474,9 +544,11 @@ class CellAddressDecorator extends CellRefDecorator {
 }
 
 /**
- * 单元格范围
+ * 单元格搬运器，用于移动单元格地址。
+ * 
+ * 根据语法树中的节点构造。
  */
-class CellRangeDecorator extends CellRefDecorator {
+class CellRangeCarrier extends CellRefDecorator {
   /**
    * @param {CellRangeIdentifier} cellRangeRef 
    */
@@ -493,16 +565,33 @@ class CellRangeDecorator extends CellRefDecorator {
     ]);
   }
 
-  toSimpleAddress() {
+  setWorkingContext(context) {
+    if(context instanceof SingleFormulaContext){
+      this._workingContext = context;
+    }
+  }
 
+  getWorkingContext() {
+    return this._workingContext;
+  }
+
+  toSimpleAddress() {
+    let sheetName = this.cellAddress.sheetName;
+    if(!sheetName) {
+      sheetName = this.getWorkingContext().activeSheetName;
+    }
+
+    let simpleStart = new SimpleCellAddress(null, this.left(), this.top());
+    let simpleEnd = new SimpleCellAddress(null, this.right(), this.bottom());
+    return new SimpleCellRange(sheetName, simpleStart, simpleEnd);
   }
 
   left() {
-    return this.startRefTranslator.columnRefTranslator.toNumber();
+    return this.startRefTranslator.getColumnNumber();
   }
 
   right() {
-    this.endRefTranslator.columnRefTranslator.toNumber();
+    return this.endRefTranslator.getColumnNumber();
   }
 
   width() {
@@ -510,11 +599,11 @@ class CellRangeDecorator extends CellRefDecorator {
   }
 
   top() {
-    return this.startRefTranslator.rowRefTranslator.toNumber();
+    return this.startRefTranslator.getRowNumber();
   }
 
   bottom() {
-    return this.endRefTranslator.rowRefTranslator.toNumber();
+    return this.endRefTranslator.getRowNumber();
   }
 
   height() {
@@ -532,6 +621,7 @@ class CellRangeDecorator extends CellRefDecorator {
   translateLeft(step) {
     this.cellRangeTranslator.translateLeft(step);
   }
+
   translateRight(step) {
     this.cellRangeTranslator.translateRight(step);
   }
@@ -550,6 +640,7 @@ class CellRangeDecorator extends CellRefDecorator {
    */
   removeRows(startRow, numberOfRows) {
     if (startRow <= this.top() && this.bottom() <= startRow + numberOfRows - 1) {
+      this.cellRange.lost();
       throw new TranslateError('单元格范围将被删除');
     }
     this.startRefTranslator.removeRowsByProperSteps(startRow, numberOfRows, true);
@@ -569,7 +660,9 @@ class CellRangeDecorator extends CellRefDecorator {
    * @param {Number} numberOfColumns 列数量
    */
   removeColumns(startColumn, numberOfColumns) {
-    if (startColumn <= this.left() && this.right() <= startColumn + numberOfColumns - 1) {
+    let startColumnNum = _convertColumnIndex(startColumn);
+    if (startColumnNum <= this.left() && this.right() <= startColumnNum + numberOfColumns - 1) {
+      this.cellRange.lost();
       throw new TranslateError('单元格范围将被删除');
     }
     this.startRefTranslator.removeColumnsByProperSteps(startColumn, numberOfColumns, true);
@@ -584,9 +677,9 @@ class CellRangeDecorator extends CellRefDecorator {
 function buildCellRefDecorator(cellRef) {
   switch (cellRef.type) {
     case Syntax.CellAddressIdentifier:
-      return new CellAddressDecorator(cellRef);
+      return new CellAddressCarrier(cellRef);
     case Syntax.CellRangeIdentifier:
-      return new CellRangeDecorator(cellRef);
+      return new CellRangeCarrier(cellRef);
   }
 
   return undefined;

@@ -1,8 +1,4 @@
 const assert = require('assert').strict;
-const sinon = require('sinon');
-
-const antlr4 = require('antlr4');
-const { transform } = require('lodash');
 
 const SingleFormulaCore = require('platform/formula/core/SingleFormulaCore').SingleFormulaCore;
 const SingleFormulaAST = require('platform/formula/core/SingleFormulaAST').SingleFormulaAST;
@@ -12,13 +8,13 @@ const buildCellRefDecorator = require('platform/formula/cellAddressParts/common/
 describe('语法树测试', function () {
 
   let FORMULA_LIST = [];
-  // 在A列左侧插入一列后的公式，所有公式右移1列
+  // 在A列左侧插入一列，所有公式右移1列
   let FORMULA_TEXT_TRANSLATE_RIGHT_1_COL = [];
 
-  // 删除A列后的公式，所有公式左移1列
+  // 删除A列，所有公式左移1列
   let FORMULA_TEXT_TRANSLATE_LEFT_1_COL = [];
 
-  // 删除第一行数据，所有公式向上移动 1 行
+  // 删除第一行，所有公式向上移动 1 行
   let FORMULA_TEXT_TRANSLATE_TOP_1_ROW = [];
 
   // 在第一行上方插入一行，所有的公式向下移动 1 行
@@ -36,39 +32,39 @@ describe('语法树测试', function () {
 
     FORMULA_TEXT_TRANSLATE_RIGHT_1_COL = [
       '=IF(D7<F7,MIN(ABS(F7-D7),E7),0)',
-      '=MIN(ROUND($H$5*F14,2), E14)',
-      '=MAX(D33-F33,0)',
+      '=MIN(ROUND($H$5*F14,2),E14)',
+      '=MAX(D33-E33,0)',
       '=MIN(A001主表!B1:C5)',
       '=ROUNDUP(MIN(D19*0.6,A101010一般企业收入明细表!D4*0.005),2)',
-      '=IF(A105060广告费和业务宣传费跨年度纳税调整明细表!D15>0, 0, ABS(A105060广告费和业务宣传费跨年度纳税调整明细表!D15))'
+      '=IF(A105060广告费和业务宣传费跨年度纳税调整明细表!D15>0,0,ABS(A105060广告费和业务宣传费跨年度纳税调整明细表!D15))'
     ];
 
     FORMULA_TEXT_TRANSLATE_LEFT_1_COL = [
       '=IF(B7<D7,MIN(ABS(D7-B7),C7),0)',
-      '=MIN(ROUND($F$5*D14,2), C14)',
+      '=MIN(ROUND($F$5*D14,2),C14)',
       '=MAX(B33-C33,0)',
-      '=#REF!', // =#REF! ，=MIN(A001主表!A1:B5)
+      '=MIN(A001主表!A1:A5)', // =#REF! ，
       '=ROUNDUP(MIN(B19*0.6,A101010一般企业收入明细表!B4*0.005),2)',
-      '=IF(A105060广告费和业务宣传费跨年度纳税调整明细表!B15>0, 0, ABS(A105060广告费和业务宣传费跨年度纳税调整明细表!B15))'
+      '=IF(A105060广告费和业务宣传费跨年度纳税调整明细表!B15>0,0,ABS(A105060广告费和业务宣传费跨年度纳税调整明细表!B15))'
     ];
 
     FORMULA_TEXT_TRANSLATE_TOP_1_ROW = [
       '=IF(C6<E6,MIN(ABS(E6-C6),D6),0)',
-      '=MIN(ROUND($G$4*E13,2), D13)',
+      '=MIN(ROUND($G$4*E13,2),D13)',
       '=MAX(C32-D32,0)',
-      '=#REF!', //TODO: =#REF! =MIN(A001主表!A1:B5)
+      '=MIN(A001主表!A1:B4)', //TODO: =#REF! 
       '=ROUNDUP(MIN(C18*0.6,A101010一般企业收入明细表!C3*0.005),2)',
-      '=IF(A105060广告费和业务宣传费跨年度纳税调整明细表!C14>0, 0, ABS(A105060广告费和业务宣传费跨年度纳税调整明细表!C14))'
+      '=IF(A105060广告费和业务宣传费跨年度纳税调整明细表!C14>0,0,ABS(A105060广告费和业务宣传费跨年度纳税调整明细表!C14))'
     ];
 
     FORMULA_TEXT_TRANSLATE_DOWN_1_ROW = [
 
       '=IF(C8<E8,MIN(ABS(E8-C8),D8),0)',
-      '=MIN(ROUND($G$6*E15,2), D15)',
+      '=MIN(ROUND($G$6*E15,2),D15)',
       '=MAX(C34-D34,0)',
       '=MIN(A001主表!A2:B6)',
       '=ROUNDUP(MIN(C20*0.6,A101010一般企业收入明细表!C5*0.005),2)',
-      '=IF(A105060广告费和业务宣传费跨年度纳税调整明细表!C16>0, 0, ABS(A105060广告费和业务宣传费跨年度纳税调整明细表!C16))'
+      '=IF(A105060广告费和业务宣传费跨年度纳税调整明细表!C16>0,0,ABS(A105060广告费和业务宣传费跨年度纳税调整明细表!C16))'
     ]
 
   });
@@ -78,7 +74,7 @@ describe('语法树测试', function () {
     assert.strictEqual(parsedStr.substring(0, parsedStr.length - 5), ast.content.toString());
   }
 
-  it('应成功构建语法树', function () {
+  it('构建语法树', function () {
     FORMULA_LIST.forEach(function (f) {
       let core = new SingleFormulaCore();
       let parseTree = core.parse(f);
@@ -91,16 +87,15 @@ describe('语法树测试', function () {
 
     let core = new SingleFormulaCore();
     let parseTree = core.parse(formula);
-
     let ast = new SingleFormulaAST(parseTree);
 
     // 收集受影响的单元格
     let cellRefNodes = ast.findAllCellRefNodes();
-
     let translatorList = cellRefNodes.map(function (cellRef) {
       return buildCellRefDecorator(cellRef);
     });
 
+    let error = undefined;
     // 修改单元格地址(在实际使用过程中，可能只有部分单元格地址需要更新)
     // 此处，假设所有单元格都需要更新。
     try {
@@ -110,30 +105,25 @@ describe('语法树测试', function () {
         } else {
           translator[operation](args);
         }
-
       });
     } catch (e) {
-      if (typeof expected === "string") {
-        assert.strictEqual(e.message, expected);
-      } else if (typeof expected === "function") {
-        expected(e);
-      }
-      return;
+      error = e;
     }
 
     // 引用方单元格公式自动更新
     let update = ast.toString();
 
-    if (typeof expected === "string") {
+    if(typeof expected === 'string') {
       assert.strictEqual(update, expected);
+      return;
     }
 
     if (typeof expected === "function") {
-      expected(update);
+      expected(error, update);
     }
   }
 
-  describe('应变更单元格地址', function () {
+  describe('变更单元格地址', function () {
     /**
      * @param {String} operator 'translateUp', 'translateDown', 'translateLeft', 'translateRight'
      */
@@ -165,9 +155,7 @@ describe('语法树测试', function () {
       //      └─────────┴─────────┴─────────┘
       // 插入新行后，单元格 B1 变更为 B2, B2 应用的公式变更为 A2
       //
-      let f = '=A1';
-      let expected = '=A2'; // B2=A2
-      transform(f, expected, 'translateDown', 1);
+      transform('=A1', '=A2', 'translateDown', 1);
     });
 
     it('remove 行地址', function () {
@@ -203,7 +191,7 @@ describe('语法树测试', function () {
   })
 
 
-  describe('正确变更单元格范围', function () {
+  describe('变更单元格范围', function () {
 
     it('插入行：在左上角之前插入行', function () {
       transform('=A1:B3', '=A2:B4', 'translateDown', 1);
@@ -293,7 +281,7 @@ describe('语法树测试', function () {
       transform('=SUM(A2:B4)', '=SUM(A2:B4)', 'removeRows', [5, 3]);
     });
 
-    it('插入列：在左上角之前插入列', function () {
+    it('插入列：全部情况', function () {
       //
       //    │
       //    │
@@ -348,6 +336,46 @@ describe('语法树测试', function () {
       transform('=SUM(B2:C4)', '=SUM(A2:B4)', 'removeColumns', [1, 1]);
       transform('=SUM(B2:C4)', '=SUM(A2:B4)', 'removeColumns', ['A', 1]);
     });
+  })
+
+  describe('变换复杂公式', function(){
+    it('插入一列', function(){
+      for(let i = 0; i < FORMULA_LIST.length; i++) {
+        transform(FORMULA_LIST[i], FORMULA_TEXT_TRANSLATE_RIGHT_1_COL[i], 'insertColumns', [1, 1]);
+      }
+    })
+    
+    it('删除A列', function (){
+      for(let i = 0; i < FORMULA_LIST.length; i++) {
+        transform(FORMULA_LIST[i], FORMULA_TEXT_TRANSLATE_LEFT_1_COL[i], 'removeColumns', [1, 1]);
+      }
+    })
+
+    it('插入一行', function(){
+      for(let i = 0; i < FORMULA_LIST.length; i++) {
+        transform(FORMULA_LIST[i], FORMULA_TEXT_TRANSLATE_DOWN_1_ROW[i], 'insertRows', [1, 1]);
+      }
+    })
+
+    it('删除第一行', function() {
+      for(let i = 0; i < FORMULA_LIST.length; i++) {
+        transform(FORMULA_LIST[i], FORMULA_TEXT_TRANSLATE_TOP_1_ROW[i], 'removeRows', [1, 1]);
+      }
+    })
+  })
+
+  describe('公式中的单元格地址被删除', function() {
+    it('单元格地址', function() {
+      transform('=A1 + B2', function(e, result) {
+        assert.strictEqual(result, '=#REF!+B2');
+      }, 'removeColumns', [1, 1]);
+    })
+
+    it('单元格范围', function() {
+      transform('=SUM(B1:C2)', function(e, result) {
+        assert.strictEqual(result, '=SUM(#REF!)');
+      }, 'removeColumns', ['B', 2]);
+    })
   })
 
 });

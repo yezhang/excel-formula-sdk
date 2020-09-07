@@ -30,6 +30,7 @@
   "devDependencies": {
     "bufferutil": "^4.0.1",
     "cd": "^0.3.3",
+    "chai": "^4.2.0",
     "coverage-istanbul-loader": "^3.0.4",
     "gulp": "^4.0.2",
     "karma": "^5.1.1",

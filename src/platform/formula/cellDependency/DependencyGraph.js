@@ -57,7 +57,10 @@ class DependencyEdgeData {
  */
 class DependencyGraph {
   constructor() {
-    this.graph = new Graph();
+    let hashFn = function(nodeData) {
+      return nodeData.hashcode();
+    }
+    this.graph = new Graph(hashFn);
   }
 
   /**
@@ -71,11 +74,26 @@ class DependencyGraph {
    * 
    */
   removeCellAddress(cellAddress) {
-
+    this.graph.removeNode(cellAddress);
   }
 
-  addCellDependencies(cellAddress, dependencies) {
+  addCellDependencies(cellAddress, dependencyMap) {
+    const that = this;
+    if(dependencyMap){
+      let deps = Object.keys(dependencyMap);
+      deps.forEach(function(dep, index) {
+        let depDetail = dependencyMap[dep];
+        that.graph.insertEdge(cellAddress, depDetail.simple, depDetail.deps);
+      })
+    }
+    
+  }
 
+  /**
+   * 返回所有顶点。
+   */
+  simpleCellAddressList() {
+    return this.graph.nodes();
   }
 
   getCellFormula(activeSheetName, simpleCellAddr){
