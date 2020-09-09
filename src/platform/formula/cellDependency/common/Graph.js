@@ -94,8 +94,23 @@ class Graph {
       node.outgoing.delete(key);
       node.incoming.delete(key);
     }
+  }
 
-
+  /**
+   * 移除从 data 节点出发的所有有向边
+   */
+  removeNodeOutgoings(data) {
+    const node = this.lookup(data);
+    if(!node) {
+      return;
+    }
+    const fromKey = this._hashFn(data);
+    const outgoings = node.outgoing;
+    for(let {toNode} of outgoings.values()) {
+      toNode.incoming.delete(fromKey);
+      const toKey = this._hashFn(toNode.data);
+      node.outgoing.delete(toKey);
+    }
   }
 
   /**

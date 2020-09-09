@@ -49,12 +49,12 @@ class CellDependencyBuilder {
    * 对单元格地址格式进行规范化处理。
    * 
    * 如果传入重复的 workingCellAddress，则执行覆盖，并更新图的关系。
-   * 
+   * @param {SimpleCellAddress} workingCellAddr 工作单元格地址
    * @param {Array[ CellAddressIdentifier|CellRangeIdentifier] } dependenciesList cellRefNodes
    */
   addOrUpdateDependencies(workingCellAddr, dependenciesList) {
     const _this = this;
-    let activeSheetName = workingCellAddr.sheetName;
+    let activeSheetName = workingCellAddr.sheet;
     
     // 包括单元格地址和单元格范围
     const depMap = {};
@@ -82,10 +82,10 @@ class CellDependencyBuilder {
   }
 
   /**
-   * 移除从 cellAddress 发出的有向边。
+   * 移除从 cellAddress 发出的有向边（只移除出度）。
    */
   _removeDependencies(cellAddress) {
-    this.depGraph.removeCellAddress(cellAddress);
+    this.depGraph.removeCellDependencies(cellAddress);
   }
 
 

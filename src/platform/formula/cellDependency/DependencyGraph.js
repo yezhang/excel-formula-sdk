@@ -84,7 +84,7 @@ class DependencyGraph {
    *        从图中移除节点 n
    * return L
    * 
-   * @return {*} 排序后的数组。
+   * @return {*} 排序后的顶点数组，数组元素类型是 SimpleCellAddress。
    */
   sort() {
     const copy = this.graph.clone();
@@ -108,10 +108,18 @@ class DependencyGraph {
   }
 
   /**
-   * 
+   * 删除单元格地址时，清除没有任何依赖的孤立节点。
    */
   removeCellAddress(cellAddress) {
     this.graph.removeNode(cellAddress);
+    this.graph.clearIsolatedNodes();
+  }
+
+  /**
+   * 只移除单元格地址的出度，当前节点不移除。
+   */
+  removeCellDependencies(cellAddress) {
+    this.graph.removeNodeOutgoings(cellAddress);
     this.graph.clearIsolatedNodes();
   }
 
@@ -119,7 +127,7 @@ class DependencyGraph {
     const that = this;
     if(dependencyMap){
       let deps = Object.keys(dependencyMap);
-      deps.forEach(function(dep, index) {
+      deps.forEach(function(dep) {
         let depDetail = dependencyMap[dep];
         that.graph.insertEdge(cellAddress, depDetail.simple, depDetail.deps);
       })

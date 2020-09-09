@@ -490,13 +490,16 @@ class CellAddressCarrier extends CellRefDecorator {
   }
 
   toSimpleAddress() {
-    let sheetName = this.cellAddress.sheetName;
+    let sheetNameID = this.cellAddress.sheetName;
+    let sheetName = sheetNameID ? sheetNameID.toString() : undefined;
     if (!sheetName) {
       sheetName = this.getWorkingContext().activeSheetName;
     }
 
     let column = this.a1RefTranslator.getColumnNumber();
     let row = this.a1RefTranslator.getRowNumber();
+    assert.ok(sheetName, '表格名称为空');
+
     return new SimpleCellAddress(sheetName, column, row);
   }
 

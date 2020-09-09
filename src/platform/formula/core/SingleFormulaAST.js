@@ -324,6 +324,9 @@ class RefItemIdentifier {
 }
 
 class CellAddressIdentifier {
+  /**
+   * @param {SheetNameIdentifier} sheetName
+   */
   constructor(sheetName, a1Reference) {
     this.type = Syntax.CellAddressIdentifier;
     this.sheetName = sheetName;
@@ -356,7 +359,10 @@ class SheetNameIdentifier {
   }
 
   clone() {
-    return new SheetNameIdentifier(this.name.slice());
+    if(this.name) {
+      return new SheetNameIdentifier(this.name.slice());
+    }
+    return new SheetNameIdentifier(undefined);
   }
 }
 
@@ -665,6 +671,7 @@ class SequenceExpression {
   }
 }
 
+exports.SheetNameIdentifier = SheetNameIdentifier;
 exports.A1ReferenceIdentifier = A1ReferenceIdentifier;
 
 exports.AbsoluteColumnIdentifier = AbsoluteColumnIdentifier;
