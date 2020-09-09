@@ -41,14 +41,12 @@ class FormulaEngine {
    */
   setCellFormula(workBookContext, cellAddr, formula) {
     const activeSheetName = workBookContext.activeSheetName;
-    const formulaParseTree = SingleFormulaCoreInst.parse(formula);
-    const ast = new SingleFormulaAST(formulaParseTree);
+    const parseTree = SingleFormulaCoreInst.parse(formula);
+    const ast = new SingleFormulaAST(parseTree);
 
-    // 收集受影响的单元格
-    let cellRefNodes = ast.findAllCellRefNodes();
-    
     const builder = new CellDependencyBuilder(this.depGraph);
-    builder.addOrUpdateDependencies(activeSheetName, cellAddr, cellRefNodes);
+    builder.setFormulaAST(ast);
+    builder.build(activeSheetName, cellAddr);
   }
 
   getCellFormula(workBookContext, cellAddr) {

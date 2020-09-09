@@ -412,8 +412,8 @@ class SimpleCellAddress {
    */
   constructor(sheetName, columnNumber, rowNumber) {
     this.sheet = sheetName;
-    this.row = columnNumber;
-    this.column = rowNumber;
+    this.column = columnNumber;
+    this.row = rowNumber;
   }
 
   getDescription() {
@@ -427,6 +427,21 @@ class SimpleCellAddress {
   hashcode() {
     return `${this.sheet}#${this.column},${this.row}`;
   }
+
+  equals(other) {
+    if (!other) {
+      return false;
+    }
+    if (!other instanceof SimpleCellAddress) {
+      return false;
+    }
+
+    return this.hashcode() === other.hashcode();
+  }
+}
+
+SimpleCellAddress.build = function(sheetName, column, row) {
+  return new SimpleCellAddress(sheetName, column, row);
 }
 
 /**
@@ -476,7 +491,7 @@ class CellAddressCarrier extends CellRefDecorator {
 
   toSimpleAddress() {
     let sheetName = this.cellAddress.sheetName;
-    if(!sheetName) {
+    if (!sheetName) {
       sheetName = this.getWorkingContext().activeSheetName;
     }
 
@@ -486,7 +501,7 @@ class CellAddressCarrier extends CellRefDecorator {
   }
 
   setWorkingContext(context) {
-    if(context instanceof SingleFormulaContext){
+    if (context instanceof SingleFormulaContext) {
       this._workingContext = context;
     }
   }
@@ -566,7 +581,7 @@ class CellRangeCarrier extends CellRefDecorator {
   }
 
   setWorkingContext(context) {
-    if(context instanceof SingleFormulaContext){
+    if (context instanceof SingleFormulaContext) {
       this._workingContext = context;
     }
   }
@@ -577,7 +592,7 @@ class CellRangeCarrier extends CellRefDecorator {
 
   toSimpleAddress() {
     let sheetName = this.cellAddress.sheetName;
-    if(!sheetName) {
+    if (!sheetName) {
       sheetName = this.getWorkingContext().activeSheetName;
     }
 

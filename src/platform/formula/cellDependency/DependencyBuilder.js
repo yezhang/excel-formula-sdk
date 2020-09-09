@@ -21,6 +21,16 @@ class CellDependencyBuilder {
     this.depGraph = depGraph;
   }
 
+  setFormulaAST(ast) {
+    this.formulaAST = ast;
+  }
+
+  build(activeSheetName, workingCellRefAddr) {
+    // 收集受影响的单元格
+    // Array[ CellAddressIdentifier|CellRangeIdentifier]
+    let dependenciesList = this.formulaAST.findAllCellRefNodes();
+    this.addOrUpdateDependencies(activeSheetName, workingCellRefAddr, dependenciesList);
+  }
 
   /**
    * 将 "单元格引用字符串" 对象化、去除重复的依赖引用、简化地址表示法。
@@ -34,6 +44,7 @@ class CellDependencyBuilder {
    */
   addOrUpdateDependencies(activeSheetName, workingCellRefAddr, dependenciesList) {
     const _this = this;
+
     let simpleCellAddress = new SimpleCellAddress(activeSheetName, workingCellRefAddr.column, workingCellRefAddr.row);
 
     // 包括单元格地址和单元格范围

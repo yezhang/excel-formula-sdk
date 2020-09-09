@@ -10,11 +10,11 @@ class TopologicalSortStrategy{
 
 }
 
-/**
- * 将解析树转换为语法树
- */
-function convertToAst(tree) {
-
+class CyclicDependencyError extends Error {
+	constructor(graph) {
+		super('单元格地址之间循环依赖');
+		this.message = graph.toString();
+	}
 }
 
 /**
@@ -41,15 +41,6 @@ class CellData {
   }
 }
 
-/**
- * 单元格依赖边的数据。
- * 本边的 from 节点所持有的单元格引用。单元格引用使用语法树节点数组表示。
- */
-class DependencyEdgeData {
-  constructor(deps) {
-    this.references = deps;
-  }
-}
 
 /**
  * 如果单元格 A1 依赖单元格 B1，则存在一条从 A1 指向 B1 边。
@@ -64,10 +55,56 @@ class DependencyGraph {
   }
 
   /**
+   * 算法描述：Kahn 算法（卡恩算法）
+   * L <- 包含所有排序元素的列表，初始为 []
+   * S <- 所有没有出度的顶点。（在标准算法中，使用了入度，在单元格地址依赖关系中，使用出度）。
+   * while S 非空 do
+   *    从 S 中移除一个节点 n
+   *    将 n 放入 L
+   *    for 每个节点 m（存在从 m 到 n 的一条边 e） do
+   *        从图中移除边 e
+   *        if m 没有出度 then  
+   *            把 m 放入 L
+   * if 图中存在边 then
+   *    return error（图中至少存在一个环）
+   * else
+   *    return L（一个拓扑排序）
+   * 
+   * 算法2：（来自 VSCode）
+   * L <- 包含所有排序元素的列表，初始为 []
+   * 
+   * while true do
+   *    S <- 从图中查询所有没有出度的顶点。
+   *    if S 为空 then
+   *        if 图中存在顶点 then
+   *          return error（图中存在循环）
+   *        break;
+   *    for S 中的每个顶点 n
+   *        将 n 放入 L
+   *        从图中移除节点 n
+   * return L
+   * 
    * @return {*} 排序后的数组。
    */
-  sort(sortStrategy) {
+  sort() {
+    const copy = this.graph.clone();
+    const L = [];
+    while(true) {
+      let S = copy.roots();
+      if(S.length === 0) {
+        if(!copy.isEmpty()) {
+          throw new CyclicDependencyError(copy);
+        }
+        break;
+      }
 
+      S.forEach(function(node) {
+        L.push(node.data);
+        copy.removeNode(node.data);
+      })
+    }
+
+    return L;
   }
 
   /**
@@ -75,6 +112,7 @@ class DependencyGraph {
    */
   removeCellAddress(cellAddress) {
     this.graph.removeNode(cellAddress);
+    this.graph.clearIsolatedNodes();
   }
 
   addCellDependencies(cellAddress, dependencyMap) {

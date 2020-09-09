@@ -1,3 +1,5 @@
+const Map = require('core-js-pure/features/map');
+
 /**
  * 图结构: 有向图
  */
@@ -9,13 +11,48 @@ class Node {
     this.incoming = new Map(); //TODO: 考虑 Map 类型的兼容性
     this.outgoing = new Map();
   }
+
+  clone() {
+    function cloneMap(map) {
+      const copy = new Map();
+      map.forEach(function (v, k) {
+        copy.set(k, v);
+      });
+
+      return copy;
+    }
+    let copy = new Node(this.data);
+    copy.incoming = cloneMap(this.incoming);
+    copy.outgoing = cloneMap(this.outgoing);
+    return copy;
+  }
 }
+
+
 
 class Graph {
   constructor(hashFn) {
     // noop
     this._hashFn = hashFn;
     this._nodes = new Map();
+  }
+
+  clone() {
+    /**
+     * 拷贝 key，拷贝 value（value中保存着 Node）
+     */
+    function cloneNodes(map) {
+      let copy = new Map();
+      map.forEach(function (v, k) {
+        if (v instanceof Node) {
+          copy.set(k, v.clone());
+        }
+      });
+      return copy;
+    }
+    let copy = new Graph(this._hashFn);
+    copy._nodes = cloneNodes(this._nodes);
+    return copy;
   }
 
   roots() {
@@ -29,6 +66,9 @@ class Graph {
     return ret;
   }
 
+  /**
+   * 返回所有顶点
+   */
   nodes() {
     const ret = [];
     for (let node of this._nodes.values()) {
@@ -54,6 +94,22 @@ class Graph {
       node.outgoing.delete(key);
       node.incoming.delete(key);
     }
+
+
+  }
+
+  /**
+   * 移除孤立节点
+   */
+  clearIsolatedNodes() {
+    // 如果生成了孤立节点，则移除孤立的节点
+    let nodes = this.nodes();
+    for (let i = 0; i < nodes.length; i++) {
+      let n = nodes[i];
+      if (n.outgoing.size === 0 && n.incoming.size === 0) {
+        this.removeNode(n.data);
+      }
+    }
   }
 
   lookupOrInsertNode(data) {
@@ -73,7 +129,7 @@ class Graph {
   }
 
   isEmpty() {
-    this._nodes.size === 0;
+    return this._nodes.size === 0;
   }
 
   toString() {
