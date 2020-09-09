@@ -32,7 +32,6 @@ describe('依赖图的构建', function () {
    */
   function genDepGraph(activeSheetName) {
     let depGraph = new DependencyGraph();
-
     const builder = new CellDependencyBuilder(depGraph);
 
     // B1 = A1 + $A1 + A1 + C1
@@ -46,7 +45,7 @@ describe('依赖图的构建', function () {
 
     let cellRefNodes = [A1, $A1, A1_2, C1];
 
-    builder.addOrUpdateDependencies(activeSheetName, B1, cellRefNodes);
+    builder.addOrUpdateDependencies(B1, cellRefNodes);
 
     return builder.getDependencyGraph();
   }
@@ -91,7 +90,7 @@ describe('依赖图的构建', function () {
     let cellRefNodes = [A1, $A1, D2];
 
     // 更新后的公式，B1 = A1 + $A1 + D2
-    builder.addOrUpdateDependencies(activeSheetName, B1, cellRefNodes);
+    builder.addOrUpdateDependencies(B1, cellRefNodes);
 
     let nodes = depGraph.simpleCellAddressList();
     // 包括 B1->A1, D2
@@ -110,7 +109,20 @@ describe('依赖图的构建', function () {
   });
 
   it('删除顶点', function () {
+    // 当用户删除某个单元格的公式时，删除依赖关系
+    let activeSheetName = 'sheet1';
+    let depGraph = genDepGraph(activeSheetName);
 
+    const builder = new CellDependencyBuilder(depGraph);
+    let B1 = {
+      column: 2,
+      row: 1
+    };
+    builder.clear(activeSheetName, B1);
+
+    let sorted = depGraph.sort();
+
+    expect(sorted).to.has.lengthOf(0);
   });
 
   it('单元格范围依赖', function () {

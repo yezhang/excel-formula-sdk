@@ -25,11 +25,21 @@ class CellDependencyBuilder {
     this.formulaAST = ast;
   }
 
+  /**
+   * 清空当前工作单元格的依赖
+   */
+  clear(activeSheetName, workingCellRefAddr) {
+    let simpleCellAddress = new SimpleCellAddress(activeSheetName, workingCellRefAddr.column, workingCellRefAddr.row);
+    this._removeDependencies(simpleCellAddress);
+  }
+
   build(activeSheetName, workingCellRefAddr) {
+    let simpleCellAddress = new SimpleCellAddress(activeSheetName, workingCellRefAddr.column, workingCellRefAddr.row);
+
     // 收集受影响的单元格
     // Array[ CellAddressIdentifier|CellRangeIdentifier]
     let dependenciesList = this.formulaAST.findAllCellRefNodes();
-    this.addOrUpdateDependencies(activeSheetName, workingCellRefAddr, dependenciesList);
+    this.addOrUpdateDependencies(simpleCellAddress, dependenciesList);
   }
 
   /**
@@ -42,11 +52,10 @@ class CellDependencyBuilder {
    * 
    * @param {Array[ CellAddressIdentifier|CellRangeIdentifier] } dependenciesList cellRefNodes
    */
-  addOrUpdateDependencies(activeSheetName, workingCellRefAddr, dependenciesList) {
+  addOrUpdateDependencies(workingCellAddr, dependenciesList) {
     const _this = this;
-
-    let simpleCellAddress = new SimpleCellAddress(activeSheetName, workingCellRefAddr.column, workingCellRefAddr.row);
-
+    let activeSheetName = workingCellAddr.sheetName;
+    
     // 包括单元格地址和单元格范围
     const depMap = {};
     dependenciesList.forEach(function (dep) {
@@ -68,8 +77,8 @@ class CellDependencyBuilder {
       }
     });
 
-    this._removeDependencies(simpleCellAddress);
-    this._addDependencies(simpleCellAddress, depMap);
+    this._removeDependencies(workingCellAddr);
+    this._addDependencies(workingCellAddr, depMap);
   }
 
   /**

@@ -31,7 +31,9 @@ class FormulaEngine {
    * 用户删除一个公式时调用。
    */
   clearCellFormula(workBookContext, cellAddr) {
-
+    const activeSheetName = workBookContext.activeSheetName;
+    const builder = new CellDependencyBuilder(this.depGraph);
+    builder.clear(activeSheetName, cellAddr);
   }
 
   /**
