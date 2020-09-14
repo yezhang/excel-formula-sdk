@@ -288,6 +288,7 @@ class CellAddressTokensDecorator {
 
     // TODO: 触发单元格高亮事件
     console.log('trigger cell address colors');
+
     _this.decorations = editor.deltaDecorations(_this.decorations, decorationRangeList);
   }
   

@@ -3,16 +3,6 @@ const buildCellRefDecorator = require('../cellAddressParts/common/CellAddressPar
 const SimpleCellAddress = require('platform/formula/cellAddressParts/common/CellAddressParts').SimpleCellAddress;
 const SingleFormulaContext = require('platform/formula/core/SingleFormulaContext').SingleFormulaContext;
 
-/**
- * 单元格依赖关系收集，生成依赖图。
- */
-class CyclicDependencyError extends Error {
-  constructor(graph) {
-    super('单元格之间发生了循环依赖');
-    this.message = graph.toString();
-  }
-}
-
 class CellDependencyBuilder {
   /**
    * @param {DependencyGraph} depGraph 依赖关系图

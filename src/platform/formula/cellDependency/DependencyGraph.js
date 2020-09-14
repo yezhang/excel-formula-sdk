@@ -6,15 +6,15 @@ const Graph = require('./common/Graph').Graph;
 /**
  * 拓扑排序策略
  */
-class TopologicalSortStrategy{
+class TopologicalSortStrategy {
 
 }
 
 class CyclicDependencyError extends Error {
-	constructor(graph) {
-		super('单元格地址之间循环依赖');
-		this.message = graph.toString();
-	}
+  constructor(graph) {
+    super('单元格地址之间循环依赖');
+    this.message = graph.toString();
+  }
 }
 
 /**
@@ -42,13 +42,17 @@ class CellData {
 }
 
 
+
+
+
+
 /**
  * 如果单元格 A1 依赖单元格 B1，则存在一条从 A1 指向 B1 边。
  * 此时，B1 为根节点。
  */
 class DependencyGraph {
   constructor() {
-    let hashFn = function(nodeData) {
+    let hashFn = function (nodeData) {
       return nodeData.hashcode();
     }
     this.graph = new Graph(hashFn);
@@ -57,14 +61,14 @@ class DependencyGraph {
   /**
    * 算法描述：Kahn 算法（卡恩算法）
    * L <- 包含所有排序元素的列表，初始为 []
-   * S <- 所有没有出度的顶点。（在标准算法中，使用了入度，在单元格地址依赖关系中，使用出度）。
+   * S <- 出度为 0 的顶点集合。（在标准算法中，使用了入度，在单元格地址依赖关系中，使用出度）。
    * while S 非空 do
    *    从 S 中移除一个节点 n
    *    将 n 放入 L
    *    for 每个节点 m（存在从 m 到 n 的一条边 e） do
    *        从图中移除边 e
    *        if m 没有出度 then  
-   *            把 m 放入 L
+   *            把 m 放入 S
    * if 图中存在边 then
    *    return error（图中至少存在一个环）
    * else
@@ -89,16 +93,16 @@ class DependencyGraph {
   sort() {
     const copy = this.graph.clone();
     const L = [];
-    while(true) {
+    while (true) {
       let S = copy.roots();
-      if(S.length === 0) {
-        if(!copy.isEmpty()) {
+      if (S.length === 0) {
+        if (!copy.isEmpty()) {
           throw new CyclicDependencyError(copy);
         }
         break;
       }
 
-      S.forEach(function(node) {
+      S.forEach(function (node) {
         L.push(node.data);
         copy.removeNode(node.data);
       })
@@ -106,6 +110,26 @@ class DependencyGraph {
 
     return L;
   }
+
+  // 查找循环依赖，并打印出循环依赖中的各个单元格地址数组（Array）
+  // 地址数组是一个二维数组，结构样例为：
+  // 样例中，单元格地址依赖关系是 c1 -> c2 -> c3 -> c1
+  // c2 -> c4 -> c5 -> c2
+  // [
+  //  [c1, c2, c3],
+  //  [c2, c4, c5],
+  //  [...]
+  // ]
+  //
+  // 算法来源《FINDING ALL THE ELEMENTARY CIRCUITS OF A DIRECTED GRAPH》（DONALD B. JOHNSON, 1975）
+  // https://www.cs.tufts.edu/comp/150GA/homeworks/hw1/Johnson%2075.PDF
+  // 算法复杂度：时间复杂度 O((n+e)(c+1)), 空间复杂度 O(n+e), n 表示顶点数，e 表示边数，c 表示基本环路数
+  findAllCyclicDependency() {
+    const ret = [];
+
+  }
+
+
 
   /**
    * 删除单元格地址时，清除没有任何依赖的孤立节点。
@@ -125,14 +149,14 @@ class DependencyGraph {
 
   addCellDependencies(cellAddress, dependencyMap) {
     const that = this;
-    if(dependencyMap){
+    if (dependencyMap) {
       let deps = Object.keys(dependencyMap);
-      deps.forEach(function(dep) {
+      deps.forEach(function (dep) {
         let depDetail = dependencyMap[dep];
         that.graph.insertEdge(cellAddress, depDetail.simple, depDetail.deps);
       })
     }
-    
+
   }
 
   /**
@@ -142,9 +166,10 @@ class DependencyGraph {
     return this.graph.nodes();
   }
 
-  getCellFormula(activeSheetName, simpleCellAddr){
+  getCellFormula(activeSheetName, simpleCellAddr) {
 
   }
 }
 
+exports.CyclicDependencyError = CyclicDependencyError;
 exports.DependencyGraph = DependencyGraph;

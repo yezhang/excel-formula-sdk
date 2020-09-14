@@ -3,7 +3,7 @@
  */
 
  describe('图', function () {
-  it('应正确构造一个实例', function (){
+  it('应正确构造一个图', function (){
     let second = new Map([
       [1, 'uno'],
       [2, 'dos']

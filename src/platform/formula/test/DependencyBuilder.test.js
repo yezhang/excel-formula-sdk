@@ -4,7 +4,7 @@
 
 const expect = require('chai').expect;
 const CellDependencyBuilder = require('platform/formula/cellDependency/DependencyBuilder').CellDependencyBuilder;
-const DependencyGraph = require('platform/formula/cellDependency/DependencyGraph').DependencyGraph;
+const { CyclicDependencyError, DependencyGraph} = require('platform/formula/cellDependency/DependencyGraph');
 const { CellAddressIdentifier, A1ReferenceIdentifier, SheetNameIdentifier,
   AbsoluteColumnIdentifier, RelativeColumnIdentifier,
   AbsoluteRowIdentifier, RelativeRowIdentifier
@@ -15,12 +15,12 @@ const { SimpleCellAddress } = require('platform/formula/cellAddressParts/common/
 
 describe('依赖图的构建', function () {
 
-  function buildRelativeAddress(sheetName, columnText, rowLine) {
+  function buildRelativeAddressAST(sheetName, columnText, rowLine) {
     return new CellAddressIdentifier(new SheetNameIdentifier(sheetName), new A1ReferenceIdentifier(
       new RelativeColumnIdentifier(columnText), new RelativeRowIdentifier(rowLine)
     ));
   }
-  function buildAbsoluteColumnAddress(sheetName, columnText, rowLine) {
+  function buildAbsoluteColumnAddressAST(sheetName, columnText, rowLine) {
     return new CellAddressIdentifier(new SheetNameIdentifier(sheetName), new A1ReferenceIdentifier(
       new AbsoluteColumnIdentifier(columnText), new RelativeRowIdentifier(rowLine)
     ));
@@ -43,10 +43,10 @@ describe('依赖图的构建', function () {
     // B1 = A1 + $A1 + A1 + C1
     let B1 = SimpleCellAddress.build(activeSheetName, 2, 1);
 
-    let A1 = buildRelativeAddress(null, 'A', 1);
-    let $A1 = buildAbsoluteColumnAddress(null, 'A', 1);
+    let A1 = buildRelativeAddressAST(null, 'A', 1);
+    let $A1 = buildAbsoluteColumnAddressAST(null, 'A', 1);
     let A1_2 = A1.clone();
-    let C1 = buildRelativeAddress(null, 'C', 1);
+    let C1 = buildRelativeAddressAST(null, 'C', 1);
 
     builder.addOrUpdateDependencies(B1, [A1, $A1, A1_2, C1]);
     return builder.getDependencyGraph();
@@ -86,9 +86,9 @@ describe('依赖图的构建', function () {
     const builder = new CellDependencyBuilder(depGraph);
     let B1 = SimpleCellAddress.build(activeSheetName, 2, 1);
 
-    let A1 = buildRelativeAddress(null, 'A', 1);
-    let $A1 = buildAbsoluteColumnAddress(null, 'A', 1);
-    let D2 = buildRelativeAddress(activeSheetName, 'D', 2);
+    let A1 = buildRelativeAddressAST(null, 'A', 1);
+    let $A1 = buildAbsoluteColumnAddressAST(null, 'A', 1);
+    let D2 = buildRelativeAddressAST(activeSheetName, 'D', 2);
 
     // 更新后的公式，B1 = A1 + $A1 + D2
     builder.addOrUpdateDependencies(B1, [A1, $A1, D2]);
@@ -110,7 +110,21 @@ describe('依赖图的构建', function () {
   });
 
   it('循环依赖检测', function () {
-    expect.fail();
+    // 用例描述：
+    // Step1, B1 = A1 + $A1 + A1 + C1
+    // Step2, C1 = B1
+    // expect: 在 Step2 报错。
+
+    let activeSheetName = 'sheet1';
+    // Step1
+    let depGraph = genDepGraph(activeSheetName);
+    let builder = new CellDependencyBuilder(depGraph);
+    let C1 = SimpleCellAddress.build(activeSheetName, 3, 1);
+    let B1 = buildRelativeAddressAST(null, 'D', 1);
+    
+    expect(function() {
+      builder.addOrUpdateDependencies(C1, [B1]);
+    }).to.throw(new CyclicDependencyError('单元格地址之间循环依赖'));
   });
 
   it('删除顶点', function () {
@@ -126,7 +140,6 @@ describe('依赖图的构建', function () {
 
     // step1
     let depGraph = genDepGraph(activeSheetName);
-
     let builder = new CellDependencyBuilder(depGraph);
     let B1 = { column: 2, row: 1 };
     // step2
@@ -143,8 +156,8 @@ describe('依赖图的构建', function () {
     // step4 C1 = D1 + E2
     builder = new CellDependencyBuilder(depGraph);
     let C1 = SimpleCellAddress.build(activeSheetName, 3, 1);
-    let D1 = buildRelativeAddress(null, 'D', 1);
-    let E2 = buildRelativeAddress(null, 'E', 2);
+    let D1 = buildRelativeAddressAST(null, 'D', 1);
+    let E2 = buildRelativeAddressAST(null, 'E', 2);
     builder.addOrUpdateDependencies(C1, [D1, E2]);
 
     // 此时，预期的依赖关系图是：
