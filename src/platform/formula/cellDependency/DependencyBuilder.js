@@ -69,7 +69,6 @@ class CellDependencyBuilder {
 
     this._removeDependencies(workingCellAddr);
     this._addDependencies(workingCellAddr, depMap);
-
     this._checkCycleDepencies();
   }
 
@@ -79,6 +78,7 @@ class CellDependencyBuilder {
 
   /**
    * 移除从 cellAddress 发出的有向边（只移除出度）。
+   * @param {SimpleCellAddress} cellAddress
    */
   _removeDependencies(cellAddress) {
     this.depGraph.removeCellDependencies(cellAddress);
@@ -87,6 +87,7 @@ class CellDependencyBuilder {
 
   /**
    * 建立从 cellAddress 指向 dependencyMap.keys() 的有向边。
+   * @param {SimpleCellAddress} cellAddress
    */
   _addDependencies(cellAddress, dependencyMap) {
     this.depGraph.addCellDependencies(cellAddress, dependencyMap);
@@ -104,7 +105,6 @@ class CellDependencyBuilder {
   getDependencyGraph() {
     return this.depGraph;
   }
-
 }
 
 

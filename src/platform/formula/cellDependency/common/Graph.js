@@ -78,6 +78,18 @@ class Graph {
     return ret;
   }
 
+  /**
+   * 返回所有顶点的原始数据
+   */
+  nodeDatas() {
+    const ret = [];
+    for (let node of this._nodes.values()) {
+      ret.push(node.data);
+    }
+
+    return ret;
+  }
+
   // 边上可以携带属性 props 对象。
   insertEdge(from, to, props) {
     const fromNode = this.lookupOrInsertNode(from);

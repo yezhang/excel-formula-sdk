@@ -4,6 +4,8 @@
 const Graph = require('platform/formula/cellDependency/common/Graph').Graph;
 const Search = require('platform/formula/cellDependency/common/ElementaryCircuitsSearch').ElementaryCircuitsSearch;
 
+const SimpleCellRange = require('platform/formula/cellAddressParts/common/CellAddressParts').SimpleCellRange;
+
 /**
  * 拓扑排序策略
  */
@@ -41,11 +43,6 @@ class CellData {
 
   }
 }
-
-
-
-
-
 
 /**
  * 如果单元格 A1 依赖单元格 B1，则存在一条从 A1 指向 B1 边。
@@ -93,7 +90,7 @@ class DependencyGraph {
    *        从图中移除节点 n
    * return L
    * 
-   * @return {*} 排序后的顶点数组，数组元素类型是 SimpleCellAddress。
+   * @return {*} 排序后的顶点数组，数组元素类型是 SimpleCellAddress。索引越小，计算优先级越高。
    */
   sort() {
     const copy = this.graph.clone();
@@ -134,8 +131,6 @@ class DependencyGraph {
     return search.run();
   }
 
-
-
   /**
    * 删除单元格地址时，清除没有任何依赖的孤立节点。
    */
@@ -152,9 +147,40 @@ class DependencyGraph {
     this.graph.clearIsolatedNodes();
   }
 
+  _isCellRange(cellRef) {
+    return cellRef instanceof SimpleCellRange;
+  }
+
+  /**
+   * @param {SimpleCellRange} cellRefRange 单元格范围
+   * @param {SimpleCellAddress} cellRefAddress 单元格地址
+   * @return 如果 cell 是 range 的一个单元格，则返回 true；否则返回 false。
+   */
+  _isInRange(cellRefRange, cellRefAddress) {
+    return cellRefRange.includes(cellRefAddress);
+  }
+
+  /**
+   * 如果 cellAddress 是单元格范围或者 dependencyMap 中包含单元格范围时，考虑对于单元格范围的处理。
+   * @param {SimpleCellAddress} cellAddress
+   */
   addCellDependencies(cellAddress, dependencyMap) {
-    const that = this;
+     const that = this;
+    
     if (dependencyMap) {
+      // 处理范围的依赖：
+      // 如果当前工作单元格 cellAddress 处在某个范围顶点内，
+      // 需要建立该单元格范围到本顶点的依赖。
+      let existingNodes = this.graph.nodeDatas();
+      if(existingNodes){
+        existingNodes.forEach(function(n){
+          if(that._isCellRange(n) && that._isInRange(n, cellAddress)){
+            that.graph.insertEdge(n, cellAddress)
+          }
+        })
+      }
+
+      // 建立本单元格的依赖关系
       let deps = Object.keys(dependencyMap);
       deps.forEach(function (dep) {
         let depDetail = dependencyMap[dep];

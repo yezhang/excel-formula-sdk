@@ -4,13 +4,14 @@
 
 const expect = require('chai').expect;
 const CellDependencyBuilder = require('platform/formula/cellDependency/DependencyBuilder').CellDependencyBuilder;
-const { CyclicDependencyError, DependencyGraph} = require('platform/formula/cellDependency/DependencyGraph');
+const { CyclicDependencyError, DependencyGraph } = require('platform/formula/cellDependency/DependencyGraph');
 const { CellAddressIdentifier, A1ReferenceIdentifier, SheetNameIdentifier,
+  CellRangeIdentifier,
   AbsoluteColumnIdentifier, RelativeColumnIdentifier,
   AbsoluteRowIdentifier, RelativeRowIdentifier
 } = require('platform/formula/core/SingleFormulaAST');
 
-const { SimpleCellAddress } = require('platform/formula/cellAddressParts/common/CellAddressParts');
+const { SimpleCellAddress, SimpleCellRange } = require('platform/formula/cellAddressParts/common/CellAddressParts');
 
 
 describe('依赖图的构建', function () {
@@ -20,6 +21,20 @@ describe('依赖图的构建', function () {
       new RelativeColumnIdentifier(columnText), new RelativeRowIdentifier(rowLine)
     ));
   }
+
+  // 构建语法树节点
+  function buildRelativeRangeAST(sheetName, columnText1, rowLine1, columnText2, rowLine2) {
+    let startRef = new A1ReferenceIdentifier(
+      new RelativeColumnIdentifier(columnText1), new RelativeRowIdentifier(rowLine1)
+    );
+
+    let endRef = new A1ReferenceIdentifier(
+      new RelativeColumnIdentifier(columnText2), new RelativeRowIdentifier(rowLine2)
+    );
+
+    return new CellRangeIdentifier(new SheetNameIdentifier(sheetName), startRef, endRef);
+  }
+
   function buildAbsoluteColumnAddressAST(sheetName, columnText, rowLine) {
     return new CellAddressIdentifier(new SheetNameIdentifier(sheetName), new A1ReferenceIdentifier(
       new AbsoluteColumnIdentifier(columnText), new RelativeRowIdentifier(rowLine)
@@ -32,9 +47,9 @@ describe('依赖图的构建', function () {
    */
   function genDepGraph(activeSheetName, existingDepGraph) {
     let depGraph = undefined;
-    if(existingDepGraph) {
+    if (existingDepGraph) {
       depGraph = existingDepGraph;
-    }else {
+    } else {
       depGraph = new DependencyGraph();
     }
 
@@ -121,8 +136,8 @@ describe('依赖图的构建', function () {
     let builder = new CellDependencyBuilder(depGraph);
     let C1 = SimpleCellAddress.build(activeSheetName, 3, 1);
     let B1 = buildRelativeAddressAST(null, 'B', 1);
-    
-    expect(function() {
+
+    expect(function () {
       builder.addOrUpdateDependencies(C1, [B1]);
     }).to.throw(CyclicDependencyError, '单元格地址之间循环依赖');
   });
@@ -147,7 +162,7 @@ describe('依赖图的构建', function () {
 
     let sorted = depGraph.sort();
     expect(sorted).to.has.lengthOf(0);
-    
+
     // step3 B1 = A1 + $A1 + A1 + C1
     depGraph = genDepGraph(activeSheetName, depGraph);
     sorted = depGraph.sort();
@@ -190,7 +205,42 @@ describe('依赖图的构建', function () {
   });
 
   it('单元格范围依赖', function () {
-    
-    expect.fail();
+    // 当设置单元格范围内的某个单元格公式时，可以建立单元格范围到该单元格地址的依赖
+    // 用例描述：
+    // Step1, A1 = SUM(B2:C3)，形成 2 个顶点 A1, B2:C3
+    // Step2, B2 = D5，形成 2 个顶点 B2，D5；
+    // 在 Step2 完成时，形成一条从 'B2:C3' 到 'B2' 的边
+    let activeSheetName = 'sheet1';
+    let A1 = SimpleCellAddress.build(activeSheetName, 'A', 1);
+    let B2_C3 = buildRelativeRangeAST(activeSheetName, 'B', 2, 'C', 3);
+
+    let depGraph = new DependencyGraph();
+    const builder = new CellDependencyBuilder(depGraph);
+    builder.addOrUpdateDependencies(A1, [B2_C3]);
+    let sorted = depGraph.sort();
+    expect(sorted).to.has.lengthOf(2);
+
+    let B2 = SimpleCellAddress.build(activeSheetName, 'B', 2);
+    let D5 = buildRelativeAddressAST(activeSheetName, 'D', 5);
+    builder.addOrUpdateDependencies(B2, [D5]);
+
+    // 预期的依赖效果：
+    // ┌────┐   ┌───────┐
+    // │ A1 │──▶│ B2:C3 │
+    // └────┘   └───────┘
+    //              │
+    //              ▼
+    //          ┌───────┐   ┌────┐
+    //          │   B2  │──▶│ D5 │
+    //          └───────┘   └────┘
+
+    // 越是优先计算的，索引越小。
+    sorted = depGraph.sort();
+    expect(sorted).to.has.lengthOf(4);
+
+    let B2_C3Index = findIndex(SimpleCellRange.build(activeSheetName, 'B', 2, 'C', 3), sorted);
+    let B2Index = findIndex(SimpleCellAddress.build(activeSheetName, 'B', 2), sorted);
+
+    expect(B2_C3Index > B2Index).to.be.true;
   });
 })

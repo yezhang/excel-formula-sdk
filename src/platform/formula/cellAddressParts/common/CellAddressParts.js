@@ -1,7 +1,6 @@
 
 const assert = require('base/common/assert');
 const types = require('base/common/types');
-const { endsWith } = require('lodash');
 
 const CellAddressNode = require('platform/formula/core/SingleFormulaAST').CellAddressIdentifier;
 const CellRangeNode = require('platform/formula/core/SingleFormulaAST').CellRangeIdentifier;
@@ -15,6 +14,9 @@ class TranslateError extends Error {
   }
 }
 
+/**
+ * 把正数转换为列字母表示法
+ */
 function convertNumberToColumnLetters(number) {
   if (!types.isInt(number)) {
     throw new TypeError('无效的数字。有效的数字是整数');
@@ -43,7 +45,20 @@ function convertNumberToColumnLetters(number) {
   return column.join('');
 }
 
+function convertToNumberWhenColumnLetters(column) {
+  if (types.isInt(column)) {
+    return column;
+  }
+  return convertColumnLettersToNumber(column);
+}
+
+/**
+ * 把字母列的表示法转换为数字。
+ * 如果参数为数字，直接返回参数的值。
+ */
 function convertColumnLettersToNumber(column) {
+  
+
   function _convertLetter(char) {
     const c = char.charCodeAt(0);
     return c - 65 /* A */ + 1;
@@ -411,6 +426,7 @@ class SimpleCellAddress {
    * @param {Number} rowNumber 1..n
    */
   constructor(sheetName, columnNumber, rowNumber) {
+    this.type = 'CellRefAddress';
     this.sheet = sheetName;
     this.column = columnNumber;
     this.row = rowNumber;
@@ -432,7 +448,7 @@ class SimpleCellAddress {
     if (!other) {
       return false;
     }
-    if (!other instanceof SimpleCellAddress) {
+    if (!(other instanceof SimpleCellAddress)) {
       return false;
     }
 
@@ -440,8 +456,8 @@ class SimpleCellAddress {
   }
 }
 
-SimpleCellAddress.build = function(sheetName, column, row) {
-  return new SimpleCellAddress(sheetName, column, row);
+SimpleCellAddress.build = function (sheetName, column, row) {
+  return new SimpleCellAddress(sheetName, convertToNumberWhenColumnLetters(column), row);
 }
 
 /**
@@ -449,9 +465,11 @@ SimpleCellAddress.build = function(sheetName, column, row) {
  */
 class SimpleCellRange {
   /**
-   * 
+   * @param {String} sheetName
    */
   constructor(sheetName, startSimpleAddress, endSimpleAddress) {
+    this.type = 'CellRefRange';
+
     this.sheet = sheetName;
     this.start = {
       column: startSimpleAddress.column,
@@ -464,7 +482,39 @@ class SimpleCellRange {
     }
   }
 
+  hashcode() {
+    return `${this.sheet}#${this.start.column},${this.start.row};${this.end.column},${this.end.row}`;
+  }
 
+  includes(simpleCellAddress) {
+    let inColumn = this.start.column <= simpleCellAddress.column && simpleCellAddress.column <= this.end.column;
+    let inRow = this.start.row <= simpleCellAddress.row && simpleCellAddress.row <= this.end.row;
+
+    return inColumn && inRow;
+  }
+
+  equals(other) {
+    if (!other) {
+      return false;
+    }
+    if (!(other instanceof SimpleCellRange)) {
+      return false;
+    }
+
+    return this.hashcode() === other.hashcode();
+  }
+}
+
+SimpleCellRange.build = function (sheetName, column1, row1, column2, row2) {
+  return new SimpleCellRange(sheetName,
+    {
+      column: convertToNumberWhenColumnLetters(column1),
+      row: row1
+    },
+    {
+      column: convertToNumberWhenColumnLetters(column2),
+      row: row2
+    });
 }
 
 /**
@@ -594,7 +644,8 @@ class CellRangeCarrier extends CellRefDecorator {
   }
 
   toSimpleAddress() {
-    let sheetName = this.cellAddress.sheetName;
+    let sheetNameID = this.cellRange.sheetName;
+    let sheetName = sheetNameID ? sheetNameID.toString() : undefined;
     if (!sheetName) {
       sheetName = this.getWorkingContext().activeSheetName;
     }
@@ -703,5 +754,6 @@ function buildCellRefDecorator(cellRef) {
   return undefined;
 }
 
+exports.SimpleCellRange = SimpleCellRange;
 exports.SimpleCellAddress = SimpleCellAddress;
 exports.buildCellRefDecorator = buildCellRefDecorator;
