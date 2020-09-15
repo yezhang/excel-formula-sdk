@@ -72,9 +72,31 @@ describe('有向图算法', function () {
       [9, 6]
     ], graph);
 
+    let search = new Search(graph);
+    let ret = search.run();
+    expect(ret).to.has.lengthOf(4);
   })
 
   it('应找不到环路', function () {
 
+    // ┌───┐         ┌───┐          ┌───┐
+    // │ 0 │◀────────│ 2 │─────────▶│ 3 │
+    // └───┘         └───┘          └───┘
+    //   │
+    //   │
+    //   ▼
+    // ┌───┐
+    // │ 1 │
+    // └───┘
+
+    fillEdges([
+      [0, 1],
+      [2, 0],
+      [2, 3]
+    ], graph);
+
+    let search = new Search(graph);
+    let ret = search.run();
+    expect(ret).to.has.lengthOf(0);
   });
 })

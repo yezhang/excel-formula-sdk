@@ -124,6 +124,30 @@ class ElementaryCircuitsSearch {
   }
 
   /**
+   * 根据环路的顶点索引，恢复图的原始顶点数。
+   */
+  _restoreGraphNodeFromId(circuits, graph) {
+    let nodes = graph.nodes();
+    let nodeIdMap = {};
+    for(let i = 0; i < nodes.length; i++) {
+      nodeIdMap[nodes[i].id] = nodes[i];
+    }
+
+    let restoredCircuits = [];
+    for(let i = 0; i < circuits.length; i++) {
+      let circuit = circuits[i];
+      let restoredCircuit = [];
+      for(let j = 0; j < circuit.length; j++) {
+        restoredCircuit.push(nodeIdMap[circuit[j]].data);
+      }
+
+      restoredCircuits.push(restoredCircuit);
+    }
+
+    return restoredCircuits;
+  }
+
+  /**
    * 算法的入口
    */
   run() {
@@ -157,7 +181,8 @@ class ElementaryCircuitsSearch {
       break;
     }
 
-    return this.circuits;
+
+    return this._restoreGraphNodeFromId(this.circuits, this.graphData);
   }
 
 }
