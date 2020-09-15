@@ -25,7 +25,7 @@ function GenIdForGraph(graph) {
 function _convertGraph(graph) {
   let adjListOrigin = [];
   let nodes = graph.nodes();
-  for (let i = 0; nodes.length; i++) {
+  for (let i = 0; i < nodes.length; i++) {
     const vAdjList = [];
     for (const { toNode } of nodes[i].outgoing.values()) {
       vAdjList.push(toNode.id);
@@ -97,7 +97,7 @@ class ElementaryCircuitsSearch {
         // output circuit
         let cycle = [];
         for (let j = 0; j < that.stack.length; j++) {
-          cycle.push(this.stack[j]); //TODO 存放索引，也可以变更为存储真实的节点
+          cycle.push(that.stack[j]); //TODO 存放索引，也可以变更为存储真实的节点
         }
         that.circuits.push(cycle);
 
@@ -109,7 +109,7 @@ class ElementaryCircuitsSearch {
       }
     });
     if (f) {
-      this.unblock(v);
+      this.unblock(v, this.blockedTags);
     } else {
       adjList[v].forEach(function (w) {
         if (that.B[w].indexOf(v) == -1) {
@@ -129,11 +129,12 @@ class ElementaryCircuitsSearch {
   run() {
     this.stack = [];
     this.circuits = [];
+    GenIdForGraph(this.graphData);
     this.adjList = _convertGraph(this.graphData);
     this.blockedTags = new Array(this.adjList.length);
     this.B = new Array(this.adjList.length);
 
-    GenIdForGraph(this.graphData);
+    
     let sccs = new StrongConnectedComponents(this.adjList);
 
     let s = 0;
@@ -160,3 +161,5 @@ class ElementaryCircuitsSearch {
   }
 
 }
+
+exports.ElementaryCircuitsSearch = ElementaryCircuitsSearch;

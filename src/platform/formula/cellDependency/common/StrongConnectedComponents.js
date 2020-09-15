@@ -37,8 +37,8 @@ class StrongConnectedComponents {
     this.stack = undefined; // 辅助属性, []
     this.lowlink = undefined; //辅助属性 [int]
     this.number = undefined; // 辅助属性 []
-    this.sscCounter = 0; // 辅助属性
-    this.currentSSCs = undefined; //辅助属性 []
+    this.sccCounter = 0; // 辅助属性
+    this.currentSCCs = undefined; //辅助属性 []
   }
 
 
@@ -49,6 +49,7 @@ class StrongConnectedComponents {
    * 注意，只有一个顶点的的强连通分量无法返回。 
    * TODO: 考虑如何处理只有一个顶点的情况。
    * @param {int} node s，顶点 s
+   * @return SCCResult
    */
   getAdjacencyList(node) {
     let nodeNum = this.adjListOriginal.length;
@@ -56,7 +57,7 @@ class StrongConnectedComponents {
     this.lowlink = new Array(nodeNum);
     this.number = new Array(nodeNum);
     this.stack = [];
-    this.currentSSCs = [];
+    this.currentSCCs = [];
 
     this.makeAdjListSubgraph(node);
 
@@ -64,7 +65,7 @@ class StrongConnectedComponents {
       if (!this.visited[i]) {
         this.getStrongConnectedComponents(i);
         let nodes = this.getLowestIdComponent();
-        if (nodes && nodes.indexOf(node) != -1 && nodes.indexOf(node + 1) != -1) {
+        if (nodes && nodes.indexOf(node) == -1 && nodes.indexOf(node + 1) == -1) {
           return this.getAdjacencyList(node + 1);
         }
 
@@ -88,25 +89,26 @@ class StrongConnectedComponents {
    */
   makeAdjListSubgraph(node) {
     this.adjList = new Array(this.adjListOriginal.length);
-    for(let i = node; i < this.adjList.length; i++) {
+    for (let i = 0; i < this.adjList.length; i++) {
+      this.adjList[i] = [];
+    }
+
+    for (let i = node; i < this.adjList.length; i++) {
       let successors = [];
-      for(let j = 0; j < this.adjListOriginal[i].length; j++) {
-        if(this.adjListOriginal[i][j] >= node) {
+      for (let j = 0; j < this.adjListOriginal[i].length; j++) {
+        if (this.adjListOriginal[i][j] >= node) {
           successors.push(this.adjListOriginal[i][j]);
         }
       }
-      if(successors.length > 0) {
-        this.adjList[i] = new Array(successors.length);
-        for(let j = 0; j < successors.length; j++) {
-          this.adjList[i][j] = successors[j];
-        }
+      if (successors.length > 0) {
+        this.adjList[i] = successors;
       }
     }
   }
 
   /**
    * 从给定节点搜索强连通分量
-   * @param {int} node 开始搜索的顶点
+   * @param {int} root 开始搜索的顶点
    */
   getStrongConnectedComponents(root) {
     this.sccCounter++;
@@ -115,30 +117,28 @@ class StrongConnectedComponents {
     this.visited[root] = true;
     this.stack.push(root);
 
-    for(let i = 0; i < this.adjList[root].length; i++) {
+    for (let i = 0; i < this.adjList[root].length; i++) {
       let w = this.adjList[root][i];
-      if(!this.visited[w]){
+      if (!this.visited[w]) {
         this.getStrongConnectedComponents(w);
         this.lowlink[root] = Math.min(this.lowlink[root], this.lowlink[w]);
-      }else if(this.number[w] < this.number[root]){
-        if(this.stack.indexOf(w) != -1) {
-          this.lowlink[root] = Math.min(lowlink[root], this.number[w]);
-        }
+      } else if ((this.stack.indexOf(w) != -1) && this.number[w] < this.lowlink[root]) {
+          this.lowlink[root] = this.number[w];
       }
     }
 
     // 找到强连通分量
-    if((this.lowlink[root] === this.number[roots]) && this.stack.length > 0) {
+    if ((this.lowlink[root] === this.number[root]) && this.stack.length > 0) {
       let next = -1;
       let scc = [];
-      do{
+      do {
         next = this.stack.pop();
         scc.push(next);
-      }while(this.number[next] > this.number[root]);
+      } while (this.number[next] > this.number[root]);
 
       // 只有一个节点的简单连通分量不会被添加
-      if(scc.length > 1) {
-        this.currentSSCs.push(scc);
+      if (scc.length > 1) {
+        this.currentSCCs.push(scc);
       }
     }
   }
@@ -149,11 +149,11 @@ class StrongConnectedComponents {
   getLowestIdComponent() {
     let min = this.adjList.length;
     let currScc = undefined;
-    for(let i = 0; i < this.currentSSCs.length; i++) {
-      let scc = this.currentSSCs[i];
-      for(let j = 0; j < scc.length; j++){
+    for (let i = 0; i < this.currentSCCs.length; i++) {
+      let scc = this.currentSCCs[i];
+      for (let j = 0; j < scc.length; j++) {
         let node = scc[j];
-        if(node < min){
+        if (node < min) {
           currScc = scc;
           min = node;
         }
@@ -167,16 +167,16 @@ class StrongConnectedComponents {
    */
   getAdjList(nodes) {
     let lowestIdAdjacencyList = undefined;
-    if(nodes) {
+    if (nodes) {
       lowestIdAdjacencyList = new Array(this.adjList.length);
-      for(let i = 0; i < lowestIdAdjacencyList.length; i++) {
+      for (let i = 0; i < lowestIdAdjacencyList.length; i++) {
         lowestIdAdjacencyList[i] = [];
       }
-      for(let i = 0; i < nodes.length; i++) {
-        let node = ndoes[i];
-        for(let j = 0; j < this.adjList[node].length; j++) {
+      for (let i = 0; i < nodes.length; i++) {
+        let node = nodes[i];
+        for (let j = 0; j < this.adjList[node].length; j++) {
           let succ = this.adjList[node][j];
-          if(nodes.indexOf(succ) != -1){
+          if (nodes.indexOf(succ) != -1) {
             lowestIdAdjacencyList[node].push(succ);
           }
         }
