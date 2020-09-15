@@ -1,7 +1,8 @@
 /**
  * 存储单元格依赖关系；支持拓扑排序；支持单元格地址的引用变更；支持序列化存储。 
  */
-const Graph = require('./common/Graph').Graph;
+const Graph = require('platform/formula/cellDependency/common/Graph').Graph;
+const Search = require('platform/formula/cellDependency/common/ElementaryCircuitsSearch').ElementaryCircuitsSearch;
 
 /**
  * 拓扑排序策略
@@ -13,7 +14,7 @@ class TopologicalSortStrategy {
 class CyclicDependencyError extends Error {
   constructor(graph) {
     super('单元格地址之间循环依赖');
-    this.message = graph.toString();
+    this.detail = graph.toString();
   }
 }
 
@@ -56,6 +57,10 @@ class DependencyGraph {
       return nodeData.hashcode();
     }
     this.graph = new Graph(hashFn);
+  }
+
+  toString() {
+    return this.graph.toString();
   }
 
   /**
@@ -125,8 +130,8 @@ class DependencyGraph {
   // https://www.cs.tufts.edu/comp/150GA/homeworks/hw1/Johnson%2075.PDF
   // 算法复杂度：时间复杂度 O((n+e)(c+1)), 空间复杂度 O(n+e), n 表示顶点数，e 表示边数，c 表示基本环路数
   findAllCyclicDependency() {
-    const ret = [];
-
+    let search = new Search(this.graph);
+    return search.run();
   }
 
 
@@ -158,6 +163,8 @@ class DependencyGraph {
     }
 
   }
+
+
 
   /**
    * 返回所有顶点。

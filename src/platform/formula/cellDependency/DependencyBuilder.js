@@ -69,6 +69,12 @@ class CellDependencyBuilder {
 
     this._removeDependencies(workingCellAddr);
     this._addDependencies(workingCellAddr, depMap);
+
+    this._checkCycleDepencies();
+  }
+
+  _checkCycleDepencies() {
+    this.depGraph.sort();
   }
 
   /**

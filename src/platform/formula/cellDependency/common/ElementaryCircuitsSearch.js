@@ -147,6 +147,24 @@ class ElementaryCircuitsSearch {
     return restoredCircuits;
   }
 
+  // 根据邻接表查找自己引用自己的节点
+  _findSelfCircuit(adjList) {
+    let circuits = [];
+    for(let from = 0; from < adjList.length; from++) {
+      let edges = adjList[from];
+      for(let i = 0; i < edges.length; i++) {
+        let to = edges[i];
+        if(to === from) {
+          // self cycle
+          circuits.push([from]);
+          break;
+        }
+      }
+    }
+
+    return circuits;
+  }
+
   /**
    * 算法的入口
    */
@@ -158,7 +176,6 @@ class ElementaryCircuitsSearch {
     this.blockedTags = new Array(this.adjList.length);
     this.B = new Array(this.adjList.length);
 
-    
     let sccs = new StrongConnectedComponents(this.adjList);
 
     let s = 0;
@@ -181,10 +198,11 @@ class ElementaryCircuitsSearch {
       break;
     }
 
+    let selfCircuits = this._findSelfCircuit(this.adjList);
+    this.circuits = selfCircuits.concat(this.circuits);
 
     return this._restoreGraphNodeFromId(this.circuits, this.graphData);
   }
-
 }
 
 exports.ElementaryCircuitsSearch = ElementaryCircuitsSearch;

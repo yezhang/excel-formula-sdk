@@ -43,6 +43,23 @@ describe('有向图算法', function () {
     expect(ret).to.has.lengthOf(1);
   });
 
+  // 用于处理 A1=A1 的循环引用
+  it('应找到指向自己的环路（A1=A1）', function () {
+    //   ┌────┐
+    //   │    │
+    //   ▼    │
+    // ┌───┐  │
+    // │ 1 │──┘
+    // └───┘
+    fillEdges([
+      [1, 1]
+    ], graph);
+
+    let search = new Search(graph);
+    let ret = search.run();
+    expect(ret).to.has.lengthOf(1);
+  });
+
   it('应找到全部环路', function () {
     // ┌───┐         ┌───┐          ┌───┐
     // │ 1 │◀────────│ 2 │─────────▶│ 3 │
@@ -75,7 +92,25 @@ describe('有向图算法', function () {
     let search = new Search(graph);
     let ret = search.run();
     expect(ret).to.has.lengthOf(4);
-  })
+  });
+
+  it('应找到一个环路(A1=B1, B1=A1)', function () {
+    //   ┌──────────┐
+    //   ▼          │
+    // ┌───┐      ┌───┐
+    // │ 1 │      │ 2 │
+    // └───┘      └───┘
+    //   │          ▲
+    //   └──────────┘
+    fillEdges([
+      [1, 2],
+      [2, 1]
+    ], graph);
+
+    let search = new Search(graph);
+    let ret = search.run();
+    expect(ret).to.has.lengthOf(1);
+  });
 
   it('应找不到环路', function () {
 

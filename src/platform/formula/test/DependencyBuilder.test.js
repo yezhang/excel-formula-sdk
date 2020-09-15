@@ -120,11 +120,11 @@ describe('依赖图的构建', function () {
     let depGraph = genDepGraph(activeSheetName);
     let builder = new CellDependencyBuilder(depGraph);
     let C1 = SimpleCellAddress.build(activeSheetName, 3, 1);
-    let B1 = buildRelativeAddressAST(null, 'D', 1);
+    let B1 = buildRelativeAddressAST(null, 'B', 1);
     
     expect(function() {
       builder.addOrUpdateDependencies(C1, [B1]);
-    }).to.throw(new CyclicDependencyError('单元格地址之间循环依赖'));
+    }).to.throw(CyclicDependencyError, '单元格地址之间循环依赖');
   });
 
   it('删除顶点', function () {
@@ -190,6 +190,7 @@ describe('依赖图的构建', function () {
   });
 
   it('单元格范围依赖', function () {
+    
     expect.fail();
   });
 })
