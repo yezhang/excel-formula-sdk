@@ -109,3 +109,5 @@ Babel 工具中使用了 core-js。
 ## 依赖包
 - [core-js](https://github.com/zloirock/core-js)，用于支持 Map 数据结构。
 
+## 打包
+形成开发包、生产包。
