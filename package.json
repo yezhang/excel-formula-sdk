@@ -12,7 +12,8 @@
   "scripts": {
     "test": "npx karma start karma.conf.js",
     "start": "webpack-dev-server --config build/webpack.config.dev.js",
-    "build": "webpack --config build/webpack.config.js"
+    "build:dev": "webpack --config build/webpack.config.dist.dev.js",
+    "build:min": "webpack --config build/webpack.config.dist.min.js"
   },
   "dependencies": {
     "@formulajs/formulajs": "^2.4.3",

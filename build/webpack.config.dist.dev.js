@@ -9,7 +9,7 @@ module.exports = {
     library: 'formulaSDK',
     libraryTarget: 'umd', 
   },
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
   module: {
     rules: [
       {
