@@ -1,5 +1,5 @@
 const FormulaCore = require('platform/formula/core/SingleFormulaCore').SingleFormulaCore;
-const FormulaSignatureList = require('platform/formula/formulaSignatureHelp').FormulaSignatureList;
+const FormulaSignatureList = require('platform/formula/intelliSense/formulaSignatureHelp').FormulaSignatureList;
 
 const formulaCoreInst = FormulaCore.INSTANCE;
 

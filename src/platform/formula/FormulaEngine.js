@@ -17,6 +17,10 @@ class WorkBookContext {
     this.activeSheetName = sheetName;
   }
 }
+/**
+ * 处理单元格中的公式，以及单元之间的依赖关系。
+ * 
+ */
 class FormulaEngine {
   constructor() {
     this.depGraph = new DependencyGraph();
@@ -40,6 +44,7 @@ class FormulaEngine {
    * 用户输入一个公式后调用。
    * @param {WorkBookContext} workBookContext 工作簿上下文，包含当前激活的工作表sheet。
    * @param {Object} cellAddr 单元格地址对象 {column:<1..n>, row:<1..n>}, 
+   * @param {String} formula 公式文本（包含=）
    */
   setCellFormula(workBookContext, cellAddr, formula) {
     const activeSheetName = workBookContext.activeSheetName;
@@ -97,3 +102,5 @@ class FormulaEngine {
 
   }
 }
+
+exports.FormulaEngine = FormulaEngine;

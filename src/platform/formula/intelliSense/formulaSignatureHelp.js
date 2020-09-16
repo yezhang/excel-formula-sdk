@@ -1,3 +1,10 @@
+/**
+ * 函数自动补全的信息。
+ * 
+ * @see https://support.google.com/docs/answer/3093364
+ * @see https://support.google.com/docs/answer/3093440
+ * @see https://support.google.com/docs/table/25273?hl=zh-Hans&ref_topic=9054531
+ */
 let FormulaSignatureList = {
   'IF': {
     prefixDisplayParts: 'IF(',
