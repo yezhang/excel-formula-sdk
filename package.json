@@ -95,7 +95,7 @@
           "title": "Builds"
         },
         "chore": {
-          "description": "其他变更（不影响 src、test 目录）",
+          "description": "杂项，其他变更（不影响 src、test 目录）",
           "title": "Chores"
         }
       }
