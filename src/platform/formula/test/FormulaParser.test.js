@@ -1,6 +1,3 @@
-const assert = require('assert').strict;
-const sinon = require('sinon');
-
 const antlr4 = require('antlr4');
 const FormulaLexer = require('../runtime/ReportFormulaLexer').ReportFormulaLexer;
 const FormulaParser = require('../runtime/ReportFormulaParser').ReportFormulaParser;

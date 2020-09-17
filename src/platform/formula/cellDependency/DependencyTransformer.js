@@ -5,4 +5,8 @@
  * 在依赖图中寻找所有需要变更的顶点集合。
  * 针对每个待变更节点，调整其地址位置、变更所有对于本单元格的引用文本、
  */
-
+class DependencyTransformer {
+  constructor() {
+    
+  }
+}

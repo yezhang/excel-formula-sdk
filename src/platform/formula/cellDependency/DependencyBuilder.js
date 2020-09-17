@@ -3,12 +3,19 @@ const buildCellRefDecorator = require('../cellAddressParts/common/CellAddressPar
 const SimpleCellAddress = require('platform/formula/cellAddressParts/common/CellAddressParts').SimpleCellAddress;
 const SingleFormulaContext = require('platform/formula/core/SingleFormulaContext').SingleFormulaContext;
 
+class DependencyError extends Error {
+  constructor(msg) {
+    super(msg);
+  }
+}
+
 class CellDependencyBuilder {
   /**
    * @param {DependencyGraph} depGraph 依赖关系图
    */
   constructor(depGraph) {
     this.depGraph = depGraph;
+    this.formulaAST = undefined;
   }
 
   setFormulaAST(ast) {
@@ -45,6 +52,9 @@ class CellDependencyBuilder {
   addOrUpdateDependencies(workingCellAddr, dependenciesList) {
     const _this = this;
     let activeSheetName = workingCellAddr.sheet;
+    if(!activeSheetName) {
+      throw new DependencyError('当前活动单元格未设置表格名称');
+    }
     
     // 包括单元格地址和单元格范围
     const depMap = {};
@@ -90,7 +100,7 @@ class CellDependencyBuilder {
    * @param {SimpleCellAddress} cellAddress
    */
   _addDependencies(cellAddress, dependencyMap) {
-    this.depGraph.addCellDependencies(cellAddress, dependencyMap);
+    this.depGraph.addCellDependencies(cellAddress, this.formulaAST, dependencyMap);
   }
 
   // 将单元格地址转化为标准对象
@@ -108,4 +118,4 @@ class CellDependencyBuilder {
 }
 
 
-exports.CellDependencyBuilder = CellDependencyBuilder;
+exports.DependencyBuilder = CellDependencyBuilder;

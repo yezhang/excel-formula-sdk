@@ -63,7 +63,7 @@ browsers: ['Chrome'], //ChromeHeadless
 使用 VSCode 的 launch.json 配置。
 
 ## 配置编辑器
-Go To Defination (Ctrl + Click)，在配置相对目录后，无法识别。但是 vscode 的源码，则可以识别。
+Go To Defination (Ctrl + Click)，在配置相对目录后，无法识别。但是 vscode 的源码(monoca-editor-core)，则可以识别。
 
 在 src 文件夹下，新建 jsconfig.json 配置文件。
 配置 jsconfig.json 中的 paths 参数。
@@ -111,3 +111,6 @@ Babel 工具中使用了 core-js。
 
 ## 打包
 形成开发包、生产包。
+
+参考 build/ 目录。
+

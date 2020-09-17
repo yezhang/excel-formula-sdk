@@ -93,10 +93,21 @@ class Graph {
   // 边上可以携带属性 props 对象。
   insertEdge(from, to, props) {
     const fromNode = this.lookupOrInsertNode(from);
+
     const toNode = this.lookupOrInsertNode(to);
 
     fromNode.outgoing.set(this._hashFn(to), { toNode, props });
     toNode.incoming.set(this._hashFn(from), { fromNode, props });
+  }
+
+  updateNode(data) {
+    let node = this.lookup(data);
+    if(node) {
+      node.data = data;
+      return true;
+    }
+
+    return false;
   }
 
   removeNode(data) {
@@ -147,6 +158,8 @@ class Graph {
       node = new Node(data);
       this._nodes.set(key, node);
     }
+
+    
 
     return node;
   }

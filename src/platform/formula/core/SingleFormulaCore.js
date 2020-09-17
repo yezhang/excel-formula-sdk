@@ -3,7 +3,7 @@ const antlr4 = require('antlr4');
 const FormulaParser = require('../runtime/ReportFormulaParser').ReportFormulaParser;
 const FormulaLexer = require('../runtime/ReportFormulaLexer').ReportFormulaLexer;
 
-const ValueEvaluationVisitor = require('../cellEvaluation/ValueEvaluationVisitor').ValueEvaluationVisitor;
+const ValueEvaluationVisitor = require('../cellEvaluation/FormulaEvaluationVisitor').FormulaEvaluationVisitor;
 const EditorTokensVisitor = require('./EditorTokensVisitor').EditorTokensVisitor;
 
 const ParserErrorListener = require('../error/ParserErrorListener');
@@ -271,3 +271,4 @@ SingleFormulaCore.createInstance = function () {
 SingleFormulaCore.INSTANCE = SingleFormulaCore.createInstance();
 
 exports.SingleFormulaCore = SingleFormulaCore;
+exports.INSTANCE = SingleFormulaCore.INSTANCE;

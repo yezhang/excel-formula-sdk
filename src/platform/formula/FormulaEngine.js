@@ -1,7 +1,9 @@
 const SingleFormulaCoreInst = require('./core/SingleFormulaCore').INSTANCE;
 const SingleFormulaAST = require('platform/formula/core/SingleFormulaAST').SingleFormulaAST;
-const CellDependencyBuilder = require('./cellDependency/DependencyBuilder');
-const CellDependencyFinder = require('./cellDependency/DependencyFinder');
+const CellDependencyBuilder = require('./cellDependency/DependencyBuilder').DependencyBuilder;
+const CellDependencyFinder = require('./cellDependency/DependencyFinder').DependencyFinder;
+const Evaluator = require('platform/formula/cellEvaluation/Evaluator').Evaluator;
+
 const DependencyGraph = require('./cellDependency/DependencyGraph').DependencyGraph;
 
 /**
@@ -9,8 +11,8 @@ const DependencyGraph = require('./cellDependency/DependencyGraph').DependencyGr
  */
 
 class WorkBookContext {
-  constructor() {
-    this.activeSheetName = null;
+  constructor(sheetName) {
+    this.activeSheetName = sheetName;
   }
 
   setActiveSheetName(sheetName) {
@@ -29,6 +31,20 @@ class FormulaEngine {
     // key: cellAddress
     // value: formula 文本
     this.formulas = {}; 
+
+    /**
+     * 当本公式引擎与表格组件配合使用时，需要提供表格数据采集器。
+     * 用于从表格的数据模型中获取值、设置值。
+     */
+    this.tableCellValueProvider = undefined;
+  }
+
+  /**
+   * 开始对表格求值。
+   * 当公式引擎与表格组件配合使用时，需要调用本函数。
+   */
+  prepareToEvaluateTable(cellValueProvider) {
+    this.tableCellValueProvider = cellValueProvider;
   }
 
   /**
@@ -43,7 +59,7 @@ class FormulaEngine {
   /**
    * 用户输入一个公式后调用。
    * @param {WorkBookContext} workBookContext 工作簿上下文，包含当前激活的工作表sheet。
-   * @param {Object} cellAddr 单元格地址对象 {column:<1..n>, row:<1..n>}, 
+   * @param {Object} cellAddr 单元格地址对象 {column:<1..n>, row:<1..n>}
    * @param {String} formula 公式文本（包含=）
    */
   setCellFormula(workBookContext, cellAddr, formula) {
@@ -56,10 +72,21 @@ class FormulaEngine {
     builder.build(activeSheetName, cellAddr);
   }
 
+  /**
+   * 获取最新的单元格公式。
+   * @param {WorkBookContext} workBookContext 工作簿上下文，包含当前激活的工作表sheet。
+   * @param {Object} cellAddr 单元格地址对象 {column:<1..n>, row:<1..n>}
+   */
   getCellFormula(workBookContext, cellAddr) {
     const activeSheetName = workBookContext.activeSheetName;
     const finder = new CellDependencyFinder(this.depGraph);
     return finder.getCellFormula(activeSheetName, cellAddr);
+  }
+
+  evaluateAll(workBookContext) {
+    // const activeSheetName = workBookContext.activeSheetName;
+    const evaluator = new Evaluator(this.depGraph);
+    return evaluator.evaluateAll();
   }
  
   /**
@@ -103,4 +130,5 @@ class FormulaEngine {
   }
 }
 
+exports.WorkBookContext = WorkBookContext;
 exports.FormulaEngine = FormulaEngine;

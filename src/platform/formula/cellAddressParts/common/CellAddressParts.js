@@ -2,8 +2,6 @@
 const assert = require('base/common/assert');
 const types = require('base/common/types');
 
-const CellAddressNode = require('platform/formula/core/SingleFormulaAST').CellAddressIdentifier;
-const CellRangeNode = require('platform/formula/core/SingleFormulaAST').CellRangeIdentifier;
 const Syntax = require('platform/formula/core/syntax').Syntax;
 const SingleFormulaContext = require('platform/formula/core/SingleFormulaContext').SingleFormulaContext;
 

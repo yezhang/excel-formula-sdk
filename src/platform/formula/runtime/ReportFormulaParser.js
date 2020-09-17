@@ -8,7 +8,7 @@ var grammarFileName = "ReportFormulaParser.g4";
 
 
 var serializedATN = ["\u0003\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964",
-    "\u00036\u00e6\u0004\u0002\t\u0002\u0004\u0003\t\u0003\u0004\u0004\t",
+    "\u00037\u00e6\u0004\u0002\t\u0002\u0004\u0003\t\u0003\u0004\u0004\t",
     "\u0004\u0004\u0005\t\u0005\u0004\u0006\t\u0006\u0004\u0007\t\u0007\u0004",
     "\b\t\b\u0004\t\t\t\u0004\n\t\n\u0004\u000b\t\u000b\u0004\f\t\f\u0004",
     "\r\t\r\u0004\u000e\t\u000e\u0004\u000f\t\u000f\u0004\u0010\t\u0010\u0004",
@@ -180,7 +180,8 @@ var symbolicNames = [ null, "MultiLineComment", "SingleLineComment", "OpenParen"
                       "HexIntegerLiteral", "OctalIntegerLiteral", "OctalIntegerLiteral2", 
                       "BinaryIntegerLiteral", "BigHexIntegerLiteral", "BigOctalIntegerLiteral", 
                       "BigBinaryIntegerLiteral", "BigDecimalIntegerLiteral", 
-                      "Identifier", "StringLiteral", "WhiteSpaces", "LineTerminator" ];
+                      "Identifier", "StringLiteral", "WhiteSpaces", "LineTerminator", 
+                      "UnexpectedCharacter" ];
 
 var ruleNames =  [ "formulaExpr", "expressionStatement", "expressionSequence", 
                    "singleExpression", "arguments", "argument", "objectLiteral", 
@@ -260,6 +261,7 @@ ReportFormulaParser.Identifier = 49;
 ReportFormulaParser.StringLiteral = 50;
 ReportFormulaParser.WhiteSpaces = 51;
 ReportFormulaParser.LineTerminator = 52;
+ReportFormulaParser.UnexpectedCharacter = 53;
 
 ReportFormulaParser.RULE_formulaExpr = 0;
 ReportFormulaParser.RULE_expressionStatement = 1;

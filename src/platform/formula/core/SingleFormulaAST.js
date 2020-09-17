@@ -10,6 +10,9 @@ const ReportFormulaParserVisitor = require('platform/formula/runtime/ReportFormu
 const ASTWalker = require('platform/formula/core/ASTWalker');
 
 
+/**
+ * 生成 AST 节点。
+ */
 class CellAddressLiteralVisitor extends CellAddressVisitor {
   constructor() {
     super();
@@ -21,6 +24,7 @@ class CellAddressLiteralVisitor extends CellAddressVisitor {
     let sheetName = null;
     if (prefix) {
       let prefixStr = prefix.getText();
+      // 移除字符串最后的 ! 符号
       sheetName = new SheetNameIdentifier(prefixStr.substring(0, prefixStr.length - 1));
     }
     let a1Reference = ctx.a1Reference().accept(this);
@@ -241,12 +245,13 @@ class ASTVisitor extends ReportFormulaParserVisitor {
     return new Literal(ctx.getText());
   }
 
+  // NumericLiteralExpression 规则本身，不产生 AST 节点
   visitNumericLiteralExpression(ctx) {
     return ctx.children[0].accept(this);
   }
 
   visitPercentageLiteralExpression(ctx) {
-    return new PercentageLiteral(ctx.getText());
+    return new PercentageLiteral(Number(ctx.getText()));
   }
 
   visitBasicNumberLiteralExpression(ctx) {
@@ -290,8 +295,19 @@ SingleFormulaAST.prototype.findAllCellRefNodes = function () {
   return cellRefNodes;
 }
 
-class FormulaProgram {
+class IAccessableType {
+  accept(visitor) {
+    let fnName = 'visit' + this.type;
+    if(fnName in visitor){
+      return visitor[fnName](this);
+    }
+
+    return undefined;
+  }
+}
+class FormulaProgram extends IAccessableType{
   constructor(body) {
+    super();
     this.type = Syntax.FormulaProgram;
     this.body = body;
   }
@@ -301,8 +317,9 @@ class FormulaProgram {
   }
 }
 
-class Identifier {
+class Identifier extends IAccessableType{
   constructor(name) {
+    super();
     this.type = Syntax.Identifier;
     this.name = name;
   }
@@ -312,8 +329,9 @@ class Identifier {
   }
 }
 
-class RefItemIdentifier {
+class RefItemIdentifier extends IAccessableType{
   constructor(name) {
+    super();
     this.type = Syntax.RefItemIdentifier;
     this.name = name;
   }
@@ -323,11 +341,12 @@ class RefItemIdentifier {
   }
 }
 
-class CellAddressIdentifier {
+class CellAddressIdentifier extends IAccessableType{
   /**
    * @param {SheetNameIdentifier} sheetName
    */
   constructor(sheetName, a1Reference) {
+    super();
     this.type = Syntax.CellAddressIdentifier;
     this.sheetName = sheetName;
     this.a1Reference = a1Reference;
@@ -348,8 +367,9 @@ class CellAddressIdentifier {
   }
 }
 
-class SheetNameIdentifier {
+class SheetNameIdentifier extends IAccessableType{
   constructor(sheetName) {
+    super();
     this.type = Syntax.SheetNameIdentifier;
     this.name = sheetName;
   }
@@ -366,8 +386,9 @@ class SheetNameIdentifier {
   }
 }
 
-class A1ReferenceIdentifier {
+class A1ReferenceIdentifier extends IAccessableType{
   constructor(columnRef, rowRef) {
+    super();
     this.type = Syntax.A1ReferenceIdentifier;
     this.columnRef = columnRef;
     this.rowRef = rowRef;
@@ -398,8 +419,9 @@ class A1ReferenceIdentifier {
   }
 }
 
-class AbsoluteColumnIdentifier {
+class AbsoluteColumnIdentifier extends IAccessableType{
   constructor(text) {
+    super();
     this.type = Syntax.AbsoluteColumnIdentifier;
     this.text = text;
   }
@@ -413,8 +435,9 @@ class AbsoluteColumnIdentifier {
   }
 }
 
-class RelativeColumnIdentifier {
+class RelativeColumnIdentifier extends IAccessableType{
   constructor(text) {
+    super();
     this.type = Syntax.RelativeColumnIdentifier;
     this.text = text;
   }
@@ -428,8 +451,9 @@ class RelativeColumnIdentifier {
   }
 }
 
-class AbsoluteRowIdentifier {
+class AbsoluteRowIdentifier extends IAccessableType{
   constructor(line) {
+    super();
     this.type = Syntax.AbsoluteRowIdentifier;
     this.line = line;
   }
@@ -443,8 +467,9 @@ class AbsoluteRowIdentifier {
   }
 }
 
-class RelativeRowIdentifier {
+class RelativeRowIdentifier extends IAccessableType{
   constructor(line) {
+    super();
     this.type = Syntax.RelativeRowIdentifier;
     this.line = line;
   }
@@ -458,8 +483,9 @@ class RelativeRowIdentifier {
   }
 }
 
-class CellRangeIdentifier {
+class CellRangeIdentifier extends IAccessableType{
   constructor(sheetName, startRef, endRef) {
+    super();
     this.type = Syntax.CellRangeIdentifier;
     this.sheetName = sheetName;
     this.startRef = startRef;
@@ -484,8 +510,9 @@ class CellRangeIdentifier {
   }
 }
 
-class PlainTextIdentifier {
+class PlainTextIdentifier extends IAccessableType{
   constructor(name) {
+    super();
     this.type = Syntax.PlainTextIdentifier;
     this.name = name;
   }
@@ -495,8 +522,9 @@ class PlainTextIdentifier {
   }
 }
 
-class Literal {
+class Literal extends IAccessableType{
   constructor(value) {
+    super();
     this.type = Syntax.Literal;
     this.value = value;
   }
@@ -506,8 +534,9 @@ class Literal {
   }
 }
 
-class PercentageLiteral {
+class PercentageLiteral extends IAccessableType{
   constructor(value) {
+    super();
     this.type = Syntax.PercentageLiteral;
     this.value = value;
   }
@@ -517,8 +546,9 @@ class PercentageLiteral {
   }
 }
 
-class ExpressionStatement {
+class ExpressionStatement extends IAccessableType{
   constructor(expression) {
+    super();
     this.type = Syntax.ExpressionStatement;
     this.expression = expression;
   }
@@ -528,8 +558,9 @@ class ExpressionStatement {
   }
 }
 
-class ArrayExpression {
+class ArrayExpression extends IAccessableType{
   constructor(elements) {
+    super();
     this.type = Syntax.ArrayExpression;
     this.elements = elements;
   }
@@ -544,8 +575,9 @@ class ArrayExpression {
   }
 }
 
-class ObjectExpression {
+class ObjectExpression extends IAccessableType{
   constructor(properties) {
+    super();
     this.type = Syntax.ObjectExpression;
     this.properties = properties;
   }
@@ -561,8 +593,9 @@ class ObjectExpression {
   }
 }
 
-class Property {
+class Property extends IAccessableType{
   constructor(key, value, kind) {
+    super();
     this.type = Syntax.Property;
     this.key = key;
     this.value = value;
@@ -570,8 +603,9 @@ class Property {
   }
 }
 
-class UnaryExpression {
+class UnaryExpression extends IAccessableType{
   constructor(operator, argument) {
+    super();
     this.type = Syntax.UnaryExpression;
     this.prefix = true;
     this.operator = operator;
@@ -583,8 +617,9 @@ class UnaryExpression {
   }
 }
 
-class BinaryExpression {
+class BinaryExpression extends IAccessableType{
   constructor(operator, left, right) {
+    super();
     this.type = Syntax.BinaryExpression;
     this.operator = operator;
     this.left = left;
@@ -596,8 +631,9 @@ class BinaryExpression {
   }
 }
 
-class AssignmentExpression {
+class AssignmentExpression extends IAccessableType{
   constructor(operator, left, right) {
+    super();
     this.type = Syntax.AssignmentExpression;
     this.operator = operator;
     this.left = left;
@@ -609,8 +645,9 @@ class AssignmentExpression {
   }
 }
 
-class LogicalExpression {
+class LogicalExpression extends IAccessableType{
   constructor(operator, left, right) {
+    super();
     this.type = Syntax.LogicalExpression;
     this.operator = operator;
     this.left = left;
@@ -622,8 +659,9 @@ class LogicalExpression {
   }
 }
 
-class ConditionalExpression {
+class ConditionalExpression extends IAccessableType{
   constructor(test, consequent, alternate) {
+    super();
     this.type = Syntax.ConditionalExpression;
     this.test = test;
     this.consequent = consequent;
@@ -637,8 +675,9 @@ class ConditionalExpression {
   }
 }
 
-class CallExpression {
+class CallExpression extends IAccessableType{
   constructor(callee, args) {
+    super();
     this.type = Syntax.CallExpression;
     this.callee = callee;
     this.arguments = args;
@@ -656,8 +695,9 @@ class CallExpression {
   }
 }
 
-class SequenceExpression {
+class SequenceExpression extends IAccessableType{
   constructor(expressions) {
+    super();
     this.type = Syntax.SequenceExpression;
     this.expressions = expressions;
   }

@@ -6,13 +6,6 @@ const Search = require('platform/formula/cellDependency/common/ElementaryCircuit
 
 const SimpleCellRange = require('platform/formula/cellAddressParts/common/CellAddressParts').SimpleCellRange;
 
-/**
- * 拓扑排序策略
- */
-class TopologicalSortStrategy {
-
-}
-
 class CyclicDependencyError extends Error {
   constructor(graph) {
     super('单元格地址之间循环依赖');
@@ -28,11 +21,18 @@ class CyclicDependencyError extends Error {
  * 本单元格的语法树。
  */
 class CellData {
-  constructor(cellAddress, formulaParseTree) {
+  constructor(cellAddress, ast) {
     this.cellAddress = cellAddress; //单元格的地址对象
-    this.f = formulaParseTree.getText(); //原始公式文本
-    this.parseTree = formulaParseTree;//公式的解析树
-    this.ast = convertToAst(formulaparseTree);
+    this.ast = ast;
+  }
+
+  // 返回最新的单元格地址。
+  getFormula() {
+    return this.ast.toString();
+  }
+
+  getFormulaAST() {
+    return this.ast;
   }
 
   /**
@@ -51,7 +51,7 @@ class CellData {
 class DependencyGraph {
   constructor() {
     let hashFn = function (nodeData) {
-      return nodeData.hashcode();
+      return nodeData.cellAddress.hashcode();
     }
     this.graph = new Graph(hashFn);
   }
@@ -135,7 +135,7 @@ class DependencyGraph {
    * 删除单元格地址时，清除没有任何依赖的孤立节点。
    */
   removeCellAddress(cellAddress) {
-    this.graph.removeNode(cellAddress);
+    this.graph.removeNode(new CellData(cellAddress));
     this.graph.clearIsolatedNodes();
   }
 
@@ -143,7 +143,7 @@ class DependencyGraph {
    * 只移除单元格地址的出度，当前节点不移除。
    */
   removeCellDependencies(cellAddress) {
-    this.graph.removeNodeOutgoings(cellAddress);
+    this.graph.removeNodeOutgoings(new CellData(cellAddress));
     this.graph.clearIsolatedNodes();
   }
 
@@ -164,7 +164,7 @@ class DependencyGraph {
    * 如果 cellAddress 是单元格范围或者 dependencyMap 中包含单元格范围时，考虑对于单元格范围的处理。
    * @param {SimpleCellAddress} cellAddress
    */
-  addCellDependencies(cellAddress, dependencyMap) {
+  addCellDependencies(cellAddress, formulaAst, dependencyMap) {
      const that = this;
     
     if (dependencyMap) {
@@ -173,9 +173,10 @@ class DependencyGraph {
       // 需要建立该单元格范围到本顶点的依赖。
       let existingNodes = this.graph.nodeDatas();
       if(existingNodes){
-        existingNodes.forEach(function(n){
+        existingNodes.forEach(function(cellData){
+          let n = cellData.cellAddress;
           if(that._isCellRange(n) && that._isInRange(n, cellAddress)){
-            that.graph.insertEdge(n, cellAddress)
+            that.graph.insertEdge(cellData, new CellData(cellAddress))
           }
         })
       }
@@ -184,7 +185,8 @@ class DependencyGraph {
       let deps = Object.keys(dependencyMap);
       deps.forEach(function (dep) {
         let depDetail = dependencyMap[dep];
-        that.graph.insertEdge(cellAddress, depDetail.simple, depDetail.deps);
+        that.graph.insertEdge(new CellData(cellAddress), new CellData(depDetail.simple), depDetail.deps);
+        that.graph.updateNode(new CellData(cellAddress,formulaAst)); //将当前单元格的最新公式更新到节点中。
       })
     }
 
@@ -199,8 +201,14 @@ class DependencyGraph {
     return this.graph.nodes();
   }
 
-  getCellFormula(activeSheetName, simpleCellAddr) {
-
+  /**
+   * 获取某个单元格最新的公式。
+   * @param {SimpleCellAddress} cellAddress
+   */
+  getCellFormula(activeSheetName, cellAddress) {
+    let node = this.graph.lookup(new CellData(cellAddress));
+    let cellData = node.data;
+    return cellData.ast.toString();
   }
 }
 

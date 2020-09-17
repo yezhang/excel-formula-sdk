@@ -68,8 +68,8 @@ describe('依赖图的构建', function () {
   }
 
   function findIndex(simpleCellAddr, array) {
-    return array.findIndex(function (v) {
-      return v.equals(simpleCellAddr);
+    return array.findIndex(function (cellData) {
+      return cellData.cellAddress.equals(simpleCellAddr);
     })
   }
 

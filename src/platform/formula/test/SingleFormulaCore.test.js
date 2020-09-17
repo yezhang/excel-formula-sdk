@@ -1,6 +1,6 @@
 const assert = require('assert').strict;
 const sinon = require('sinon');
-const FormulaCore = require('../core/SingleFormulaCore').SingleFormulaCore;
+const FormulaCore = require('platform/formula/core/SingleFormulaCore').SingleFormulaCore;
 
 const core = FormulaCore.INSTANCE;
 
@@ -288,8 +288,4 @@ describe('识别变量', function () {
   describe('普通变量', function () {
 
   });
-});
-
-describe('', function () {
-
 });
