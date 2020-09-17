@@ -75,10 +75,26 @@ describe('公式引擎-常用场景', function () {
     expect(innerFormula).to.be.equal(A2FormulaTextUpdated);
   });
 
-  it('设计态-调整表结构-删除行', function () {
+  it('设计态-调整表结构-删除行（没有删除单元格）', function () {
     // 测试用例：
     // 调整表结构后，受影响的单元格公式需要更新，指向新的单元格地址。
     // 验证调整后受影响的单元格公式
+    let context = new WorkBookContext('sheet1');
+    let A2CellRef = { column: 1, row: 2 }; // A2 = B2
+    let A2FormulaText = '=B2';
+    engine.setCellFormula(context, A2CellRef, A2FormulaText);
+
+    // 插入行，1 行前面插入 1 行
+    engine.removeRows(context, 1, 1);
+
+    let A1CellRef = { column: 1, row: 1}; // A1 = B1
+    let A1FormulaTextUpdated = '=B1';
+    let innerFormula = engine.getCellFormula(context, A1CellRef);
+    expect(innerFormula).to.be.equal(A1FormulaTextUpdated);
+
+  });
+
+  it('设计态-调整表结构-删除行（删除了单元格）', function () {
     expect.fail();
   });
 
