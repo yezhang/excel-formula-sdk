@@ -21,9 +21,19 @@ class CyclicDependencyError extends Error {
  * 本单元格的语法树。
  */
 class CellData {
+  /**
+   * @param {SimpleCellAddress | SimpleCellRange} cellAddress
+   */
   constructor(cellAddress, ast) {
     this.cellAddress = cellAddress; //单元格的地址对象
     this.ast = ast;
+  }
+
+  /**
+   * 浅拷贝，只拷贝单元地址。
+   */
+  shallowClone() {
+    return new CellData(this.cellAddress.clone(), null);
   }
 
   // 返回最新的单元格地址。
@@ -165,17 +175,17 @@ class DependencyGraph {
    * @param {SimpleCellAddress} cellAddress
    */
   addCellDependencies(cellAddress, formulaAst, dependencyMap) {
-     const that = this;
-    
+    const that = this;
+
     if (dependencyMap) {
       // 处理范围的依赖：
       // 如果当前工作单元格 cellAddress 处在某个范围顶点内，
       // 需要建立该单元格范围到本顶点的依赖。
       let existingNodes = this.graph.nodeDatas();
-      if(existingNodes){
-        existingNodes.forEach(function(cellData){
+      if (existingNodes) {
+        existingNodes.forEach(function (cellData) {
           let n = cellData.cellAddress;
-          if(that._isCellRange(n) && that._isInRange(n, cellAddress)){
+          if (that._isCellRange(n) && that._isInRange(n, cellAddress)) {
             that.graph.insertEdge(cellData, new CellData(cellAddress))
           }
         })
@@ -186,18 +196,22 @@ class DependencyGraph {
       deps.forEach(function (dep) {
         let depDetail = dependencyMap[dep];
         that.graph.insertEdge(new CellData(cellAddress), new CellData(depDetail.simple), depDetail.deps);
-        that.graph.updateNode(new CellData(cellAddress,formulaAst)); //将当前单元格的最新公式更新到节点中。
+        that.graph.updateNode(new CellData(cellAddress, formulaAst)); //将当前单元格的最新公式更新到节点中。
       })
     }
-
   }
 
-
+  /**
+   * 将旧地址的节点移动到新位置
+   */
+  updateCellAddress(oldCellAddress, newCellAddress) {
+    this.graph.moveNode(new CellData(oldCellAddress), new CellData(newCellAddress));
+  }
 
   /**
    * 返回所有顶点。
    */
-  simpleCellAddressList() {
+  cellList() {
     return this.graph.nodes();
   }
 
@@ -207,6 +221,9 @@ class DependencyGraph {
    */
   getCellFormula(activeSheetName, cellAddress) {
     let node = this.graph.lookup(new CellData(cellAddress));
+    if (!node) {
+      return undefined; // 当前单元格不存在
+    }
     let cellData = node.data;
     return cellData.ast.toString();
   }

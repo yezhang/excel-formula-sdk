@@ -100,6 +100,10 @@ class Graph {
     toNode.incoming.set(this._hashFn(from), { fromNode, props });
   }
 
+  /**
+   * 当 data 对象的部分数据域发生变更时，需要更新这部分数据。
+   * @param {*} data 
+   */
   updateNode(data) {
     let node = this.lookup(data);
     if(node) {
@@ -108,6 +112,23 @@ class Graph {
     }
 
     return false;
+  }
+
+  /**
+   * 移除 oldKey 位置处的数据，移动到新位置。
+   * 
+   * 当节点的数据发生更新后，图中节点的 key 由于会受到 data 的影响，也需要更新。
+   * 此时，使用本方法移动节点。在移动后，节点的数据不变。
+   * @param {Object} oldData 节点的旧数据 
+   * @param {Object} data 节点数据
+   */
+  moveNode(oldData, data) {
+    let oldNode = this.lookup(oldData);
+    let oldKey = this.lookupKey(oldData);
+    this._nodes.delete(oldKey);
+
+    const newKey = this._hashFn(data);
+    this._nodes.set(newKey, oldNode);
   }
 
   removeNode(data) {
@@ -159,13 +180,15 @@ class Graph {
       this._nodes.set(key, node);
     }
 
-    
-
     return node;
   }
 
   lookup(data) {
     return this._nodes.get(this._hashFn(data));
+  }
+
+  lookupKey(data) {
+    return this._hashFn(data);
   }
 
   isEmpty() {

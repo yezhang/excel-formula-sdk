@@ -2,6 +2,7 @@ const SingleFormulaCoreInst = require('./core/SingleFormulaCore').INSTANCE;
 const SingleFormulaAST = require('platform/formula/core/SingleFormulaAST').SingleFormulaAST;
 const CellDependencyBuilder = require('./cellDependency/DependencyBuilder').DependencyBuilder;
 const CellDependencyFinder = require('./cellDependency/DependencyFinder').DependencyFinder;
+const DependencyTransformer = require('platform/formula/cellDependency/DependencyTransformer').DependencyTransformer;
 const Evaluator = require('platform/formula/cellEvaluation/Evaluator').Evaluator;
 
 const DependencyGraph = require('./cellDependency/DependencyGraph').DependencyGraph;
@@ -92,41 +93,49 @@ class FormulaEngine {
   /**
    * 用户调整表结构：增加行
    */
-  addRow(sheetName, columnRowIndex) {
-
+  addRows(workBookContext, columnRowIndex, rowCount) {
+    const activeSheetName = workBookContext.activeSheetName;
+    const transform = new DependencyTransformer(this.depGraph);
+    return transform.insertRows(activeSheetName, columnRowIndex, rowCount);
   }
 
   /**
    * 用户调整表结构：删除行
    */
-  removeRow(sheetName, columnRowIndex) {
-
+  removeRows(workBookContext, columnRowIndex, rowCount) {
+    const activeSheetName = workBookContext.activeSheetName;
+    const transform = new DependencyTransformer(this.depGraph);
+    return transform.removeRows(activeSheetName, columnRowIndex, rowCount);
   }
 
   /**
    * 用户调整表结构：增加列
    */
-  addColumn(sheetName, columnRowIndex) {
-
+  addColumns(workBookContext, columnRowIndex, columnCount) {
+    const activeSheetName = workBookContext.activeSheetName;
+    const transform = new DependencyTransformer(this.depGraph);
+    return transform.insertColumns(activeSheetName, columnRowIndex, columnCount);
   }
 
   /**
    * 用户调整表结构：删除列
    */
-  removeColumn(sheetName, columnRowIndex) {
-
+  removeColumns(workBookContext, columnRowIndex, columnCount) {
+    const activeSheetName = workBookContext.activeSheetName;
+    const transform = new DependencyTransformer(this.depGraph);
+    return transform.removeColumns(activeSheetName, columnRowIndex, columnCount);
   }
   /**
    * 用户调整表结构：移动列
    */
-  moveColumn(sheetName, column, toColumn) {
-
+  moveColumn(workBookContext, column, toColumn) {
+    const activeSheetName = workBookContext.activeSheetName;
   }
   /**
    * 用户调整表结构：移动行
    */
-  moveRow(sheetName, row, toRow) {
-
+  moveRow(workBookContext, row, toRow) {
+    const activeSheetName = workBookContext.activeSheetName;
   }
 }
 

@@ -55,8 +55,6 @@ function convertToNumberWhenColumnLetters(column) {
  * 如果参数为数字，直接返回参数的值。
  */
 function convertColumnLettersToNumber(column) {
-  
-
   function _convertLetter(char) {
     const c = char.charCodeAt(0);
     return c - 65 /* A */ + 1;
@@ -271,12 +269,12 @@ class A1ReferenceTranslator {
   /**
    * 在 CellRange 引用中使用。
    * 
-   * @param {Boolean} isStopedInsideOfDeletion 在删除范围内停止单元格。
    * 当删除范围很大，包括了当前单元格时，执行删除动作后，本单元格引用的地址需要调整为新地址。
    * 新地址可以为删除范围的起点或删除范围起点的前一个单元格位置。
    * 当 isStopedInsideOfDeletion == true, 停在删除范围起点。
    * 当 isStopedInsideOfDeletion === false，停在删除范围起点之前。
    * 
+   * @param {Boolean} isStopedInsideOfDeletion 在删除范围内停止单元格。
    * isStopedInsideOfDeletion 默认值是：false
    */
   removeRowsByProperSteps(startRow, numberOfRows, isStopedInsideOfDeletion) {
@@ -287,8 +285,6 @@ class A1ReferenceTranslator {
       this.translateUp(propSteps); // 可能会由于可移动空间不够，抛出异常
     }
   }
-
-
 
   /**
    * @param {String | Number} beforeWhich 列序号, A..Z, 1..n
@@ -412,6 +408,11 @@ class CompositeA1ReferenceTranslator {
   }
 }
 
+const CellAddressState = {
+  LOST: 'LOST', // 单元格地址已经丢失（如被删除）
+  DIRTY: 'DIRTY', // 单元格地址需要更新
+  NORMAL: 'NORMAL', // 单元格地址处于正常状态
+};
 /**
  * 简单单元格地址表示法
  */
@@ -428,6 +429,21 @@ class SimpleCellAddress {
     this.sheet = sheetName;
     this.column = columnNumber;
     this.row = rowNumber;
+
+    this.state = CellAddressState.NORMAL;
+  }
+
+  clone() {
+    return new SimpleCellAddress(this.sheet, this.column, this.row);
+  }
+
+  // 单元格地址失效（单元格被删除）
+  lost() {
+    this.state = CellAddressState.LOST;
+  }
+
+  isLost() {
+    return this.state === CellAddressState.LOST;
   }
 
   getDescription() {
@@ -451,6 +467,154 @@ class SimpleCellAddress {
     }
 
     return this.hashcode() === other.hashcode();
+  }
+
+  /**
+   * 如果无法移动指定步数，则抛出异常。
+   */
+  translateLeft(step){
+    assert.ok(types.isInt(step) && step >= 0, 'translateLeft: step 参数需要是 0 或正整数');
+    if(step > this.column) {
+      throw new Error('单元格地址无法向左移动：超出了当前地址范围');
+    }
+
+    this.column -= step;
+  }
+
+  translateRight(step){
+    assert.ok(types.isInt(step) && step >= 0, 'translateRight: step 参数需要是 0 或正整数');
+    this.column += step;
+  }
+
+  translateUp(step){
+    assert.ok(types.isInt(step) && step >= 0, 'translateUp: step 参数需要是 0 或正整数');
+    if(step > this.row) {
+      throw new Error('单元格地址无法向上移动：超出了当前地址范围');
+    }
+
+    this.row -= step;
+  }
+
+  translateDown(step){
+    assert.ok(types.isInt(step) && step >= 0, 'translateDown: step 参数需要是 0 或正整数');
+    this.row += step;
+  }
+
+  insertRowsWhenNecessary(activeSheetName, beforeWhich, numberOfRows){
+    if(this.isAffactedByInsertingRows(activeSheetName, beforeWhich, numberOfRows)){
+      this.translateDown(numberOfRows);
+    }
+  }
+
+  insertRows(activeSheetName, beforeWhich, numberOfRows) {
+    this.translateDown(numberOfRows);
+  }
+
+  // 注意：本函数无法处理当前单元格应该被删除的情况。
+  // 移动单元格位置，最多移动到删除的起始位置（startFrom）。
+  removeRowsWhenNecessary(activeSheetName, startFrom, numberOfRows) {
+    if(this.isAffactedByRemovingRows(activeSheetName, startFrom, numberOfRows)){
+      this.translateUp(Math.min(numberOfRows, this.row - startFrom));
+    }
+  }
+
+  removeRows(activeSheetName, startFrom, numberOfRows) {
+    this.translateUp(Math.min(numberOfRows, this.row - startFrom));
+  }
+
+  insertColumnsWhenNecessary(activeSheetName, beforeWhich, numberOfColumns) {
+    if(this.isAffactedByInsertingColumns(activeSheetName, beforeWhich, numberOfColumns)){
+      this.translateRight(numberOfColumns);
+    }
+  }
+
+  insertColumns(activeSheetName, beforeWhich, numberOfColumns) {
+    this.translateRight(numberOfColumns);
+  }
+
+  // 注意：本函数无法处理当前单元格应该被删除的情况。
+  removeColumnsWhenNecessary(activeSheetName, startFrom, numberOfColumns) {
+    if(this.isAffactedByRemovingColumns(activeSheetName, startFrom, numberOfColumns)){
+      this.translateLeft(Math.min(numberOfColumns, this.column - startFrom));
+    }
+  }
+
+  removeColumns(activeSheetName, startFrom, numberOfColumns) {
+    this.translateLeft(Math.min(numberOfColumns, this.column - startFrom));
+  }
+
+ 
+  willBeRemovedWhenRemovingRows(activeSheetName, startFrom, numberOfRows) {
+    if(this.isAffactedByRemovingRows(activeSheetName, startFrom, numberOfRows)) {
+      return this.row <= (startFrom + numberOfRows - 1);
+    }
+
+    return false;
+  }
+
+  willBeRemovedWhenRemovingColumns(activeSheetName, startFrom, numberOfColumns) {
+    if(this.isAffactedByRemovingColumns(activeSheetName, startFrom, numberOfColumns)) {
+      return this.column <= (startFrom + numberOfColumns - 1);
+    }
+
+    return false;
+  }
+
+   /**
+   * 判断当前地址是否受到 “插入行” 操作的影响
+   */
+  isAffactedByInsertingRows(activeSheetName, beforeWhich, numberOfRows) {
+    if(activeSheetName !== this.sheet) {
+      return false;
+    }
+    if(numberOfRows <= 0) {
+      return false;
+    }
+
+    return beforeWhich <= this.row;
+  }
+
+  /**
+   * 判断当前地址是否受到 “删除行” 操作的影响
+   */
+  isAffactedByRemovingRows(activeSheetName, startFrom, numberOfRows){
+    if(activeSheetName !== this.sheet) {
+      return false;
+    }
+
+    if(numberOfRows <= 0) {
+      return false;
+    }
+
+    return startFrom <= this.row;
+  }
+
+  /**
+   * 判断当前地址是否受到 “插入列” 操作的影响
+   */
+  isAffactedByInsertingColumns(activeSheetName, beforeWhich, numberOfColumns) {
+    if(activeSheetName !== this.sheet) {
+      return false;
+    }
+    if(numberOfColumns <= 0) {
+      return false;
+    }
+
+    return beforeWhich <= this.column;
+  }
+
+  /**
+   * 判断当前地址是否受到 “删除列” 操作的影响
+   */
+  isAffactedByRemovingColumns(activeSheetName, startFrom, numberOfColumns) {
+    if(activeSheetName !== this.sheet) {
+      return false;
+    }
+    if(numberOfColumns <= 0) {
+      return false;
+    }
+    
+    return startFrom <= this.column;
   }
 }
 
@@ -478,6 +642,16 @@ class SimpleCellRange {
       column: endSimpleAddress.column,
       row: endSimpleAddress.row
     }
+  }
+
+  clone() {
+    return new SimpleCellRange(this.sheet, {
+      column: this.start.column,
+      row: this.start.row
+    }, {
+      column: this.end.column,
+      row: this.end.row
+    });
   }
 
   hashcode() {
@@ -517,6 +691,7 @@ SimpleCellRange.build = function (sheetName, column1, row1, column2, row2) {
 
 /**
  * 所有单元格引用的基类。
+ * 用于对单元格地址的语法树节点进行功能增强。
  */
 class CellRefDecorator { }
 
@@ -531,6 +706,15 @@ class CellAddressCarrier extends CellRefDecorator {
     this.cellAddress = cellAddressIdentifier;
     this.a1RefTranslator = new A1ReferenceTranslator(this.cellAddress.a1Reference);
     this._workingContext = undefined; //工作单元格的上下文，包括当前的工作表，活动单元格等界面操作信息。
+  }
+
+  // 丢弃当前单元格（单元格被删除）
+  lost() {
+    this.cellAddress.lost();
+  }
+
+  isLost() {
+    return this.cellAddress.isLost();
   }
 
   toString() {
@@ -741,6 +925,10 @@ class CellRangeCarrier extends CellRefDecorator {
   }
 }
 
+/**
+ * 根据语法树节点，构建节点移动工具。
+ * @param {CellAddressIdentifier | CellRangeCarrier} cellRef
+ */
 function buildCellRefDecorator(cellRef) {
   switch (cellRef.type) {
     case Syntax.CellAddressIdentifier:

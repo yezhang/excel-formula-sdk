@@ -352,6 +352,15 @@ class CellAddressIdentifier extends IAccessableType{
     this.a1Reference = a1Reference;
   }
 
+  lost() {
+    this._isLost = true;
+    this.a1Reference.lost();
+  }
+
+  isLost() {
+    return this._isLost === true || this.a1Reference.isLost();
+  }
+
   toString() {
     if (this.a1Reference.isLost()) {
       return Syntax.REF_ERROR;
