@@ -59,43 +59,43 @@
       "path": "./node_modules/cz-conventional-changelog",
       "types": {
         "feat": {
-          "description": "A new feature",
+          "description": "一项新的特性",
           "title": "Features"
         },
         "daily": {
-          "description": "Some new changes",
+          "description": "日常变更",
           "title": "Daily Development"
         },
         "fix": {
-          "description": "A bug fix",
+          "description": "BUG 修复",
           "title": "Bug Fixes"
         },
         "docs": {
-          "description": "Documentation only changes",
+          "description": "只修改了文档",
           "title": "Documentation"
         },
         "style": {
-          "description": "Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)",
+          "description": "代码样式调整 (空白符, 格式化, 补充分号等)",
           "title": "Styles"
         },
         "refactor": {
-          "description": "A code change that neither fixes a bug nor adds a feature",
+          "description": "代码重构调整，既没有修复 BUG，也没有补充新功能",
           "title": "Code Refactoring"
         },
         "perf": {
-          "description": "A code change that improves performance",
+          "description": "对性能改进的代码",
           "title": "Performance Improvements"
         },
         "test": {
-          "description": "Adding missing tests or correcting existing tests",
+          "description": "补充测试用例、调整现有测试用例",
           "title": "Tests"
         },
         "build": {
-          "description": "Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)",
+          "description": "修改构建过程、修改外部依赖 (可能的作用域: gulp, broccoli, npm)",
           "title": "Builds"
         },
         "chore": {
-          "description": "Other changes that don't modify src or test files",
+          "description": "其他变更（不影响 src、test 目录）",
           "title": "Chores"
         }
       }
