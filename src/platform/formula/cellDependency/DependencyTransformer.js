@@ -30,6 +30,7 @@ class DependencyTransformer {
 
   _doTransformation(affectedCellList, addrSelfActionFn, depActionFn) {
     const that = this;
+    const updatedFormulaAddress = []; // “公式内容”受到影响的单元格的新地址
     affectedCellList.forEach(function (node) {
       let cellData = node.data;
       let addrSelf = cellData.cellAddress;
@@ -42,21 +43,35 @@ class DependencyTransformer {
 
       // 变更受影响的公式
       let depmap = node.incoming;
-      for (let { props } of depmap.values()) {
+      for (let { fromNode, props } of depmap.values()) {
         let carryList = props; // props 的具体值，是 DependencyBuilder.addOrUpdateDependencies 设置的。
         carryList.forEach(function (cellCarry) {
           depActionFn(cellCarry, addrSelf);
         });
+        updatedFormulaAddress.push(fromNode);
       }
     });
+
+    return updatedFormulaAddress.filter(function (node) {
+      let { data: { cellAddress } } = node;
+      return (cellAddress.isLost() === false);
+    }).map(function (node) {
+      let cellData = node.data;
+      return cellData.cellAddress;
+    });
+
   }
 
+  /**
+   * @return 需要更新公式的单元格的新地址。
+   * 返回更新地址后的单元格列表，这些单元格可以用于外部表格组件更新公式使用。
+   */
   insertRows(activeSheetName, beforeWhich, numberOfRows) {
     let affectedCellList = this._findDirtyCells(function (addr) {
       return addr.isAffactedByInsertingRows(activeSheetName, beforeWhich, numberOfRows);
     });
 
-    this._doTransformation(affectedCellList,
+    return this._doTransformation(affectedCellList,
       function (addrSelf) {
         // 变更自身位置
         addrSelf.insertRows(activeSheetName, beforeWhich, numberOfRows);
@@ -66,15 +81,16 @@ class DependencyTransformer {
         cellCarry.insertRows(beforeWhich, numberOfRows);
       }
     );
+
   }
 
   removeRows(activeSheetName, startFrom, numberOfRows) {
     let affectedCellList = this._findDirtyCells(function (simpleCellAddress) {
       return simpleCellAddress.isAffactedByRemovingRows(activeSheetName, startFrom, numberOfRows);
     });
-    this._doTransformation(affectedCellList,
+    return this._doTransformation(affectedCellList,
       function (addrSelf) {
-        if(addrSelf.willBeRemovedWhenRemovingRows(activeSheetName, startFrom, numberOfRows)){
+        if (addrSelf.willBeRemovedWhenRemovingRows(activeSheetName, startFrom, numberOfRows)) {
           addrSelf.lost();
           return;
         }
@@ -82,7 +98,7 @@ class DependencyTransformer {
         addrSelf.removeRows(activeSheetName, startFrom, numberOfRows);
       },
       function (cellCarry, addrSelf) {
-        if(addrSelf.isLost()) {
+        if (addrSelf.isLost()) {
           cellCarry.lost();
           return;
         }
@@ -97,7 +113,7 @@ class DependencyTransformer {
       return addr.isAffactedByInsertingColumns(activeSheetName, beforeWhich, numberOfColumns);
     });
 
-    this._doTransformation(affectedCellList,
+    return this._doTransformation(affectedCellList,
       function (addrSelf) {
         // 变更自身位置
         addrSelf.insertColumns(activeSheetName, beforeWhich, numberOfRows);
@@ -113,9 +129,9 @@ class DependencyTransformer {
     let affectedCellList = this._findDirtyCells(function (simpleCellAddress) {
       return simpleCellAddress.isAffactedByRemovingColumns(activeSheetName, startFrom, numberOfColumns);
     });
-    this._doTransformation(affectedCellList,
+    return this._doTransformation(affectedCellList,
       function (addrSelf) {
-        if(addrSelf.willBeRemovedWhenRemovingRows(activeSheetName, startFrom, numberOfColumns)){
+        if (addrSelf.willBeRemovedWhenRemovingRows(activeSheetName, startFrom, numberOfColumns)) {
           addrSelf.lost();
           return;
         }
@@ -123,7 +139,7 @@ class DependencyTransformer {
         addrSelf.removeColumns(activeSheetName, startFrom, numberOfColumns);
       },
       function (cellCarry, addrSelf) {
-        if(addrSelf.isLost()) {
+        if (addrSelf.isLost()) {
           cellCarry.lost();
           return;
         }

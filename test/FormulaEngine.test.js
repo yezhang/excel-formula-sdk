@@ -67,12 +67,15 @@ describe('公式引擎-常用场景', function () {
     engine.setCellFormula(context, A1CellRef, A1FormulaText);
 
     // 插入行，1 行前面插入 1 行
-    engine.addRows(context, 1, 1);
+    let updatedCellAddressList = engine.addRows(context, 1, 1);
 
     let A2CellRef = { column: 1, row: 2}; // A2 = B2
     let A2FormulaTextUpdated = '=B2';
     let innerFormula = engine.getCellFormula(context, A2CellRef);
-    expect(innerFormula).to.be.equal(A2FormulaTextUpdated);
+    expect(innerFormula).to.equal(A2FormulaTextUpdated);
+
+    expect(updatedCellAddressList[0]).to.have.property('column', 1);
+    expect(updatedCellAddressList[0]).to.have.property('row', 2);
   });
 
   it('设计态-调整表结构-删除行（没有删除单元格）', function () {
@@ -84,18 +87,40 @@ describe('公式引擎-常用场景', function () {
     let A2FormulaText = '=B2';
     engine.setCellFormula(context, A2CellRef, A2FormulaText);
 
-    // 插入行，1 行前面插入 1 行
-    engine.removeRows(context, 1, 1);
+    // 删除行，从 1 行开始，删除 1 行
+    let updatedCellAddressList = engine.removeRows(context, 1, 1);
 
     let A1CellRef = { column: 1, row: 1}; // A1 = B1
     let A1FormulaTextUpdated = '=B1';
     let innerFormula = engine.getCellFormula(context, A1CellRef);
     expect(innerFormula).to.be.equal(A1FormulaTextUpdated);
 
+    expect(updatedCellAddressList[0]).to.have.property('column', 1);
+    expect(updatedCellAddressList[0]).to.have.property('row', 1);
+
   });
 
   it('设计态-调整表结构-删除行（删除了单元格）', function () {
-    expect.fail();
+    // 测试用例：
+    // 调整表结构后，单元格被删除
+    // 验证调整后依赖图中没有节点
+
+    let context = new WorkBookContext('sheet1');
+    let A2CellRef = { column: 1, row: 2 }; // A2 = B2
+    let A2FormulaText = '=B2';
+    engine.setCellFormula(context, A2CellRef, A2FormulaText);
+
+    // 删除行，从 1 行开始，删除 1 行
+    let updatedCellAddressList = engine.removeRows(context, 1, 2);
+    expect(updatedCellAddressList).to.have.lengthOf(0);
+
+    // 再次设置公式
+    engine.setCellFormula(context, A2CellRef, A2FormulaText);
+    // 删除后没有影响单元格
+    updatedCellAddressList = engine.removeRows(context, 3, 2);
+
+    let innerFormula = engine.getCellFormula(context, A2CellRef);
+    expect(innerFormula).to.be.equal(A2FormulaText);
   });
 
   it('设计态-调整表结构-插入列', function () {
