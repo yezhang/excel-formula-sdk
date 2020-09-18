@@ -13,7 +13,7 @@ singleExpression
     : singleExpression arguments                                                # ArgumentsExpression
     | '+' singleExpression                                                      # UnaryPlusExpression
     | '-' singleExpression                                                      # UnaryMinusExpression
-    | <assoc=right> singleExpression '**' singleExpression                      # PowerExpression
+    | <assoc=right> singleExpression op='**' singleExpression                      # PowerExpression
     | singleExpression op=('*' | '/' | '%') singleExpression                    # MultiplicativeExpression
     | singleExpression op=('+' | '-') singleExpression                          # AdditiveExpression
     | singleExpression op=('<' | '>' | '<=' | '>=') singleExpression            # RelationalExpression

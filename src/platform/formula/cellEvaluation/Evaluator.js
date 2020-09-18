@@ -4,11 +4,30 @@
 const types = require('base/common/types');
 const CellValueProviderProxy = require('platform/formula/cellEvaluation/CellValueProviderProxy');
 const FormulaEvaluationVisitor = require('platform/formula/cellEvaluation/FormulaEvaluationVisitor').FormulaEvaluationVisitor;
+const {SimpleCellAddress} = require('platform/formula/cellAddressParts/common/CellAddressParts');
 
+/**
+ * 根据依赖图对单元格求值。
+ */
 class Evaluator {
   constructor(depGraph, tableCellValueProvider) {
     this.depGraph = depGraph;
     this.cellValueProxy = new CellValueProviderProxy(tableCellValueProvider);
+  }
+
+  /**
+   * 对某个单元格的公式求值。
+   * @param {String} activeSheetName 工作表名称
+   * @param {Object} cellAddr 单元格地址对象 {column:<1..n>, row:<1..n>}
+   */
+  evaluate(activeSheetName, cellAddr) {
+    let simpleAddr = SimpleCellAddress.build(activeSheetName, cellAddr.column, cellAddr.row);
+    let formulaAST = this.depGraph.getCellFormulaAST(activeSheetName, simpleAddr);
+    return this.evaluateAST(formulaAST);
+  }
+
+  evaluateAST(formulaAST) {
+    return formulaAST.accept(new FormulaEvaluationVisitor(this.cellValueProxy));
   }
 
   evaluateAll() {

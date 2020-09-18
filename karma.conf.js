@@ -2,6 +2,8 @@ process.env.CHROME_BIN = require('puppeteer').executablePath();
 
 const webpackDevConfig = require('./build/webpack.config.dev');
 
+webpackDevConfig.stats = 'errors-only'; // 关闭不必要的日志
+
 module.exports = function (config) {
   config.set({
     basePath: '.',
@@ -55,8 +57,8 @@ module.exports = function (config) {
      * config.LOG_INFO //输出全部信息
      * config.LOG_DEBUG //输出调试信息
      */
-    logLevel: config.LOG_INFO,
-    browsers: ['Chrome'], //ChromeHeadless
+    logLevel: config.LOG_DISABLE,
+    browsers: ['ChromeHeadless'], // 或者 ChromeHeadless, Chrome
 
     // 开启或禁用持续集成模式
     singleRun: true, // true，执行后退出

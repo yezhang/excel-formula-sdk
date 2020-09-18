@@ -220,12 +220,16 @@ class DependencyGraph {
    * @param {SimpleCellAddress} cellAddress
    */
   getCellFormula(activeSheetName, cellAddress) {
+    return this.getCellFormulaAST(activeSheetName, cellAddress).toString();
+  }
+
+  getCellFormulaAST(activeSheetName, cellAddress) {
     let node = this.graph.lookup(new CellData(cellAddress));
     if (!node) {
       return undefined; // 当前单元格不存在
     }
     let cellData = node.data;
-    return cellData.ast.toString();
+    return cellData.ast;
   }
 }
 

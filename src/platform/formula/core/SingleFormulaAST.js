@@ -135,6 +135,10 @@ class ASTVisitor extends ReportFormulaParserVisitor {
     return ctx.identifier().accept(this);
   }
 
+  visitLiteralExpression(ctx) {
+    return ctx.literal().accept(this);
+  }
+
   visitIdentifierPlainText(ctx) {
     let name = ctx.getText();
     return new PlainTextIdentifier(name);
@@ -251,7 +255,11 @@ class ASTVisitor extends ReportFormulaParserVisitor {
   }
 
   visitPercentageLiteralExpression(ctx) {
-    return new PercentageLiteral(Number(ctx.getText()));
+    return ctx.percentageLiteral().accept(this);
+  }
+
+  visitPercentageLiteral(ctx) {
+    return new PercentageLiteral(Number(ctx.BasicNumberLiteral().getText()))
   }
 
   visitBasicNumberLiteralExpression(ctx) {
@@ -269,6 +277,10 @@ function SingleFormulaAST(parseTree) {
   this.content = parseTree.accept(new ASTVisitor());
 
   return this;
+}
+
+SingleFormulaAST.prototype.accept = function accept(visitor) {
+  return this.content.accept(visitor);
 }
 
 SingleFormulaAST.prototype.toString = function toString() {
@@ -305,6 +317,12 @@ class IAccessableType {
     return undefined;
   }
 }
+
+/**
+ * 语法树节点的定义参考：
+ * https://github.com/estree/estree
+ * https://github.com/estree/estree/blob/master/es5.md
+ */
 class FormulaProgram extends IAccessableType{
   constructor(body) {
     super();

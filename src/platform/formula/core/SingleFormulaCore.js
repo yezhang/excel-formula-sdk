@@ -3,15 +3,10 @@ const antlr4 = require('antlr4');
 const FormulaParser = require('../runtime/ReportFormulaParser').ReportFormulaParser;
 const FormulaLexer = require('../runtime/ReportFormulaLexer').ReportFormulaLexer;
 
-const ValueEvaluationVisitor = require('../cellEvaluation/FormulaEvaluationVisitor').FormulaEvaluationVisitor;
 const EditorTokensVisitor = require('./EditorTokensVisitor').EditorTokensVisitor;
 
 const ParserErrorListener = require('../error/ParserErrorListener');
 const LexerErrorListener = require('../error/LexerErrorListener');
-
-const FormulaErrs = require('../error/FormulaExceptions');
-const CalculationException = FormulaErrs.CalculationException;
-const ParseException = FormulaErrs.ParseException;
 
 const EditorErrorHandler = require('../../contrib/errorHandler/EditorErrorHandler');
 
@@ -26,7 +21,6 @@ class NotImplementedError extends Error {
  */
 
 function SingleFormulaCore(errorHandler, cellValueProvider) {
-  this.evaluateVisitor = new ValueEvaluationVisitor()
   this.setErrorHandler(errorHandler);
   this.setCellValueProvider(cellValueProvider);
 }
@@ -216,6 +210,15 @@ SingleFormulaCore.prototype.collectTokens = function (tokenTree) {
  * @return {Object} 解析树（ParseTree）
  */
 SingleFormulaCore.prototype.parse = function parse(input) {
+  const parser = this.buildParser(input);
+  // 启动公式解析，遇到错误会触发 ErrorListener。
+  return parser.formulaExpr(); 
+}
+
+/**
+ * 构建解析器
+ */
+SingleFormulaCore.prototype.buildParser = function parser(input) {
   const errorListenerObj = this.createErrorListener(this.sharedErrorHandler);
 
   const chars = new antlr4.InputStream(input);
@@ -229,10 +232,7 @@ SingleFormulaCore.prototype.parse = function parse(input) {
   parser.removeErrorListeners(); // 移除默认的 ConsoleErrorListener
   parser.addErrorListener(errorListenerObj.parserErrorListener);
 
-  // 启动公式解析，遇到错误会触发 ErrorListener。
-  const tree = parser.formulaExpr(); 
-
-  return tree;
+  return parser;
 }
 
 /**
@@ -243,26 +243,6 @@ SingleFormulaCore.prototype.collectCellAddresses = function(parseTree) {
   throw new NotImplementedError();
 }
 
-/**
- * 计算公式
- * @param {String} input 输入字符串
- */
-SingleFormulaCore.prototype.calc = function calc(input) {
-  var ast = this.parse(input);
-  if (!ast) {
-    return;
-  }
-
-  try {
-    return ast.accept(this.evaluateVisitor);
-  } catch (e) {
-    if (e instanceof ParseException) {
-      this.sharedErrorHandler.handleParseError(e.input, e.line, e.column, e.message);
-    } else {
-      this.sharedErrorHandler.handleEvaluateError(e);
-    }
-  }
-}
 
 SingleFormulaCore.createInstance = function () {
   return new SingleFormulaCore(new EditorErrorHandler());

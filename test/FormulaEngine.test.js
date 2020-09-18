@@ -30,7 +30,7 @@ describe('公式引擎-常用场景', function () {
     engine.setCellFormula(context, A1CellRef, A1FormulaText);
 
     let innerFormula = engine.getCellFormula(context, A1CellRef);
-    expect(innerFormula).to.be.equal(A1FormulaText);
+    expect(innerFormula).to.equal(A1FormulaText);
 
 
     let C1CellRef = { column: 3, row: 1 }; // C1 = D1
@@ -38,7 +38,7 @@ describe('公式引擎-常用场景', function () {
     engine.setCellFormula(context, C1CellRef, C1FormulaText);
 
     innerFormula = engine.getCellFormula(context, C1CellRef);
-    expect(innerFormula).to.be.equal(C1FormulaText);
+    expect(innerFormula).to.equal(C1FormulaText);
 
 
     let B1CellRef = { column: 2, row: 1 }; // B1 = C1 * 0.5
@@ -46,8 +46,8 @@ describe('公式引擎-常用场景', function () {
     engine.setCellFormula(context, B1CellRef, B1FormulaText);
 
     innerFormula = engine.getCellFormula(context, B1CellRef);
-    // 获取到的公式会重新被格式化
-    expect(innerFormula).to.be.equal(B1FormulaText.replace(/\s/g, ''));
+    // 获取到的公式会重新被格式化，移除不必要的空格
+    expect(innerFormula).to.equal(B1FormulaText.replace(/\s/g, ''));
   });
 
   it('设计态-单元格输入公式完毕（单元格范围）', function () {
@@ -93,7 +93,7 @@ describe('公式引擎-常用场景', function () {
     let A1CellRef = { column: 1, row: 1}; // A1 = B1
     let A1FormulaTextUpdated = '=B1';
     let innerFormula = engine.getCellFormula(context, A1CellRef);
-    expect(innerFormula).to.be.equal(A1FormulaTextUpdated);
+    expect(innerFormula).to.equal(A1FormulaTextUpdated);
 
     expect(updatedCellAddressList[0]).to.have.property('column', 1);
     expect(updatedCellAddressList[0]).to.have.property('row', 1);
@@ -120,13 +120,18 @@ describe('公式引擎-常用场景', function () {
     updatedCellAddressList = engine.removeRows(context, 3, 2);
 
     let innerFormula = engine.getCellFormula(context, A2CellRef);
-    expect(innerFormula).to.be.equal(A2FormulaText);
+    expect(innerFormula).to.equal(A2FormulaText);
   });
 
   it('设计态-调整表结构-插入列', function () {
     // 测试用例：
     // 调整表结构后，受影响的单元格公式需要更新，指向新的单元格地址。
     // 验证调整后受影响的单元格公式
+    let context = new WorkBookContext('sheet1');
+    let A2CellRef = { column: 1, row: 2 }; // A2 = B2
+    let A2FormulaText = '=B2';
+    engine.setCellFormula(context, A2CellRef, A2FormulaText);
+
     expect.fail();
   });
 

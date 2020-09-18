@@ -84,6 +84,18 @@ class FormulaEngine {
     return finder.getCellFormula(activeSheetName, cellAddr);
   }
 
+  /**
+   * 
+   * @param {WorkBookContext} workBookContext 
+   * @param {Object} cellAddr 单元格地址对象 {column:<1..n>, row:<1..n>}
+   */
+  evaluate(workBookContext, cellAddr) {
+    const activeSheetName = workBookContext.activeSheetName;
+
+    const evaluator = new Evaluator(this.depGraph);
+    return evaluator.evaluate(activeSheetName, cellAddr);
+  }
+
   evaluateAll(workBookContext) {
     // const activeSheetName = workBookContext.activeSheetName;
     const evaluator = new Evaluator(this.depGraph);

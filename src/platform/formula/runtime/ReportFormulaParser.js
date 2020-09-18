@@ -782,6 +782,7 @@ LogicalAndExpressionContext.prototype.accept = function(visitor) {
 
 function PowerExpressionContext(parser, ctx) {
 	SingleExpressionContext.call(this, parser);
+    this.op = null; // Token;
     SingleExpressionContext.prototype.copyFrom.call(this, ctx);
     return this;
 }
@@ -1387,7 +1388,7 @@ ReportFormulaParser.prototype.singleExpression = function(_p) {
                         throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 14)");
                     }
                     this.state = 68;
-                    this.match(ReportFormulaParser.Power);
+                    localctx.op = this.match(ReportFormulaParser.Power);
                     this.state = 69;
                     this.singleExpression(14);
                     break;
