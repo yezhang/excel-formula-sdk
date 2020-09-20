@@ -23,6 +23,18 @@ describe('公式引擎-常用场景', function () {
     engine = new FormulaEngine();
   });
 
+  it('设计态-单元格输入错误的公式', function(){
+    let context = new WorkBookContext('sheet1');
+    let A1CellRef = { column: 1, row: 1 }; // A1 = B1
+    let A1FormulaText = '=B1+';
+    
+    expect(function(){
+      engine.setCellFormula(context, A1CellRef, A1FormulaText);
+    }).to.throw('输入的公式存在错误');
+    
+
+  });
+
   it('设计态-单元格输入公式完毕（纯单元格地址）', function () {
     let context = new WorkBookContext('sheet1');
     let A1CellRef = { column: 1, row: 1 }; // A1 = B1

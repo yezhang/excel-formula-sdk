@@ -66,6 +66,9 @@ class FormulaEngine {
   setCellFormula(workBookContext, cellAddr, formula) {
     const activeSheetName = workBookContext.activeSheetName;
     const parseTree = SingleFormulaCoreInst.parse(formula);
+    if(SingleFormulaCoreInst.hasErrors()) {
+      throw new Error('输入的公式存在错误');
+    }
     const ast = new SingleFormulaAST(parseTree);
 
     const builder = new CellDependencyBuilder(this.depGraph);

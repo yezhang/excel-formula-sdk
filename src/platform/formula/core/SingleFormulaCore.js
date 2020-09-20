@@ -207,7 +207,7 @@ SingleFormulaCore.prototype.collectTokens = function (tokenTree) {
 /**
  * 生成的解析树中，允许包括错误。
  * @param {String} input 输入字符串
- * @return {Object} 解析树（ParseTree）
+ * @return {Object} 解析树（ParseTree）。如果语法有错误，则抛出解析错误（词法错误、语法错误）
  */
 SingleFormulaCore.prototype.parse = function parse(input) {
   const parser = this.buildParser(input);
@@ -221,6 +221,8 @@ SingleFormulaCore.prototype.parse = function parse(input) {
 SingleFormulaCore.prototype.buildParser = function parser(input) {
   const errorListenerObj = this.createErrorListener(this.sharedErrorHandler);
 
+  this._innerErrorListeners = errorListenerObj;
+
   const chars = new antlr4.InputStream(input);
   const lexer = new FormulaLexer(chars);
   lexer.removeErrorListeners();
@@ -233,6 +235,12 @@ SingleFormulaCore.prototype.buildParser = function parser(input) {
   parser.addErrorListener(errorListenerObj.parserErrorListener);
 
   return parser;
+}
+
+SingleFormulaCore.prototype.hasErrors = function hasErrors() {
+  let hasLexerErrors = this._innerErrorListeners.lexerErrorListener.hasErrors();
+  let hasParseErrors = this._innerErrorListeners.parserErrorListener.hasErrors();
+  return hasLexerErrors || hasParseErrors;
 }
 
 /**
