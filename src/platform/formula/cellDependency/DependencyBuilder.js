@@ -35,7 +35,6 @@ class CellDependencyBuilder {
     if(oldSheetName && newSheetName) {
       this.depGraph.renameSheet(oldSheetName, newSheetName);
     }
-    
   }
 
   /**

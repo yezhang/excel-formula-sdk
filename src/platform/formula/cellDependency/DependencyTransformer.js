@@ -116,11 +116,11 @@ class DependencyTransformer {
     return this._doTransformation(affectedCellList,
       function (addrSelf) {
         // 变更自身位置
-        addrSelf.insertColumns(activeSheetName, beforeWhich, numberOfRows);
+        addrSelf.insertColumns(activeSheetName, beforeWhich, numberOfColumns);
       },
       function (cellCarry) {
         // 变更每个依赖本单元格的公式语法树节点
-        cellCarry.insertColumns(beforeWhich, numberOfRows);
+        cellCarry.insertColumns(beforeWhich, numberOfColumns);
       }
     );
   }

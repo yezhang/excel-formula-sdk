@@ -23,7 +23,7 @@ class Evaluator {
    * 对某个单元格的公式求值。
    * @param {String} activeSheetName 工作表名称
    * @param {Object} cellAddr 单元格地址对象 {column:<1..n>, row:<1..n>}
-   * 
+   * @return 公式计算后的值。
    */
   evaluate(activeSheetName, cellAddr) {
     let simpleAddr = SimpleCellAddress.build(activeSheetName, cellAddr.column, cellAddr.row);
