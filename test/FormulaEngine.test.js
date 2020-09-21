@@ -2,6 +2,7 @@
  * 对于所有公开 API 的测试。
  */
 const expect = require('chai').expect;
+const { set } = require('lodash');
 const { WorkBookContext, FormulaEngine } = require('platform/formula/FormulaEngine');
 
 /**
@@ -23,17 +24,19 @@ describe('公式引擎-常用场景', function () {
     engine = new FormulaEngine();
   });
 
-  it('设计态-单元格输入错误的公式', function(){
+  it('设计态-单元格输入错误的公式', function () {
     let context = new WorkBookContext('sheet1');
     let A1CellRef = { column: 1, row: 1 }; // A1 = B1
     let A1FormulaText = '=B1+';
-    
-    expect(function(){
+
+    expect(function () {
       engine.setCellFormula(context, A1CellRef, A1FormulaText);
     }).to.throw('输入的公式存在错误');
-    
+
 
   });
+
+
 
   it('设计态-单元格输入公式完毕（纯单元格地址）', function () {
     let context = new WorkBookContext('sheet1');
@@ -81,7 +84,7 @@ describe('公式引擎-常用场景', function () {
     // 插入行，1 行前面插入 1 行
     let updatedCellAddressList = engine.addRows(context, 1, 1);
 
-    let A2CellRef = { column: 1, row: 2}; // A2 = B2
+    let A2CellRef = { column: 1, row: 2 }; // A2 = B2
     let A2FormulaTextUpdated = '=B2';
     let innerFormula = engine.getCellFormula(context, A2CellRef);
     expect(innerFormula).to.equal(A2FormulaTextUpdated);
@@ -102,7 +105,7 @@ describe('公式引擎-常用场景', function () {
     // 删除行，从 1 行开始，删除 1 行
     let updatedCellAddressList = engine.removeRows(context, 1, 1);
 
-    let A1CellRef = { column: 1, row: 1}; // A1 = B1
+    let A1CellRef = { column: 1, row: 1 }; // A1 = B1
     let A1FormulaTextUpdated = '=B1';
     let innerFormula = engine.getCellFormula(context, A1CellRef);
     expect(innerFormula).to.equal(A1FormulaTextUpdated);
@@ -154,27 +157,27 @@ describe('公式引擎-常用场景', function () {
     expect.fail();
   });
 
-  describe('运行态', function() {
+  describe('运行态', function () {
     it('公式求值-正确求值', function () {
       let context = new WorkBookContext('sheet1');
       const cellValueProvider = {
         getCellValue: function (cell) {
           // C7 = 5, column = 3, row = 7
-          if(cell.column === 3) {
+          if (cell.column === 3) {
             return 5;
           }
 
           // D7 = 6, column = 4, row = 7
-          if(cell.column === 4) {
+          if (cell.column === 4) {
             return 6;
           }
 
           // E7 = 7, column = 5, row = 7
-          if(cell.column === 5) {
+          if (cell.column === 5) {
             return 7;
           }
         },
-        getCellRangeValues: function(cellRange) {
+        getCellRangeValues: function (cellRange) {
 
         }
       };
@@ -185,29 +188,58 @@ describe('公式引擎-常用场景', function () {
 
       // A1=IF(C7<E7,MIN(ABS(E7-C7),D7),0)
       engine.setCellFormula(context, A1CellRef, '=IF(C7<E7,MIN(ABS(E7-C7),D7),0)');
-  
+
       let ret = undefined;
-      try{
+
+      try {
         engine.prepareToEvaluateTable(cellValueProvider);
         ret = engine.evaluate(context, A1CellRef);
-      }catch(e){
+      } catch (e) {
         ret = e.getResult();
       }
-  
+
+
       expect(ret).to.equal(2);
     });
-  
-    it('公式求值-全部单元格自动求值', function(){
-      // engine.evaluateAll(context); // 执行全部公式的重算。
+
+    it('公式求值-全部单元格自动求值', function () {
+      // 测试用例描述：
+      // Step1. 设置公式 A2 = A1
+      // Step2, set A1 = 1;
+      // 全部重新计算
+      let context = new WorkBookContext('sheet1');
+      const cellValueProvider = {
+        getCellValue: function (cell) {
+          // A1, column = 1, row = 1
+          if(cell.row == 1) {
+            return 1;
+          }
+        },
+        getCellRangeValues: function (cellRange) {
+
+        },
+        setCellValue: function (cell, value) {
+          
+        }
+      };
+      const A2CellRef = {
+        column: 1,
+        row: 2
+      }
+      // A2=A1
+      engine.setCellFormula(context, A2CellRef, '=A1');
+
+      engine.prepareToEvaluateTable(cellValueProvider);
+      engine.evaluateAll(context); // 执行全部公式的重算。
     });
 
-    it('公式求值-计算错误', function(){
+    it('公式求值-计算错误', function () {
 
     });
 
-    
+
   })
-  
+
 
   describe('表内公式', function () {
     it('增值税纳税申报表主表:17=12+13-14-15+16', function () {

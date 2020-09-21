@@ -1,4 +1,4 @@
-
+const types = require('base/common/types');
 const buildCellRefDecorator = require('../cellAddressParts/common/CellAddressParts').buildCellRefDecorator;
 const SimpleCellAddress = require('platform/formula/cellAddressParts/common/CellAddressParts').SimpleCellAddress;
 const SingleFormulaContext = require('platform/formula/core/SingleFormulaContext').SingleFormulaContext;
@@ -20,6 +20,22 @@ class CellDependencyBuilder {
 
   setFormulaAST(ast) {
     this.formulaAST = ast;
+  }
+
+  /**
+   * 根据 unusedSheetNames 数组中的名称，移除该表格的下的所有单元格节点。
+   */
+  removeSheets(activeSheetName, unusedSheetNames){
+    if(types.isArray(unusedSheetNames)) {
+      this.depGraph.removeSheets(unusedSheetNames);
+    }
+  }
+
+  renameSheet(activeSheetName, oldSheetName, newSheetName) {
+    if(oldSheetName && newSheetName) {
+      this.depGraph.renameSheet(oldSheetName, newSheetName);
+    }
+    
   }
 
   /**

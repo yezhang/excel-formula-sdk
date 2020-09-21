@@ -433,6 +433,10 @@ class SimpleCellAddress {
     this.state = CellAddressState.NORMAL;
   }
 
+  setSheet(sheet) {
+    this.sheet = sheet;
+  }
+
   clone() {
     return new SimpleCellAddress(this.sheet, this.column, this.row);
   }
@@ -642,6 +646,10 @@ class SimpleCellRange {
       column: endSimpleAddress.column,
       row: endSimpleAddress.row
     }
+  }
+
+  setSheet(sheet) {
+    this.sheet = sheet;
   }
 
   clone() {

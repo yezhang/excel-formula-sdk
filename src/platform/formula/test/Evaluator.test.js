@@ -22,6 +22,17 @@ describe('公式求值', function () {
 
     }
   }
+
+  it('公式全部重算', function() {
+    // 测试用例描述：
+    // Step1. 设置公式 A2 = A1
+    // Step2, set A1 = 1;
+    // 全部重新计算
+
+    
+    expect.fail('全部重算');
+  })
+
   describe('[常量+运算符]', function () {
     function assertEvaluation(input, expected) {
       let ast = new SingleFormulaAST(Core.parse(input));
@@ -72,6 +83,7 @@ describe('公式求值', function () {
       datas.forEach(function(item){
 
       })
+
     });
   })
 })

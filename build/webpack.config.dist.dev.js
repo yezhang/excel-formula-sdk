@@ -4,7 +4,7 @@ module.exports = {
   mode: 'development',
   entry: './src/index.js',
   output: {
-    path: path.resolve(__dirname, '../dist/dev'),
+    path: path.resolve(__dirname, '../dist/excel-formula-sdk/dev'),
     filename: 'formula-sdk.js',
     library: 'formulaSDK',
     libraryTarget: 'umd', 
@@ -21,7 +21,7 @@ module.exports = {
     ]
   },
   optimization: {
-    runtimeChunk: true
+    runtimeChunk: false
   },
   node: { module: "empty", net: "empty", fs: "empty" }, //配置 antlr4 不在 nodejs 环境工作。
   resolve: {

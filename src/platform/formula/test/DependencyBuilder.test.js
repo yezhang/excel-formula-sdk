@@ -204,6 +204,10 @@ describe('依赖图的构建', function () {
     expect(C1Index > E1Index).to.be.true;
   });
 
+  it('删除工作表', function() {
+    expect.fail();
+  });
+
   it('单元格范围依赖', function () {
     // 当设置单元格范围内的某个单元格公式时，可以建立单元格范围到该单元格地址的依赖
     // 用例描述：

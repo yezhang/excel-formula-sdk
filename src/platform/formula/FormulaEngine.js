@@ -57,6 +57,12 @@ class FormulaEngine {
     builder.clear(activeSheetName, cellAddr);
   }
 
+  removeSheets(workBookContext, sheets) {
+    const activeSheetName = workBookContext.activeSheetName;
+    const builder = new CellDependencyBuilder(this.depGraph);
+    builder.clear(activeSheetName, sheets);
+  }
+
   /**
    * 用户输入一个公式后调用。
    * @param {WorkBookContext} workBookContext 工作簿上下文，包含当前激活的工作表sheet。

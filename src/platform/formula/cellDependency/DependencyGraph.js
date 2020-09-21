@@ -3,7 +3,6 @@
  */
 const Graph = require('platform/formula/cellDependency/common/Graph').Graph;
 const Search = require('platform/formula/cellDependency/common/ElementaryCircuitsSearch').ElementaryCircuitsSearch;
-
 const SimpleCellRange = require('platform/formula/cellAddressParts/common/CellAddressParts').SimpleCellRange;
 
 class CyclicDependencyError extends Error {
@@ -30,7 +29,7 @@ class CellData {
   }
 
   /**
-   * 浅拷贝，只拷贝单元地址。
+   * 浅拷贝，只拷贝单元地址，不拷贝单元格持有的语法树。
    */
   shallowClone() {
     return new CellData(this.cellAddress.clone(), null);
@@ -206,6 +205,42 @@ class DependencyGraph {
    */
   updateCellAddress(oldCellAddress, newCellAddress) {
     this.graph.moveNode(new CellData(oldCellAddress), new CellData(newCellAddress));
+  }
+
+  renameSheet(oldSheetName, newSheetName) {
+    const that = this;
+    let cellDatas = this.graph.nodeDatas();
+      cellDatas.forEach(function(data){
+        let cellAddress = data.cellAddress;
+        let sheetName = cellAddress.sheet;
+        if(oldSheetName === sheetName) {
+          // 需要重命名该节点
+          let newCellData = data.shallowClone();
+          newCellData.cellAddress.setSheet(newSheetName);
+          
+          that.graph.moveNode(data, newCellData);
+        }
+      })
+  }
+
+  removeSheets(unusedSheetNames) {
+    const that = this;
+    let namesSet = Object.create(null);
+    if(unusedSheetNames) {
+      unusedSheetNames.forEach(function(name){
+        namesSet[name] = name;
+      });
+
+      let cellDatas = this.graph.nodeDatas();
+      cellDatas.forEach(function(data){
+        let cellAddress = data.cellAddress;
+        let sheetName = cellAddress.sheet;
+        if(namesSet.hasOwnProperty(sheetName)) {
+          // 需要删除该节点
+          that.graph.removeNode(data);
+        }
+      })
+    }
   }
 
   /**
