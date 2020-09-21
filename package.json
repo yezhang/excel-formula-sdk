@@ -1,7 +1,7 @@
 {
   "name": "formulatextarea",
   "version": "0.1.0",
-  "description": "公式编辑器",
+  "description": "Excel 公式解析引擎（公式编辑器、公式计算）",
   "main": "index.js",
   "repository": {
     "url": "git@git.yonyou.com:e-invoice-FE/FormulaTextArea.git",
