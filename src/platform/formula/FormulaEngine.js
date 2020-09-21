@@ -88,20 +88,21 @@ class FormulaEngine {
   }
 
   /**
-   * 
+   * 对指定单元格的公式求值；
+   * 如果指定单元格处没有公式，则直接从单元格处取值。
    * @param {WorkBookContext} workBookContext 
    * @param {Object} cellAddr 单元格地址对象 {column:<1..n>, row:<1..n>}
    */
   evaluate(workBookContext, cellAddr) {
     const activeSheetName = workBookContext.activeSheetName;
 
-    const evaluator = new Evaluator(this.depGraph);
+    const evaluator = new Evaluator(this.depGraph, this.tableCellValueProvider);
     return evaluator.evaluate(activeSheetName, cellAddr);
   }
 
   evaluateAll(workBookContext) {
     // const activeSheetName = workBookContext.activeSheetName;
-    const evaluator = new Evaluator(this.depGraph);
+    const evaluator = new Evaluator(this.depGraph, this.tableCellValueProvider);
     return evaluator.evaluateAll();
   }
  

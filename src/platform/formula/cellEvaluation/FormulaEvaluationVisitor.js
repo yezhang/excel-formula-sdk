@@ -3,9 +3,8 @@ const formulaFns = require('@formulajs/formulajs');
 const types = require('base/common/types');
 const {SimpleCellAddress} = require('platform/formula/cellAddressParts/common/CellAddressParts');
 const StringUtils = require('../../../base/StringUtils').StringUtils;
-const FormulaErrs = require('../error/FormulaExceptions');
-const CalculationException = FormulaErrs.CalculationException;
 
+const EvaluationErrors = require('platform/formula/cellEvaluation/EvaluationErrors');
 
 
 class FormulaEvaluationVisitor {
@@ -33,9 +32,13 @@ class FormulaEvaluationVisitor {
     return node.expression.accept(this);
   }
 
+  /**
+   * TODO: 针对 IF 函数的短路运算？
+   * @param {*} node 
+   */
   visitCallExpression(node) {
     const that = this;
-    let fnName = node.callee;
+    let fnName = node.callee.toString();
     let args = node.arguments;
     let argList = args.map(function (arg) {
       return arg.accept(that);
@@ -46,7 +49,7 @@ class FormulaEvaluationVisitor {
       return formulaFns[fnName].apply(null, argList);
     }
 
-    throw new Error('非法的函数');
+    throw new EvaluationErrors.NameError('非法的函数');
   }
 
   visitPlainTextIdentifier(node) {
@@ -63,13 +66,18 @@ class FormulaEvaluationVisitor {
    * @param {CellAddressIdentifier} node
    */
   _buildSimpleCellAddress(node) {
-    let sheetName = node.sheetName.toString();
+    // AST 与用户输入的文本保持一致，其中的节点可能有 sheetName，也可能没有 sheetName
+
+    let sheetName = undefined;
+    if(node.sheetName){
+      sheetName = node.sheetName.toString();
+    }
     let a1ref = node.a1Reference;
     let column = a1ref.columnRef.text;
     let row = a1ref.rowRef.line;
     return SimpleCellAddress.build(sheetName, column, row);
   }
-  
+
   /**
    * 单元格地址：CellAddressLiteral
    */

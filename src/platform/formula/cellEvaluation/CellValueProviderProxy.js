@@ -20,6 +20,14 @@ class CellValueProviderProxy {
   }
 
   /**
+   * 获取单元格范围的值，是一个数组。
+   * @param {SimpleCellRange} cellRange 
+   */
+  getCellRangeValues(cellRange) {
+    return this.cellValueProvider.getCellRangeValues(cellRange);
+  }
+
+  /**
    * 获取单元格的公式
    */
   getCellFormula(cellAddress) {

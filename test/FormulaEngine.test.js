@@ -154,15 +154,60 @@ describe('公式引擎-常用场景', function () {
     expect.fail();
   });
 
-  it('运行态-报表公式求值', function () {
-    let context = new WorkBookContext('sheet1');
-    const A1CellRef = {
-      column: 1,
-      row: 1
-    }
-    engine.evaluate(context, A1CellRef);
-    engine.evaluateAll(context); // 执行全部公式的重算。
-  });
+  describe('运行态', function() {
+    it('公式求值-正确求值', function () {
+      let context = new WorkBookContext('sheet1');
+      const cellValueProvider = {
+        getCellValue: function (cell) {
+          // C7 = 5, column = 3, row = 7
+          if(cell.column === 3) {
+            return 5;
+          }
+
+          // D7 = 6, column = 4, row = 7
+          if(cell.column === 4) {
+            return 6;
+          }
+
+          // E7 = 7, column = 5, row = 7
+          if(cell.column === 5) {
+            return 7;
+          }
+        },
+        getCellRangeValues: function(cellRange) {
+
+        }
+      };
+      const A1CellRef = {
+        column: 1,
+        row: 1
+      }
+
+      // A1=IF(C7<E7,MIN(ABS(E7-C7),D7),0)
+      engine.setCellFormula(context, A1CellRef, '=IF(C7<E7,MIN(ABS(E7-C7),D7),0)');
+  
+      let ret = undefined;
+      try{
+        engine.prepareToEvaluateTable(cellValueProvider);
+        ret = engine.evaluate(context, A1CellRef);
+      }catch(e){
+        ret = e.getResult();
+      }
+  
+      expect(ret).to.equal(2);
+    });
+  
+    it('公式求值-全部单元格自动求值', function(){
+      // engine.evaluateAll(context); // 执行全部公式的重算。
+    });
+
+    it('公式求值-计算错误', function(){
+
+    });
+
+    
+  })
+  
 
   describe('表内公式', function () {
     it('增值税纳税申报表主表:17=12+13-14-15+16', function () {

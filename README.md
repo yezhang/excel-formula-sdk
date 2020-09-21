@@ -1,6 +1,6 @@
 # excel-formula-sdk
 
-**注意：** 本项目接口仍处于不稳定阶段，会随时发生调整。
+**注意：** 本项目接口仍处于不稳定阶段，接口会随时发生调整。
 
 Excel 公式解析引擎，用于支持公式输入编辑器的智能提示、单元格之间的公式依赖计算、公式的求值。
 
@@ -26,8 +26,10 @@ const FormulaEngine = ExcelFormulaSDK.FormulaEngine;
 
 当用户输入公式按下回车时，执行如下调用：
 ```js
-let context = new WorkBookContext('sheet1'); // 工作簿上下文（包括“活动的工作表”，“活动的单元格”等信息）
-let A1CellRef = { column: 1, row: 1 }; // A1 = B1
+// 工作簿上下文（包括“活动的工作表”，“活动的单元格”等信息）
+let context = new WorkBookContext('sheet1'); 
+// 当前单元格是 A1，公式为“=B1”，即 A1 = B1
+let A1CellRef = { column: 1, row: 1 }; 
 engine.setCellFormula(context, A1CellRef, '=B1');
 ```
 
@@ -44,6 +46,15 @@ const A1CellRef = {
 engine.evaluate(context, A1CellRef);
 ```
 
+在公式计算失败时，会排除异常；在异常中包含界面显示需要的文本。
+```js
+let ret = undefined;
+try{
+  ret = engine.evaluate(context, A1CellRef);
+}catch(e){
+  ret = e.getResult();
+}
+```
 
 
 ## 与编辑器组件 monoca-editor 集成API
