@@ -1,6 +1,6 @@
 {
-  "name": "formulatextarea",
-  "version": "0.1.0",
+  "name": "excel-formula-engine",
+  "version": "0.0.1",
   "description": "Excel 公式解析引擎（公式编辑器、公式计算）",
   "main": "index.js",
   "repository": {
