@@ -156,6 +156,11 @@ describe('公式引擎-常用场景', function () {
 
   it('运行态-报表公式求值', function () {
     let context = new WorkBookContext('sheet1');
+    const A1CellRef = {
+      column: 1,
+      row: 1
+    }
+    engine.evaluate(context, A1CellRef);
     engine.evaluateAll(context); // 执行全部公式的重算。
   });
 

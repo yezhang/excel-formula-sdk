@@ -1,3 +1,52 @@
+# excel-formula-sdk
+
+Excel 公式解析引擎，用于支持公式输入编辑器的智能提示、单元格之间的公式依赖计算、公式的求值。
+
+## 使用方法
+在使用本组件时，需要引用本组件。
+
+CommonJS 规范引入方法：
+```js
+const ExcelFormulaSDK = require('excel-formula-sdk');
+const FormulaEngine = ExcelFormulaSDK.FormulaEngine;
+```
+
+`<script/>` 引入方法:
+```html
+<script src="path/to/formula-sdk.js"></script>
+<script src="path/to/main.formula-sdk.js"></script>
+```
+通过 `<script/>` 标签引用，会形成 formulaSDK 全局变量，用于对公式 SDK 执行调用。
+
+
+
+## 与表格组件集成API
+
+当用户输入公式按下回车时，执行如下调用：
+```js
+let context = new WorkBookContext('sheet1'); // 工作簿上下文（包括“活动的工作表”，“活动的单元格”等信息）
+let A1CellRef = { column: 1, row: 1 }; // A1 = B1
+engine.setCellFormula(context, A1CellRef, '=B1');
+```
+
+如果输入的公式发生了错误，`engine.setCellFormula` 函数会抛出异常，提示禁止用户提交公式即可。
+
+
+当对单元格 A1 求值时，执行如下调用：
+```js
+let context = new WorkBookContext('sheet1');
+const A1CellRef = {
+  column: 1,
+  row: 1
+}
+engine.evaluate(context, A1CellRef);
+```
+
+
+
+## 与编辑器组件 monoca-editor 集成API
+
+
 ## 错误处理方式
 
 当有公式的解析错误时，仍然需要使用 visitor 访问解析树。以便支持变量高亮等内容。
@@ -5,6 +54,9 @@
 当有解析错误时，对公式求值会出错。
 
 本项目打包后，形成一个独立的组件。在使用时，需要与表格组件、编辑器组件配合。
+
+公式解析出错时，使用监听器处理错误，不使用异常。
+公式求值出错时，抛出异常；异常紧用于求值引擎内部使用，用于方便处理不同类型的错误；外部显示计算错误的结果时，使用文本显示。
 
 ## 单元测试
 测试文件与源文件放置在同一个目录下。
