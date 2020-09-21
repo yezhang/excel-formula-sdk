@@ -307,6 +307,9 @@ SingleFormulaAST.prototype.findAllCellRefNodes = function () {
   return cellRefNodes;
 }
 
+/**
+ * 用于支持语法树节点的访问。
+ */
 class IAccessableType {
   accept(visitor) {
     let fnName = 'visit' + this.type;
