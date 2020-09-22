@@ -28,18 +28,22 @@ class DependencyTransformer {
     return affectedCellList;
   }
 
+  /**
+   * 
+   * @param {*} affectedCellList 
+   * @param {*} addrSelfActionFn 当前单元格地址自身的行为函数
+   * @param {*} depActionFn 当前单元格所依赖的单元格的行为函数
+   * @return 收到影响的单元格的地址列表。
+   */
   _doTransformation(affectedCellList, addrSelfActionFn, depActionFn) {
     const that = this;
     const updatedFormulaAddress = []; // “公式内容”受到影响的单元格的新地址
     affectedCellList.forEach(function (node) {
       let cellData = node.data;
       let addrSelf = cellData.cellAddress;
-      let oldAddr = addrSelf.clone();
 
       // 变更自身位置
       addrSelfActionFn(addrSelf);
-
-      that.depGraph.updateCellAddress(oldAddr, addrSelf);
 
       // 变更受影响的公式
       let depmap = node.incoming;
@@ -51,6 +55,9 @@ class DependencyTransformer {
         updatedFormulaAddress.push(fromNode);
       }
     });
+
+    // 更新依赖图中的索引
+    this.depGraph._syncCellAddress();
 
     return updatedFormulaAddress.filter(function (node) {
       let { data: { cellAddress } } = node;
@@ -131,7 +138,7 @@ class DependencyTransformer {
     });
     return this._doTransformation(affectedCellList,
       function (addrSelf) {
-        if (addrSelf.willBeRemovedWhenRemovingRows(activeSheetName, startFrom, numberOfColumns)) {
+        if (addrSelf.willBeRemovedWhenRemovingColumns(activeSheetName, startFrom, numberOfColumns)) {
           addrSelf.lost();
           return;
         }
@@ -148,7 +155,6 @@ class DependencyTransformer {
       }
     );
   }
-
 }
 
 exports.DependencyTransformer = DependencyTransformer;

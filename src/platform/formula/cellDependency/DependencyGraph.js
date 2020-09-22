@@ -69,6 +69,10 @@ class DependencyGraph {
     return this.graph.toString();
   }
 
+  __DEBUG_Print() {
+    return this.graph.toString();
+  }
+
   /**
    * 算法描述：Kahn 算法（卡恩算法）
    * L <- 包含所有排序元素的列表，初始为 []
@@ -201,10 +205,11 @@ class DependencyGraph {
   }
 
   /**
-   * 将旧地址的节点移动到新位置
+   * 在修改图中节点对应的单元格地址后，需要同步刷新底层图的索引。
+   * DependencyTransformer 需要。
    */
-  updateCellAddress(oldCellAddress, newCellAddress) {
-    this.graph.moveNode(new CellData(oldCellAddress), new CellData(newCellAddress));
+  _syncCellAddress() {
+    this.graph.refreshNodes();
   }
 
   renameSheet(oldSheetName, newSheetName) {
@@ -217,7 +222,7 @@ class DependencyGraph {
           // 需要重命名该节点
           let newCellData = data.shallowClone();
           newCellData.cellAddress.setSheet(newSheetName);
-          
+
           that.graph.moveNode(data, newCellData);
         }
       })
@@ -258,6 +263,9 @@ class DependencyGraph {
     return this.getCellFormulaAST(activeSheetName, cellAddress).toString();
   }
 
+  /**
+   * @param {SimpleCellAddress} cellAddress
+   */
   getCellFormulaAST(activeSheetName, cellAddress) {
     let node = this.graph.lookup(new CellData(cellAddress));
     if (!node) {

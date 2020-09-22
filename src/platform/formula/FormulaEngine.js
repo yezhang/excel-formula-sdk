@@ -40,6 +40,10 @@ class FormulaEngine {
     this.tableCellValueProvider = undefined;
   }
 
+  __DEBUG_Print() {
+    return this.depGraph.__DEBUG_Print();
+  }
+
   /**
    * 开始对表格求值。
    * 当公式引擎与表格组件配合使用时，需要调用本函数。

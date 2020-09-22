@@ -154,7 +154,20 @@ describe('公式引擎-常用场景', function () {
     // 测试用例：
     // 调整表结构后，受影响的单元格公式需要更新，指向新的单元格地址。
     // 验证调整后受影响的单元格公式
-    expect.fail();
+
+    let context = new WorkBookContext('sheet1');
+    let C1CellRef = { column: 3, row: 1 }; // C1 = B1
+    let C1FormulaText = '=B1';
+    engine.setCellFormula(context, C1CellRef, C1FormulaText);
+
+    // 从 A 列开始，删除 1 列
+    // 公式变为 B1 = A1
+    const affactedCells = engine.removeColumns(context, 1, 1);
+
+    expect(affactedCells).to.have.lengthOf(1);
+    
+    let formula = engine.getCellFormula(context, affactedCells[0]);
+    expect(formula).to.equal('=A1');
   });
 
   describe('运行态', function () {
@@ -219,7 +232,7 @@ describe('公式引擎-常用场景', function () {
 
         },
         setCellValue: function (cell, value) {
-          
+
         }
       };
       const A2CellRef = {
@@ -234,7 +247,7 @@ describe('公式引擎-常用场景', function () {
     });
 
     it('公式求值-计算错误', function () {
-
+      expect.fail();
     });
 
 

@@ -9,8 +9,12 @@ describe('变更单元格结构', function() {
   })
 
   describe('列操作', function(){
-    if('插入列', function() {
+    it('插入列', function() {
       expect.fail();
+    })
+
+    it('删除列', function() {
+      
     })
   })
 })

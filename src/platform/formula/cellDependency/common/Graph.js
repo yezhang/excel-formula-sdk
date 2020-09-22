@@ -79,6 +79,18 @@ class Graph {
   }
 
   /**
+   * 返回所有顶点的 key
+   */
+  nodeKeys() {
+    const ret = [];
+    for (let node of this._nodes.keys()) {
+      ret.push(node);
+    }
+
+    return ret;
+  }
+
+  /**
    * 返回所有顶点的原始数据
    */
   nodeDatas() {
@@ -100,13 +112,68 @@ class Graph {
     toNode.incoming.set(this._hashFn(from), { fromNode, props });
   }
 
+
+  _refreshNodeEdges(node) {
+    const that = this;
+    function _valueList(map) {
+      const ret = [];
+      for (let v of map.values()) {
+        ret.push(v);
+      }
+
+      return ret;
+    }
+
+    
+    // 刷新入度
+    const incomingList = _valueList(node.incoming);
+    const syncedInComing = new Map();
+    incomingList.forEach(function (incoming) {
+      let fromNode = incoming.fromNode;
+      syncedInComing.set(that._hashFn(fromNode.data), incoming);
+    })
+
+    node.incoming.clear();
+    node.incoming = syncedInComing;
+
+    // 刷新出度
+    const outgoingList = _valueList(node.outgoing);
+    const syncedOutgoing = new Map();
+    outgoingList.forEach(function (outgoing){
+      let toNode = outgoing.toNode;
+      syncedOutgoing.set(that._hashFn(toNode.data), outgoing);
+    })
+
+    node.outgoing.clear();
+    node.outgoing = syncedOutgoing;
+  }
+  /**
+   * 刷新图的状态：用于根据图中的节点，更新图的 hashkey。
+   * 
+   * 假设图中节点持有的数据都已经更新。
+   */
+  refreshNodes() {
+    const that = this;
+    let nodes = this.nodes();
+    let syncedNodes = new Map();
+    nodes.forEach(function (node) {
+      syncedNodes.set(that._hashFn(node.data), node);
+
+      // 刷新节点的入度、出度
+      that._refreshNodeEdges(node);
+    });
+
+    this._nodes.clear();
+    this._nodes = syncedNodes;
+  }
+
   /**
    * 当 data 对象的部分数据域发生变更时，需要更新这部分数据。
    * @param {*} data 
    */
   updateNode(data) {
     let node = this.lookup(data);
-    if(node) {
+    if (node) {
       node.data = data;
       return true;
     }
@@ -145,12 +212,12 @@ class Graph {
    */
   removeNodeOutgoings(data) {
     const node = this.lookup(data);
-    if(!node) {
+    if (!node) {
       return;
     }
     const fromKey = this._hashFn(data);
     const outgoings = node.outgoing;
-    for(let {toNode} of outgoings.values()) {
+    for (let { toNode } of outgoings.values()) {
       toNode.incoming.delete(fromKey);
       const toKey = this._hashFn(toNode.data);
       node.outgoing.delete(toKey);
