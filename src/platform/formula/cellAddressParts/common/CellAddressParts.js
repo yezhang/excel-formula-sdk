@@ -52,13 +52,18 @@ function convertToNumberWhenColumnLetters(column) {
 
 /**
  * 把字母列的表示法转换为数字。
- * 如果参数为数字，直接返回参数的值。
+ * 如果参数为数字，直接返回参数的值。 
+ * @param {String} columnLetters 支持大写和小写。
  */
-function convertColumnLettersToNumber(column) {
+function convertColumnLettersToNumber(columnLetters) {
   function _convertLetter(char) {
     const c = char.charCodeAt(0);
     return c - 65 /* A */ + 1;
   }
+
+  // 一律按照大写处理
+  const column = columnLetters.toUpperCase();
+
   let sum = 0;
   let len = column.length;
   for (let i = 0; i < len; i++) {

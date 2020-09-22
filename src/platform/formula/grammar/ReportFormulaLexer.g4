@@ -53,7 +53,7 @@ CellRangeLiteral: CellAddressLiteral ':' CellAddressLiteral;
 // 单元格地址需要作为一个整体识别，识别后在 visitor 中解析。
 // 如果在语法上将行、列进一步拆分，会与 标识符、数字字面量 有歧义。
 CellAddressLiteral
-    : SheetAddress? '$'? [A-Z] [A-Z]* '$'? [1-9] [0-9]* ;
+    : SheetAddress? '$'? [A-Za-z] [A-Za-z]* '$'? [1-9] [0-9]* ;
 
 // 表格名称
 fragment SheetAddress

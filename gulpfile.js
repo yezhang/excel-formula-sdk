@@ -93,10 +93,7 @@ function updateSemver(cb) {
 }
 
 function npmPublish(cb) {
-  const rootFolder = path.resolve(__dirname, './');
-  process.chdir('./dist/excel-formula-sdk');
-  spawn('npm', ['publish'], { stdio: 'inherit' }).on('close', function (err) {
-    process.chdir(rootFolder);
+  spawn('npm', ['publish', './dist/excel-formula-sdk'], { stdio: 'inherit' }).on('close', function (err) {
     cb();
   });
 

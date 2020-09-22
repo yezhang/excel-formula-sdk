@@ -21,7 +21,7 @@ WorkSheetPrefix
     : SheetName '!'
     ;
 
-CellColumnAddress: [A-Z] [A-Z]*;
+CellColumnAddress: [A-Za-z] [A-Za-z]*;
 CellRowAddress: [1-9] [0-9]*;
 
 Colon:                          ':';
