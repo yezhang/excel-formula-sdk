@@ -284,10 +284,7 @@ describe('公式引擎-常用场景', function () {
 
         }
       };
-      const A2CellRef = {
-        column: 1,
-        row: 2
-      }
+      const A2CellRef = { column: 1, row: 2 };
       // A2=A1
       engine.setCellFormula(context, A2CellRef, '=A1');
 
@@ -295,6 +292,43 @@ describe('公式引擎-常用场景', function () {
       engine.evaluateAll(context); // 执行全部公式的重算。
     });
 
+    it('只计算受影响的单元格', function () {
+      // 测试用例描述：
+      // 1) 设置公式 A1 = B1; B1 = C1; B2 = C2;
+      // 2) 设置 C1 的值
+      // 3) 期待：只计算 B1, A1 单元格处的公式, B2 不应该计算。
+
+      let context = new WorkBookContext('sheet1');
+      const cellValueProvider = {
+        getCellValue: function (cell) {
+          if(cell.column === 2 && cell.row === 2){
+            expect.fail('B2 发生了计算');
+          }
+        },
+        getCellRangeValues: function (cellRange) {
+
+        },
+        setCellValue: function (cell, value) {
+
+        }
+      };
+
+      // A1 = B1; B1 = C1; B2 = C2;
+      const A1 = { column: 1, row: 1 };
+      engine.setCellFormula(context, A1, '=B1');
+
+      const B1 = { column: 2, row: 1 };
+      engine.setCellFormula(context, B1, '=C1');
+
+      const B2 = { column: 2, row: 2 };
+      engine.setCellFormula(context, B2, '=C2');
+
+      // set C1
+      const C1 = { column: 3, row: 1 };
+      engine.prepareToEvaluateTable(cellValueProvider);
+
+      engine.reEvaluateAll(context, C1);
+    });
     it('公式求值-计算错误', function () {
       expect.fail();
     });

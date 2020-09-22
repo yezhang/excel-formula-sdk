@@ -63,6 +63,7 @@ class DependencyGraph {
       return nodeData.cellAddress.hashcode();
     }
     this.graph = new Graph(hashFn);
+    this._hashFn = hashFn;
   }
 
   toString() {
@@ -71,6 +72,42 @@ class DependencyGraph {
 
   __DEBUG_Print() {
     return this.graph.toString();
+  }
+
+  /**
+   * 根据给定的单元格地址，查找所有入度的节点。
+   * 对形成的子图做拓扑排序后分别求值。
+   * 
+   * @param {SimpleCellAddress} cellAddress 图中的出发节点。
+   */
+  sortSubgraph(cellAddress) {
+    const subgraph = this._copyFilteredSubgraph(cellAddress);
+    return this._sortGraph(subgraph);
+  }
+
+  /**
+   * 根据起始顶点的 [入度] 提炼依赖关系子图。
+   * 
+   * @param {SimpleCellAddress} cellAddress 图中的出发节点。
+   */
+  _copyFilteredSubgraph(cellAddress) {
+    const startNode = this.graph.lookup(new CellData(cellAddress));
+    const subgraph = new Graph(this._hashFn);
+    this._copySearchedNode(startNode, subgraph);
+    return subgraph;
+  }
+
+  /**
+   * DFS，深度优先搜索。
+   * @param {*} node 
+   * @param {*} toGraph 
+   */
+  _copySearchedNode(node, toGraph) {
+    const incomingMap = node.incoming.values();
+    for(let { fromNode, props } of incomingMap) {
+      toGraph.insertEdge(fromNode.data, node.data, props);
+      this._copySearchedNode(fromNode, toGraph);
+    }
   }
 
   /**
@@ -105,8 +142,8 @@ class DependencyGraph {
    * 
    * @return {*} 排序后的顶点数组，数组元素类型是 SimpleCellAddress。索引越小，计算优先级越高。
    */
-  sort() {
-    const copy = this.graph.clone();
+  _sortGraph(graph) {
+    const copy = graph.clone();
     const L = [];
     while (true) {
       let S = copy.roots();
@@ -124,6 +161,10 @@ class DependencyGraph {
     }
 
     return L;
+  }
+
+  sort() {
+    return this._sortGraph(this.graph);
   }
 
   // 查找循环依赖，并打印出循环依赖中的各个单元格地址数组（Array）
@@ -195,7 +236,7 @@ class DependencyGraph {
         })
       }
 
-      // 建立本单元格的依赖关系
+      // 建立本单元格对其他单元格的依赖关系
       let deps = Object.keys(dependencyMap);
       deps.forEach(function (dep) {
         let depDetail = dependencyMap[dep];

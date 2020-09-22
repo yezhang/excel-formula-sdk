@@ -9,6 +9,7 @@
   },
   "author": "zhangyef@yonyou.com",
   "license": "MIT",
+  "Keywords": ["excel", "formula", "sdk", "monaco"],
   "scripts": {
     "test": "node ./test/require-alias/loader.js --colors --config ./test/.mocharc.js",
     "coverage": "npx karma start karma.conf.js",

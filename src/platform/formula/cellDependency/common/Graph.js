@@ -217,7 +217,7 @@ class Graph {
     }
     const fromKey = this._hashFn(data);
     const outgoings = node.outgoing;
-    for (let { toNode } of outgoings.values()) {
+    for (let { toNode } of outgoings.values()) { 
       toNode.incoming.delete(fromKey);
       const toKey = this._hashFn(toNode.data);
       node.outgoing.delete(toKey);

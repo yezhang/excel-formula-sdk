@@ -1,3 +1,5 @@
+const assert = require('base/common/assert');
+
 const SingleFormulaCoreInst = require('./core/SingleFormulaCore').INSTANCE;
 const SingleFormulaAST = require('platform/formula/core/SingleFormulaAST').SingleFormulaAST;
 const CellDependencyBuilder = require('./cellDependency/DependencyBuilder').DependencyBuilder;
@@ -97,6 +99,8 @@ class FormulaEngine {
     return finder.getCellFormula(activeSheetName, cellAddr);
   }
 
+
+
   /**
    * 对指定单元格的公式求值；
    * 如果指定单元格处没有公式，则直接从单元格处取值。
@@ -105,13 +109,31 @@ class FormulaEngine {
    */
   evaluate(workBookContext, cellAddr) {
     const activeSheetName = workBookContext.activeSheetName;
-
     const evaluator = new Evaluator(this.depGraph, this.tableCellValueProvider);
     return evaluator.evaluate(activeSheetName, cellAddr);
   }
 
+  /**
+   * 当单元格的数值变更后，自动执行重算。
+   * 只重算受到影响的单元格。
+   * @param {Object} fromCellAddr 发生数值变更/公式变更的单元格地址对象 {column:<1..n>, row:<1..n>}
+   */
+  reEvaluateAll(workBookContext, fromCellAddr) {
+    this._assertCellValueProvider(this._assertCellValueProvider);
+
+    const activeSheetName = workBookContext.activeSheetName;
+    const evaluator = new Evaluator(this.depGraph, this.tableCellValueProvider);
+    return evaluator.reEvaluateAll(activeSheetName, fromCellAddr);
+  }
+
+  _assertCellValueProvider(provider) {
+    assert.ok(provider, '需要调用 prepareToEvaluateTable 方法, 提供 tableCellValueProvider');
+  }
+
   evaluateAll(workBookContext) {
     // const activeSheetName = workBookContext.activeSheetName;
+    this._assertCellValueProvider(this._assertCellValueProvider);
+
     const evaluator = new Evaluator(this.depGraph, this.tableCellValueProvider);
     return evaluator.evaluateAll();
   }

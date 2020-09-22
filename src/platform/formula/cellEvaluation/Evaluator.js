@@ -2,6 +2,7 @@
  * 公式求值器，计算公式的具体数值。
  */
 const types = require('base/common/types');
+
 const CellValueProviderProxy = require('platform/formula/cellEvaluation/CellValueProviderProxy');
 const FormulaEvaluationVisitor = require('platform/formula/cellEvaluation/FormulaEvaluationVisitor').FormulaEvaluationVisitor;
 const { SimpleCellAddress } = require('platform/formula/cellAddressParts/common/CellAddressParts');
@@ -41,9 +42,15 @@ class Evaluator {
     return formulaAST.accept(new FormulaEvaluationVisitor(this.cellValueProxy, ownerSheetName));
   }
 
-  evaluateAll() {
+  reEvaluateAll(activeSheetName, fromCellAddr) {
+    let simpleAddr = SimpleCellAddress.build(activeSheetName, fromCellAddr.column, fromCellAddr.row);
+    let sorted = this.depGraph.sortSubgraph(simpleAddr);
+    return this._evaluateOneByOne(sorted);
+  }
+
+  _evaluateOneByOne(sorted) {
+
     let that = this;
-    let sorted = this.depGraph.sort();
     if (types.isArray(sorted)) {
       sorted.forEach(function (cellData) {
 
@@ -60,8 +67,13 @@ class Evaluator {
           // 在求值完毕后，会同步调用 cellValueProxy 设置单元格值，因为后续单元格会依赖该值的计算
           that.cellValueProxy.setCellValue(cellData.cellAddress, ret);
         }
-      })
+      });
     }
+  }
+
+  evaluateAll() {
+    let sorted = this.depGraph.sort();
+    return this._evaluateOneByOne(sorted);
   }
 }
 
