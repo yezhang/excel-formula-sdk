@@ -36,7 +36,7 @@ class DependencyTransformer {
    * @return 受到影响的公式单元格的地址列表。
    */
   _doTransformation(affectedCellList, addrSelfActionFn, depActionFn) {
-    const that = this;
+
     const updatedFormulaAddressNodes = []; // “公式内容”受到影响的单元格的新地址
     affectedCellList.forEach(function (node) {
       let cellData = node.data;
@@ -62,7 +62,7 @@ class DependencyTransformer {
     // 更新依赖图中的索引
     this.depGraph._syncCellAddress();
 
-    const updatedFormulaAddress = updatedFormulaAddressNodes.filter(function (node) {
+    let updatedFormulaAddress = updatedFormulaAddressNodes.filter(function (node) {
       let { data: { cellAddress } } = node;
       return (cellAddress.isLost() === false);
     }).map(function (node) {
@@ -71,7 +71,8 @@ class DependencyTransformer {
     });
 
     // updatedFormulaAddress 去重
-    return ArrayUtils.uniqueArray(updatedFormulaAddress, SimpleCellAddress.defaultHashFn);
+    updatedFormulaAddress = ArrayUtils.uniqueArray(updatedFormulaAddress, SimpleCellAddress.defaultHashFn);
+    return updatedFormulaAddress;
   }
 
   /**

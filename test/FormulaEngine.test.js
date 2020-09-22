@@ -48,7 +48,8 @@ describe('公式引擎-常用场景', function () {
     const B2CellRef = { column: 2, row: 2 };
     // B2 = A1 + B1 + C1
     engine.setCellFormula(context, B2CellRef, '= A1 + B1 + C1');
-    engine.addColumns(context, 2, 1);
+    let affactedCells = engine.addColumns(context, 2, 1);
+    expect(affactedCells).to.have.lengthOf(1);
 
     const C2CellRef = { column: 3, row: 2 };
     const expectedC2Formula = '=A1+C1+D1';
@@ -72,7 +73,8 @@ describe('公式引擎-常用场景', function () {
     const B2CellRef = { column: 2, row: 2 };
     // B2 = A1 + B1 + C1
     engine.setCellFormula(context, B2CellRef, '= A1 + B1 + C1');
-    engine.addRows(context, 1, 1);
+    let affactedCells = engine.addRows(context, 1, 1);
+    expect(affactedCells).to.have.lengthOf(1);
 
     const B3 = { column: 2, row: 3 };
     const expectedC2Formula = '=A2+B2+C2';

@@ -81,7 +81,7 @@ identifier
     | Identifier            #IdentifierPlainText
     ;
 
-refItemCode: '@' Identifier; //报表项的标识符
+refItemCode: '@' Identifier; //报表项的标识符，浮动行的标识符
 
 // 字面量
 literal
