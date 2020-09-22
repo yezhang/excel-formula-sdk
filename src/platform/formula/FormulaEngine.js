@@ -79,7 +79,7 @@ class FormulaEngine {
     if(SingleFormulaCoreInst.hasErrors()) {
       throw new Error('输入的公式存在错误');
     }
-    const ast = new SingleFormulaAST(parseTree);
+    const ast = new SingleFormulaAST(parseTree, activeSheetName);
 
     const builder = new CellDependencyBuilder(this.depGraph);
     builder.setFormulaAST(ast);

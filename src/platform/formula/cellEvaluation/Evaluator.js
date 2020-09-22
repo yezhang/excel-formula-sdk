@@ -37,7 +37,8 @@ class Evaluator {
   }
 
   evaluateAST(formulaAST) {
-    return formulaAST.accept(new FormulaEvaluationVisitor(this.cellValueProxy));
+    let ownerSheetName = formulaAST.ownerSheetName;
+    return formulaAST.accept(new FormulaEvaluationVisitor(this.cellValueProxy, ownerSheetName));
   }
 
   evaluateAll() {

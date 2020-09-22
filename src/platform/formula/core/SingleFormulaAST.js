@@ -272,10 +272,10 @@ class ASTVisitor extends ReportFormulaParserVisitor {
 /**
  * 语法树
  */
-function SingleFormulaAST(parseTree) {
+function SingleFormulaAST(parseTree, ownerSheetName) {
   this.parseTree = parseTree;
   this.content = parseTree.accept(new ASTVisitor());
-
+  this.ownerSheetName = ownerSheetName;
   return this;
 }
 

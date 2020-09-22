@@ -6,11 +6,18 @@ const StringUtils = require('../../../base/StringUtils').StringUtils;
 
 const EvaluationErrors = require('platform/formula/cellEvaluation/EvaluationErrors');
 
-
+/**
+ * 针对单个公式求值。
+ */
 class FormulaEvaluationVisitor {
-  constructor(cellValueProxy) {
-
+  /**
+   * 
+   * @param {*} cellValueProxy 
+   * @param {String} ownerSheetName 当前公式所属的工作表名称。
+   */
+  constructor(cellValueProxy, ownerSheetName) {
     this.cellValueProxy = cellValueProxy;
+    this.ownerSheetName = ownerSheetName;
   }
 
   setCellValueProvider(provider) {
@@ -49,7 +56,7 @@ class FormulaEvaluationVisitor {
       return formulaFns[fnName].apply(null, argList);
     }
 
-    throw new EvaluationErrors.NameError('非法的函数');
+    throw new EvaluationErrors.NameError('非法的函数，无法识别');
   }
 
   visitPlainTextIdentifier(node) {
@@ -72,6 +79,11 @@ class FormulaEvaluationVisitor {
     if(node.sheetName){
       sheetName = node.sheetName.toString();
     }
+
+    if(!sheetName || sheetName.length === 0) {
+      sheetName = this.ownerSheetName;
+    }
+    
     let a1ref = node.a1Reference;
     let column = a1ref.columnRef.text;
     let row = a1ref.rowRef.line;
