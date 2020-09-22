@@ -1,8 +1,8 @@
 {
   "name": "excel-formula-sdk",
-  "version": "0.0.4",
+  "version": "0.0.7",
   "description": "Excel 公式解析引擎（公式编辑器、公式计算）",
-  "main": "src/index.js",
+  "main": "./min/formula-sdk.js",
   "repository": {
     "url": "git@git.yonyou.com:e-invoice-FE/FormulaTextArea.git",
     "type": "git"
@@ -15,7 +15,8 @@
     "start": "webpack-dev-server --config build/webpack.config.dev.js",
     "build:dev": "webpack --config build/webpack.config.dist.dev.js",
     "build:min": "webpack --config build/webpack.config.dist.min.js",
-    "build-all": "npm run build:dev && npm run build:min"
+    "build-all": "npm run build:dev && npm run build:min",
+    "publish": "npm publish"
   },
   "dependencies": {
     "@formulajs/formulajs": "^2.4.3",
@@ -37,6 +38,8 @@
     "coverage-istanbul-loader": "^3.0.4",
     "cz-conventional-changelog": "^3.3.0",
     "gulp": "^4.0.2",
+    "gulp-bump": "^3.2.0",
+    "gulp-rename": "^2.0.0",
     "karma": "^5.1.1",
     "karma-chrome-launcher": "^3.1.0",
     "karma-coverage": "^2.0.3",
