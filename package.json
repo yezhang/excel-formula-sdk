@@ -14,7 +14,8 @@
     "coverage": "npx karma start karma.conf.js",
     "start": "webpack-dev-server --config build/webpack.config.dev.js",
     "build:dev": "webpack --config build/webpack.config.dist.dev.js",
-    "build:min": "webpack --config build/webpack.config.dist.min.js"
+    "build:min": "webpack --config build/webpack.config.dist.min.js",
+    "build-all": "npm run build:dev && npm run build:min"
   },
   "dependencies": {
     "@formulajs/formulajs": "^2.4.3",

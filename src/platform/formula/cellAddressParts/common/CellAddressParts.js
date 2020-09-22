@@ -626,6 +626,10 @@ SimpleCellAddress.build = function (sheetName, column, row) {
   return new SimpleCellAddress(sheetName, convertToNumberWhenColumnLetters(column), row);
 }
 
+SimpleCellAddress.defaultHashFn = function (cellAddress) {
+  return cellAddress.hashcode();
+}
+
 /**
  * 简单单元格范围表示法
  */

@@ -1,5 +1,5 @@
-const { SimpleCellAddress, SimpleCellRange } = require('platform/formula/cellAddressParts/common/CellAddressParts');
-
+const ArrayUtils = require('base/ArrayUtils');
+const { SimpleCellAddress } = require('platform/formula/cellAddressParts/common/CellAddressParts');
 
 /**
  * 对依赖图做结构变换：增行、减行、增列、减列。
@@ -33,11 +33,11 @@ class DependencyTransformer {
    * @param {*} affectedCellList 
    * @param {*} addrSelfActionFn 当前单元格地址自身的行为函数
    * @param {*} depActionFn 当前单元格所依赖的单元格的行为函数
-   * @return 收到影响的单元格的地址列表。
+   * @return 受到影响的公式单元格的地址列表。
    */
   _doTransformation(affectedCellList, addrSelfActionFn, depActionFn) {
     const that = this;
-    const updatedFormulaAddress = []; // “公式内容”受到影响的单元格的新地址
+    const updatedFormulaAddressNodes = []; // “公式内容”受到影响的单元格的新地址
     affectedCellList.forEach(function (node) {
       let cellData = node.data;
       let addrSelf = cellData.cellAddress;
@@ -52,14 +52,17 @@ class DependencyTransformer {
         carryList.forEach(function (cellCarry) {
           depActionFn(cellCarry, addrSelf);
         });
-        updatedFormulaAddress.push(fromNode);
+
+        // 记录依赖 addrSelf 的公式单元格地址
+        // 当 fromNode 也依赖于其他单元格地址时，fromNode 可能已经在 updatedFormulaAddress 中存在。
+        updatedFormulaAddressNodes.push(fromNode);
       }
     });
 
     // 更新依赖图中的索引
     this.depGraph._syncCellAddress();
 
-    return updatedFormulaAddress.filter(function (node) {
+    const updatedFormulaAddress = updatedFormulaAddressNodes.filter(function (node) {
       let { data: { cellAddress } } = node;
       return (cellAddress.isLost() === false);
     }).map(function (node) {
@@ -67,6 +70,8 @@ class DependencyTransformer {
       return cellData.cellAddress;
     });
 
+    // updatedFormulaAddress 去重
+    return ArrayUtils.uniqueArray(updatedFormulaAddress, SimpleCellAddress.defaultHashFn);
   }
 
   /**
