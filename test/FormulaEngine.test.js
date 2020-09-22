@@ -36,6 +36,53 @@ describe('公式引擎-常用场景', function () {
 
   });
 
+  it('重复设置公式+插入列', function () {
+    // 测试用例说明：
+    // 1) B2 = A1 + B1 + C1
+    // 2) 选择 A 列，向右 增加 1 列。insert column: beforeWhich = 2
+    // 3) 期待: C2 = A1 + C1 + D1
+    // 4) 重新设置 C2 = A1 + C1 + D1;
+    // 5) 期待: C2 = A1 + C1 + D1
+
+    let context = new WorkBookContext('sheet1');
+    const B2CellRef = { column: 2, row: 2 };
+    // B2 = A1 + B1 + C1
+    engine.setCellFormula(context, B2CellRef, '= A1 + B1 + C1');
+    engine.addColumns(context, 2, 1);
+
+    const C2CellRef = { column: 3, row: 2 };
+    const expectedC2Formula = '=A1+C1+D1';
+    let C2Fromula = engine.getCellFormula(context, C2CellRef);
+    expect(C2Fromula).to.equal(expectedC2Formula);
+
+    engine.setCellFormula(context, C2CellRef, expectedC2Formula);
+    C2Fromula = engine.getCellFormula(context, C2CellRef);
+    expect(C2Fromula).to.equal(expectedC2Formula);
+  });
+
+  it('重复设置公式+插入行', function () {
+    // 测试用例说明：
+    // 1) B2 = A1 + B1 + C1
+    // 2) 选择第一行，向上 增加 1 行。insert row: beforeWhich = 1
+    // 3) 期待: B3 = A2 + B2 + C2
+    // 4) 重新设置 B3 = A2 + B2 + C2
+    // 5) 期待: B3 = A2 + B2 + C2
+
+    let context = new WorkBookContext('sheet1');
+    const B2CellRef = { column: 2, row: 2 };
+    // B2 = A1 + B1 + C1
+    engine.setCellFormula(context, B2CellRef, '= A1 + B1 + C1');
+    engine.addRows(context, 1, 1);
+
+    const B3 = { column: 2, row: 3 };
+    const expectedC2Formula = '=A2+B2+C2';
+    let f = engine.getCellFormula(context, B3);
+    expect(f).to.equal(expectedC2Formula);
+
+    engine.setCellFormula(context, B3, expectedC2Formula);
+    f = engine.getCellFormula(context, B3);
+    expect(f).to.equal(expectedC2Formula);
+  });
 
 
   it('设计态-单元格输入公式完毕（纯单元格地址）', function () {
@@ -165,7 +212,7 @@ describe('公式引擎-常用场景', function () {
     const affactedCells = engine.removeColumns(context, 1, 1);
 
     expect(affactedCells).to.have.lengthOf(1);
-    
+
     let formula = engine.getCellFormula(context, affactedCells[0]);
     expect(formula).to.equal('=A1');
   });
@@ -224,7 +271,7 @@ describe('公式引擎-常用场景', function () {
       const cellValueProvider = {
         getCellValue: function (cell) {
           // A1, column = 1, row = 1
-          if(cell.row == 1) {
+          if (cell.row == 1) {
             return 1;
           }
         },
@@ -255,6 +302,7 @@ describe('公式引擎-常用场景', function () {
 
 
   describe('表内公式', function () {
+
     it('增值税纳税申报表主表:17=12+13-14-15+16', function () {
 
     })
