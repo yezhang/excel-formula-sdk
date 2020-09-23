@@ -21,12 +21,12 @@ describe('一般常量', function () {
   beforeEach(function () {
     core = new FormulaCore();
   })
-  
+
 
   /**
    * 处理识别错误
    */
-  function decorateCoreWithErrHandler(core, rawInput) {
+  function decorateCoreWithErrHandler(core, rawInput, ruleName) {
     var handleEvaluateErrorStub = sinon.spy(function (e) { });
 
     var handleParseErrorStub = sinon.spy(function (input, line, column, message) {
@@ -39,7 +39,14 @@ describe('一般常量', function () {
       handleEvaluateError: handleEvaluateErrorStub,
       handleParseError: handleParseErrorStub
     });
-    core.buildParser(rawInput).formulaExpr();
+    const parser = core.buildParser(rawInput);
+
+    if (ruleName) {
+      parser[ruleName]();
+    } else {
+
+      parser.formulaExpr();
+    }
 
     //验证语法错误必须识别
     expect(handleParseErrorStub.called).to.be.true;
@@ -93,8 +100,8 @@ describe('一般常量', function () {
     });
 
     it('TRUE/True', function () {
-      decorateCoreWithErrHandler(core, 'TRUE');
-      decorateCoreWithErrHandler(core, 'True');
+      decorateCoreWithErrHandler(core, 'TRUE', 'literal');
+      decorateCoreWithErrHandler(core, 'True', 'literal');
       // assertRecognitionList(core, [
       //   {
       //     rawValue: 'TRUE',

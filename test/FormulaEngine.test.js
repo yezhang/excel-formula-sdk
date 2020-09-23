@@ -239,6 +239,13 @@ describe('公式引擎-常用场景', function () {
     expect(formula).to.equal('=A1');
   });
 
+  it('公式自动填充', function() {
+    let context = new WorkBookContext('sheet1');
+    let f = '=SUM(A1:B2)';
+    let other = engine.autofillDown(context, f, 1);
+    expect(other).to.equal('=SUM(A2:B3)');
+  });
+  
   describe('运行态', function () {
     it('公式求值-正确求值', function () {
       let context = new WorkBookContext('sheet1');

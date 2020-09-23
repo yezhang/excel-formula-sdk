@@ -1,7 +1,10 @@
 const assert = require('assert').strict;
 
 const SingleFormulaCore = require('platform/formula/core/SingleFormulaCore').SingleFormulaCore;
-const SingleFormulaAST = require('platform/formula/core/SingleFormulaAST').SingleFormulaAST;
+const { SingleFormulaAST,
+  AbsoluteColumnIdentifier, RelativeColumnIdentifier,
+  AbsoluteRowIdentifier, RelativeRowIdentifier,
+  A1ReferenceIdentifier, SheetNameIdentifier } = require('platform/formula/core/SingleFormulaAST');
 
 const buildCellRefDecorator = require('platform/formula/cellAddressParts/common/CellAddressParts').buildCellRefDecorator;
 
@@ -113,7 +116,7 @@ describe('语法树测试', function () {
     // 引用方单元格公式自动更新
     let update = ast.toString();
 
-    if(typeof expected === 'string') {
+    if (typeof expected === 'string') {
       assert.strictEqual(update, expected);
       return;
     }
@@ -122,6 +125,20 @@ describe('语法树测试', function () {
       expected(error, update);
     }
   }
+
+  it('AST: 单元格地址的结构化表示', function () {
+
+    assert.strictEqual(new RelativeColumnIdentifier('A').toString(), 'A');
+    assert.strictEqual(new AbsoluteColumnIdentifier('A').toString(), '$A');
+    assert.strictEqual(new RelativeRowIdentifier(1).toString(), '1');
+    assert.strictEqual(new AbsoluteRowIdentifier(1).toString(), '$1');
+
+    let c = new AbsoluteColumnIdentifier('B');
+    let r = new RelativeRowIdentifier(1);
+    let ref = new A1ReferenceIdentifier(c, r);
+    assert.strictEqual(ref.toString(), '$B1');
+
+  });
 
   describe('变更单元格地址', function () {
     /**
@@ -266,8 +283,8 @@ describe('语法树测试', function () {
       // 移除范围 [startRow = 1, num = 3]
       transform('=SUM(A2:B4)', '=SUM(A1:B1)', 'removeRows', [1, 3]);
       // 移除范围 [startRow = 2, num = 3]
-      transform('=SUM(A2:B4)', function(excep){
-        assert.throws(function() {throw excep;}, {
+      transform('=SUM(A2:B4)', function (excep) {
+        assert.throws(function () { throw excep; }, {
           name: 'TranslateError',
           message: '单元格范围将被删除'
         });
@@ -338,41 +355,41 @@ describe('语法树测试', function () {
     });
   })
 
-  describe('变换复杂公式', function(){
-    it('插入一列', function(){
-      for(let i = 0; i < FORMULA_LIST.length; i++) {
+  describe('变换复杂公式', function () {
+    it('插入一列', function () {
+      for (let i = 0; i < FORMULA_LIST.length; i++) {
         transform(FORMULA_LIST[i], FORMULA_TEXT_TRANSLATE_RIGHT_1_COL[i], 'insertColumns', [1, 1]);
       }
     })
-    
-    it('删除A列', function (){
-      for(let i = 0; i < FORMULA_LIST.length; i++) {
+
+    it('删除A列', function () {
+      for (let i = 0; i < FORMULA_LIST.length; i++) {
         transform(FORMULA_LIST[i], FORMULA_TEXT_TRANSLATE_LEFT_1_COL[i], 'removeColumns', [1, 1]);
       }
     })
 
-    it('插入一行', function(){
-      for(let i = 0; i < FORMULA_LIST.length; i++) {
+    it('插入一行', function () {
+      for (let i = 0; i < FORMULA_LIST.length; i++) {
         transform(FORMULA_LIST[i], FORMULA_TEXT_TRANSLATE_DOWN_1_ROW[i], 'insertRows', [1, 1]);
       }
     })
 
-    it('删除第一行', function() {
-      for(let i = 0; i < FORMULA_LIST.length; i++) {
+    it('删除第一行', function () {
+      for (let i = 0; i < FORMULA_LIST.length; i++) {
         transform(FORMULA_LIST[i], FORMULA_TEXT_TRANSLATE_TOP_1_ROW[i], 'removeRows', [1, 1]);
       }
     })
   })
 
-  describe('公式中的单元格地址被删除', function() {
-    it('单元格地址', function() {
-      transform('=A1 + B2', function(e, result) {
+  describe('公式中的单元格地址被删除', function () {
+    it('单元格地址', function () {
+      transform('=A1 + B2', function (e, result) {
         assert.strictEqual(result, '=#REF!+B2');
       }, 'removeColumns', [1, 1]);
     })
 
-    it('单元格范围', function() {
-      transform('=SUM(B1:C2)', function(e, result) {
+    it('单元格范围', function () {
+      transform('=SUM(B1:C2)', function (e, result) {
         assert.strictEqual(result, '=SUM(#REF!)');
       }, 'removeColumns', ['B', 2]);
     })

@@ -11,7 +11,7 @@ const ASTWalker = require('platform/formula/core/ASTWalker');
 
 
 /**
- * 生成 AST 节点。
+ * 生成单元格地址、单元格范围的 AST 节点。
  */
 class CellAddressLiteralVisitor extends CellAddressVisitor {
   constructor() {

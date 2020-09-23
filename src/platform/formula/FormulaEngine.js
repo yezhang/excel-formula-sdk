@@ -6,6 +6,7 @@ const CellDependencyBuilder = require('./cellDependency/DependencyBuilder').Depe
 const CellDependencyFinder = require('./cellDependency/DependencyFinder').DependencyFinder;
 const DependencyTransformer = require('platform/formula/cellDependency/DependencyTransformer').DependencyTransformer;
 const Evaluator = require('platform/formula/cellEvaluation/Evaluator').Evaluator;
+const AutoFillTransformer = require('platform/formula/generation/AutoFillTransformer').AutoFillTransformer;
 
 const DependencyGraph = require('./cellDependency/DependencyGraph').DependencyGraph;
 
@@ -99,7 +100,36 @@ class FormulaEngine {
     return finder.getCellFormula(activeSheetName, cellAddr);
   }
 
+  /**
+   * 生成自动向下填充的公式。
+   * 注意：在自动填充过程中，公式中的相对单元格地址会自动生长，绝对地址不会自动生长。
+   * @param {*} workBookContext 工作簿上下文
+   * @param {String} formula 公式文本
+   * @param {int} step 填充步数
+   * @return 自动向下填充后的公式。如果 formula 参数非法，则抛出异常。
+   */
+  autofillDown(workBookContext, formula, step) {
+    const activeSheetName = workBookContext.activeSheetName;
+    const parseTree = SingleFormulaCoreInst.parse(formula);
+    if(SingleFormulaCoreInst.hasErrors()) {
+      throw new Error('输入的公式存在错误');
+    }
+    const ast = new SingleFormulaAST(parseTree, activeSheetName);
+    const transform = new AutoFillTransformer(ast, activeSheetName);
+    return transform.getFormulaAfterFillingDown(step);
+  }
 
+  autofillUp(workBookContext, formula, step) {
+
+  }
+
+  autofillLeft(workBookContext, formula, step) {
+
+  }
+
+  autofillRight(workBookContext, formula, step) {
+
+  }
 
   /**
    * 对指定单元格的公式求值；

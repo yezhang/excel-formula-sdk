@@ -3,7 +3,7 @@
  */
 
 const expect = require('chai').expect;
-const CellDependencyBuilder = require('platform/formula/cellDependency/DependencyBuilder').CellDependencyBuilder;
+const CellDependencyBuilder = require('platform/formula/cellDependency/DependencyBuilder').DependencyBuilder;
 const { CyclicDependencyError, DependencyGraph } = require('platform/formula/cellDependency/DependencyGraph');
 const { CellAddressIdentifier, A1ReferenceIdentifier, SheetNameIdentifier,
   CellRangeIdentifier,
@@ -77,7 +77,7 @@ describe('依赖图的构建', function () {
     let activeSheetName = 'sheet1';
     let depGraph = genDepGraph(activeSheetName);
 
-    let nodes = depGraph.simpleCellAddressList();
+    let nodes = depGraph.cellList();
 
     // 包括 B1->A1, C1
     expect(nodes).to.have.lengthOf(3);
@@ -108,7 +108,7 @@ describe('依赖图的构建', function () {
     // 更新后的公式，B1 = A1 + $A1 + D2
     builder.addOrUpdateDependencies(B1, [A1, $A1, D2]);
 
-    let nodes = depGraph.simpleCellAddressList();
+    let nodes = depGraph.cellList();
     // 包括 B1->A1, D2
     expect(nodes).to.have.lengthOf(3);
 

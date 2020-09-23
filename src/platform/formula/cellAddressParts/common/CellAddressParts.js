@@ -4,6 +4,7 @@ const types = require('base/common/types');
 
 const Syntax = require('platform/formula/core/syntax').Syntax;
 const SingleFormulaContext = require('platform/formula/core/SingleFormulaContext').SingleFormulaContext;
+const { RelativeColumnIdentifier, RelativeRowIdentifier } = require('platform/formula/core/SingleFormulaAST');
 
 class TranslateError extends Error {
   constructor(message) {
@@ -142,6 +143,28 @@ class CellColumnTranslator {
   }
 }
 
+/**
+ * 只移动相对列地址。
+ */
+class RelativeCellColumnTranslator {
+  constructor(columnIdentifier) {
+    this._columnIdentifier = columnIdentifier;
+    this._cellColumnTranslatorProxy = new CellColumnTranslator(this._columnIdentifier);
+
+    // RelativeColumnIdentifier
+  }
+  translateLeft(step) {
+    if (this._columnIdentifier instanceof RelativeColumnIdentifier) {
+      this._cellColumnTranslatorProxy.translateLeft(step);
+    }
+  }
+
+  translateRight(step) {
+    if (this._columnIdentifier instanceof RelativeColumnIdentifier) {
+      this._cellColumnTranslatorProxy.translateRight(step);
+    }
+  }
+}
 
 /**
  * 行平移器
@@ -188,18 +211,36 @@ class CellRowTranslator {
   }
 }
 
-
 /**
- * 不包括表名的单元格地址引用
+ * 只移动相对行
  */
-class A1ReferenceTranslator {
-  constructor(a1Reference) {
-    this.a1Reference = a1Reference;
-
-    this.columnRefTranslator = new CellColumnTranslator(this.a1Reference.columnRef);
-    this.rowRefTranslator = new CellRowTranslator(this.a1Reference.rowRef);
+class RelativeCellRowTranslator {
+  constructor(rowIdentifier) {
+    this._rowIdentifier = rowIdentifier;
+    this._celllRowTranslatorProxy = new CellRowTranslator(this._rowIdentifier);
   }
 
+  translateUp(step) {
+    if(this._rowIdentifier instanceof RelativeRowIdentifier){
+      this._celllRowTranslatorProxy.translateUp(step);
+    }
+  }
+
+  translateDown(step) {
+    if(this._rowIdentifier instanceof RelativeRowIdentifier){
+      this._celllRowTranslatorProxy.translateDown(step);
+    }
+  }
+
+}
+
+class IA1ReferenceTranslator {
+  constructor(a1Reference) {
+    this.a1Reference = a1Reference;
+    this.$init();
+  }
+
+  $init(){ /** protected, no op */}
   toString() {
     return this.a1Reference.toString();
   }
@@ -325,6 +366,30 @@ class A1ReferenceTranslator {
       const propSteps = Math.min(columnNumber - startColumnNum + fixStep, numberOfColumns);
       this.translateLeft(propSteps); // 可能会由于坐标空间不够，抛出异常
     }
+  }
+}
+/**
+ * 不包括表名的单元格地址引用
+ */
+class A1ReferenceTranslator extends IA1ReferenceTranslator{
+  constructor(a1Reference) {
+    super(a1Reference);
+  }
+
+  $init() {
+    this.columnRefTranslator = new CellColumnTranslator(this.a1Reference.columnRef);
+    this.rowRefTranslator = new CellRowTranslator(this.a1Reference.rowRef);
+  }
+}
+
+class RelativeA1ReferenceTranslator extends IA1ReferenceTranslator {
+  constructor(a1Reference) {
+    super(a1Reference);
+  }
+
+  $init() {
+    this.columnRefTranslator = new RelativeCellColumnTranslator(this.a1Reference.columnRef);
+    this.rowRefTranslator = new RelativeCellRowTranslator(this.a1Reference.rowRef);
   }
 }
 
@@ -761,10 +826,10 @@ class CellRefDecorator { }
  * 根据语法树中的节点构造。
  */
 class CellAddressCarrier extends CellRefDecorator {
-  constructor(cellAddressIdentifier) {
+  constructor(cellAddressIdentifier, A1ReferenceTranslatorCtor) {
     super();
     this.cellAddress = cellAddressIdentifier;
-    this.a1RefTranslator = new A1ReferenceTranslator(this.cellAddress.a1Reference);
+    this.a1RefTranslator = new A1ReferenceTranslatorCtor(this.cellAddress.a1Reference);
     this._workingContext = undefined; //工作单元格的上下文，包括当前的工作表，活动单元格等界面操作信息。
   }
 
@@ -862,12 +927,12 @@ class CellRangeCarrier extends CellRefDecorator {
   /**
    * @param {CellRangeIdentifier} cellRangeRef 
    */
-  constructor(cellRangeRef) {
+  constructor(cellRangeRef, A1ReferenceTranslatorCtor) {
     super();
     this.cellRange = cellRangeRef;
 
-    this.startRefTranslator = new A1ReferenceTranslator(this.cellRange.startRef);
-    this.endRefTranslator = new A1ReferenceTranslator(this.cellRange.endRef);
+    this.startRefTranslator = new A1ReferenceTranslatorCtor(this.cellRange.startRef);
+    this.endRefTranslator = new A1ReferenceTranslatorCtor(this.cellRange.endRef);
 
     this.cellRangeTranslator = new CompositeA1ReferenceTranslator([
       this.startRefTranslator,
@@ -985,21 +1050,38 @@ class CellRangeCarrier extends CellRefDecorator {
   }
 }
 
+function _doBuildCellRefCarrier(cellRef, a1RefTranslatorCtor) {
+  switch (cellRef.type) {
+    case Syntax.CellAddressIdentifier:
+      return new CellAddressCarrier(cellRef, a1RefTranslatorCtor);
+    case Syntax.CellRangeIdentifier:
+      return new CellRangeCarrier(cellRef, a1RefTranslatorCtor);
+  }
+
+  return undefined;
+}
 /**
  * 根据语法树节点，构建节点移动工具。
  * @param {CellAddressIdentifier | CellRangeCarrier} cellRef
  */
 function buildCellRefDecorator(cellRef) {
-  switch (cellRef.type) {
-    case Syntax.CellAddressIdentifier:
-      return new CellAddressCarrier(cellRef);
-    case Syntax.CellRangeIdentifier:
-      return new CellRangeCarrier(cellRef);
-  }
+  return _doBuildCellRefCarrier(cellRef, A1ReferenceTranslator);
+  
+}
 
-  return undefined;
+/**
+ * 构建只移动相对地址（相对行、相对列）的平移器。
+ * 地址中的绝对行、绝对列部分不会移动。
+ * 
+ * 本函数用于生成自动填充公式。
+ * 
+ * @param {*} cellRef 
+ */
+function buildRelativeCellRefCarrier(cellRef) {
+  return _doBuildCellRefCarrier(cellRef, RelativeA1ReferenceTranslator);
 }
 
 exports.SimpleCellRange = SimpleCellRange;
 exports.SimpleCellAddress = SimpleCellAddress;
 exports.buildCellRefDecorator = buildCellRefDecorator;
+exports.buildRelativeCellRefCarrier = buildRelativeCellRefCarrier;
