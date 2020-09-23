@@ -154,7 +154,7 @@ describe('公式引擎-常用场景', function () {
     engine.setCellFormula(context, C2, f);
 
     let updatedCellAddressList = engine.addRows(context, 1, 1);
-    let C3 = { column: 3, row: 3};
+    let C3 = { column: 3, row: 3 };
     let innerFormula = engine.getCellFormula(context, C3);
     expect(innerFormula).to.equal('=SUM(A2:B3)');
 
@@ -239,13 +239,13 @@ describe('公式引擎-常用场景', function () {
     expect(formula).to.equal('=A1');
   });
 
-  it('公式自动填充', function() {
+  it('公式自动填充', function () {
     let context = new WorkBookContext('sheet1');
     let f = '=SUM(A1:B2)';
     let other = engine.autofillDown(context, f, 1);
     expect(other).to.equal('=SUM(A2:B3)');
   });
-  
+
   describe('运行态', function () {
     it('公式求值-正确求值', function () {
       let context = new WorkBookContext('sheet1');
@@ -368,6 +368,30 @@ describe('公式引擎-常用场景', function () {
 
     it('增值税纳税申报表主表:17=12+13-14-15+16', function () {
 
+    });
+
+    it('函数调用', function () {
+      // 测试用例描述：
+      // 1) B1 = SUM(A1+A2), A1 = 1, A2 = 2;
+      // 2) 计算 B1 的值
+
+      let context = new WorkBookContext('sheet1');
+      const cellValueProvider = {
+        datas: [[1, 2]],
+        getCellValue: function (cell) {
+          return this.datas[cell.column - 1][cell.row - 1];
+        },
+        getCellRangeValues: function (cellRange) {
+
+        }
+      };
+
+      // B1 = SUM(A1+A2)
+      const B1 = { column: 2, row: 1 };
+      engine.setCellFormula(context, B1, '= SUM(A1+A2)');
+      engine.prepareToEvaluateTable(cellValueProvider);
+      let ret = engine.evaluate(context, B1);
+      expect(ret).to.equal(3)
     })
   });
 
