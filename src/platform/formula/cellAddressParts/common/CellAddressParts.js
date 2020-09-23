@@ -481,36 +481,36 @@ class SimpleCellAddress {
   /**
    * 如果无法移动指定步数，则抛出异常。
    */
-  translateLeft(step){
+  translateLeft(step) {
     assert.ok(types.isInt(step) && step >= 0, 'translateLeft: step 参数需要是 0 或正整数');
-    if(step > this.column) {
+    if (step > this.column) {
       throw new Error('单元格地址无法向左移动：超出了当前地址范围');
     }
 
     this.column -= step;
   }
 
-  translateRight(step){
+  translateRight(step) {
     assert.ok(types.isInt(step) && step >= 0, 'translateRight: step 参数需要是 0 或正整数');
     this.column += step;
   }
 
-  translateUp(step){
+  translateUp(step) {
     assert.ok(types.isInt(step) && step >= 0, 'translateUp: step 参数需要是 0 或正整数');
-    if(step > this.row) {
+    if (step > this.row) {
       throw new Error('单元格地址无法向上移动：超出了当前地址范围');
     }
 
     this.row -= step;
   }
 
-  translateDown(step){
+  translateDown(step) {
     assert.ok(types.isInt(step) && step >= 0, 'translateDown: step 参数需要是 0 或正整数');
     this.row += step;
   }
 
-  insertRowsWhenNecessary(activeSheetName, beforeWhich, numberOfRows){
-    if(this.isAffactedByInsertingRows(activeSheetName, beforeWhich, numberOfRows)){
+  insertRowsWhenNecessary(activeSheetName, beforeWhich, numberOfRows) {
+    if (this.isAffactedByInsertingRows(activeSheetName, beforeWhich, numberOfRows)) {
       this.translateDown(numberOfRows);
     }
   }
@@ -522,7 +522,7 @@ class SimpleCellAddress {
   // 注意：本函数无法处理当前单元格应该被删除的情况。
   // 移动单元格位置，最多移动到删除的起始位置（startFrom）。
   removeRowsWhenNecessary(activeSheetName, startFrom, numberOfRows) {
-    if(this.isAffactedByRemovingRows(activeSheetName, startFrom, numberOfRows)){
+    if (this.isAffactedByRemovingRows(activeSheetName, startFrom, numberOfRows)) {
       this.translateUp(Math.min(numberOfRows, this.row - startFrom));
     }
   }
@@ -532,7 +532,7 @@ class SimpleCellAddress {
   }
 
   insertColumnsWhenNecessary(activeSheetName, beforeWhich, numberOfColumns) {
-    if(this.isAffactedByInsertingColumns(activeSheetName, beforeWhich, numberOfColumns)){
+    if (this.isAffactedByInsertingColumns(activeSheetName, beforeWhich, numberOfColumns)) {
       this.translateRight(numberOfColumns);
     }
   }
@@ -543,7 +543,7 @@ class SimpleCellAddress {
 
   // 注意：本函数无法处理当前单元格应该被删除的情况。
   removeColumnsWhenNecessary(activeSheetName, startFrom, numberOfColumns) {
-    if(this.isAffactedByRemovingColumns(activeSheetName, startFrom, numberOfColumns)){
+    if (this.isAffactedByRemovingColumns(activeSheetName, startFrom, numberOfColumns)) {
       this.translateLeft(Math.min(numberOfColumns, this.column - startFrom));
     }
   }
@@ -552,9 +552,9 @@ class SimpleCellAddress {
     this.translateLeft(Math.min(numberOfColumns, this.column - startFrom));
   }
 
- 
+
   willBeRemovedWhenRemovingRows(activeSheetName, startFrom, numberOfRows) {
-    if(this.isAffactedByRemovingRows(activeSheetName, startFrom, numberOfRows)) {
+    if (this.isAffactedByRemovingRows(activeSheetName, startFrom, numberOfRows)) {
       return this.row <= (startFrom + numberOfRows - 1);
     }
 
@@ -562,21 +562,21 @@ class SimpleCellAddress {
   }
 
   willBeRemovedWhenRemovingColumns(activeSheetName, startFrom, numberOfColumns) {
-    if(this.isAffactedByRemovingColumns(activeSheetName, startFrom, numberOfColumns)) {
+    if (this.isAffactedByRemovingColumns(activeSheetName, startFrom, numberOfColumns)) {
       return this.column <= (startFrom + numberOfColumns - 1);
     }
 
     return false;
   }
 
-   /**
-   * 判断当前地址是否受到 “插入行” 操作的影响
-   */
+  /**
+  * 判断当前地址是否受到 “插入行” 操作的影响
+  */
   isAffactedByInsertingRows(activeSheetName, beforeWhich, numberOfRows) {
-    if(activeSheetName !== this.sheet) {
+    if (activeSheetName !== this.sheet) {
       return false;
     }
-    if(numberOfRows <= 0) {
+    if (numberOfRows <= 0) {
       return false;
     }
 
@@ -586,12 +586,12 @@ class SimpleCellAddress {
   /**
    * 判断当前地址是否受到 “删除行” 操作的影响
    */
-  isAffactedByRemovingRows(activeSheetName, startFrom, numberOfRows){
-    if(activeSheetName !== this.sheet) {
+  isAffactedByRemovingRows(activeSheetName, startFrom, numberOfRows) {
+    if (activeSheetName !== this.sheet) {
       return false;
     }
 
-    if(numberOfRows <= 0) {
+    if (numberOfRows <= 0) {
       return false;
     }
 
@@ -602,10 +602,10 @@ class SimpleCellAddress {
    * 判断当前地址是否受到 “插入列” 操作的影响
    */
   isAffactedByInsertingColumns(activeSheetName, beforeWhich, numberOfColumns) {
-    if(activeSheetName !== this.sheet) {
+    if (activeSheetName !== this.sheet) {
       return false;
     }
-    if(numberOfColumns <= 0) {
+    if (numberOfColumns <= 0) {
       return false;
     }
 
@@ -616,22 +616,22 @@ class SimpleCellAddress {
    * 判断当前地址是否受到 “删除列” 操作的影响
    */
   isAffactedByRemovingColumns(activeSheetName, startFrom, numberOfColumns) {
-    if(activeSheetName !== this.sheet) {
+    if (activeSheetName !== this.sheet) {
       return false;
     }
-    if(numberOfColumns <= 0) {
+    if (numberOfColumns <= 0) {
       return false;
     }
-    
+
     return startFrom <= this.column;
   }
 }
 
-SimpleCellAddress.build = function (sheetName, column, row) {
+SimpleCellAddress.build = function build(sheetName, column, row) {
   return new SimpleCellAddress(sheetName, convertToNumberWhenColumnLetters(column), row);
 }
 
-SimpleCellAddress.defaultHashFn = function (cellAddress) {
+SimpleCellAddress.defaultHashFn = function defaultHashFn(cellAddress) {
   return cellAddress.hashcode();
 }
 
@@ -691,6 +691,34 @@ class SimpleCellRange {
     }
 
     return this.hashcode() === other.hashcode();
+  }
+
+  /**
+  * 判断当前地址是否受到 “插入行” 操作的影响
+  */
+  isAffactedByInsertingRows(activeSheetName, beforeWhich, numberOfRows) {
+    
+  }
+
+  /**
+  * 判断当前地址是否受到 “删除行” 操作的影响
+  */
+  isAffactedByRemovingRows(activeSheetName, startFrom, numberOfRows) {
+
+  }
+
+  /**
+ * 判断当前地址是否受到 “插入列” 操作的影响
+ */
+  isAffactedByInsertingColumns(activeSheetName, beforeWhich, numberOfColumns) {
+
+  }
+
+  /**
+   * 判断当前地址是否受到 “删除列” 操作的影响
+   */
+  isAffactedByRemovingColumns(activeSheetName, startFrom, numberOfColumns) {
+    
   }
 }
 

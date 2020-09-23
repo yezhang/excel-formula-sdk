@@ -92,6 +92,9 @@ class DependencyGraph {
    */
   _copyFilteredSubgraph(cellAddress) {
     const startNode = this.graph.lookup(new CellData(cellAddress));
+    if (!startNode) {
+      return undefined;
+    }
     const subgraph = new Graph(this._hashFn);
     this._copySearchedNode(startNode, subgraph);
     return subgraph;
@@ -104,7 +107,7 @@ class DependencyGraph {
    */
   _copySearchedNode(node, toGraph) {
     const incomingMap = node.incoming.values();
-    for(let { fromNode, props } of incomingMap) {
+    for (let { fromNode, props } of incomingMap) {
       toGraph.insertEdge(fromNode.data, node.data, props);
       this._copySearchedNode(fromNode, toGraph);
     }
@@ -143,6 +146,9 @@ class DependencyGraph {
    * @return {*} 排序后的顶点数组，数组元素类型是 SimpleCellAddress。索引越小，计算优先级越高。
    */
   _sortGraph(graph) {
+    if (!graph) {
+      return undefined;
+    }
     const copy = graph.clone();
     const L = [];
     while (true) {
@@ -257,32 +263,32 @@ class DependencyGraph {
   renameSheet(oldSheetName, newSheetName) {
     const that = this;
     let cellDatas = this.graph.nodeDatas();
-      cellDatas.forEach(function(data){
-        let cellAddress = data.cellAddress;
-        let sheetName = cellAddress.sheet;
-        if(oldSheetName === sheetName) {
-          // 需要重命名该节点
-          let newCellData = data.shallowClone();
-          newCellData.cellAddress.setSheet(newSheetName);
+    cellDatas.forEach(function (data) {
+      let cellAddress = data.cellAddress;
+      let sheetName = cellAddress.sheet;
+      if (oldSheetName === sheetName) {
+        // 需要重命名该节点
+        let newCellData = data.shallowClone();
+        newCellData.cellAddress.setSheet(newSheetName);
 
-          that.graph.moveNode(data, newCellData);
-        }
-      })
+        that.graph.moveNode(data, newCellData);
+      }
+    })
   }
 
   removeSheets(unusedSheetNames) {
     const that = this;
     let namesSet = Object.create(null);
-    if(unusedSheetNames) {
-      unusedSheetNames.forEach(function(name){
+    if (unusedSheetNames) {
+      unusedSheetNames.forEach(function (name) {
         namesSet[name] = name;
       });
 
       let cellDatas = this.graph.nodeDatas();
-      cellDatas.forEach(function(data){
+      cellDatas.forEach(function (data) {
         let cellAddress = data.cellAddress;
         let sheetName = cellAddress.sheet;
-        if(namesSet.hasOwnProperty(sheetName)) {
+        if (namesSet.hasOwnProperty(sheetName)) {
           // 需要删除该节点
           that.graph.removeNode(data);
         }

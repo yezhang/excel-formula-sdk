@@ -49,7 +49,9 @@ class Evaluator {
   }
 
   _evaluateOneByOne(sorted) {
-
+    if (!sorted) {
+      return undefined;
+    }
     let that = this;
     if (types.isArray(sorted)) {
       sorted.forEach(function (cellData) {
