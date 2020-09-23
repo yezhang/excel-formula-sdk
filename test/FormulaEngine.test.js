@@ -376,6 +376,7 @@ describe('公式引擎-常用场景', function () {
       // 2) 计算 B1 的值
 
       let context = new WorkBookContext('sheet1');
+      let B1Ret = undefined;
       const cellValueProvider = {
         datas: [[1, 2]],
         getCellValue: function (cell) {
@@ -383,6 +384,9 @@ describe('公式引擎-常用场景', function () {
         },
         getCellRangeValues: function (cellRange) {
 
+        },
+        setCellValue: function (cell, value) {
+          B1Ret = value;
         }
       };
 
@@ -390,8 +394,17 @@ describe('公式引擎-常用场景', function () {
       const B1 = { column: 2, row: 1 };
       engine.setCellFormula(context, B1, '= SUM(A1+A2)');
       engine.prepareToEvaluateTable(cellValueProvider);
-      let ret = engine.evaluate(context, B1);
-      expect(ret).to.equal(3)
+      B1Ret = engine.evaluate(context, B1);
+      expect(B1Ret).to.equal(3)
+
+      // 测试自动重新计算
+      // 设置 A1 = 3;
+      // 期待 B1 = 5;
+      const A1 = {column: 1, row: 1};
+      cellValueProvider.datas[A1.column-1][A1.row-1] = 3;
+      engine.reEvaluateAll(context, A1);
+
+      expect(B1Ret).to.equal(5);
     })
   });
 
