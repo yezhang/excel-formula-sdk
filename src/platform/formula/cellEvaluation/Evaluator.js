@@ -43,9 +43,15 @@ class Evaluator {
   }
 
   reEvaluateAll(activeSheetName, fromCellAddr) {
+    const that = this;
     let simpleAddr = SimpleCellAddress.build(activeSheetName, fromCellAddr.column, fromCellAddr.row);
-    let sorted = this.depGraph.sortSubgraph(simpleAddr);
-    return this._evaluateOneByOne(sorted);
+
+    // fromCellAddr 可能是依赖图中的一个单元格顶点，也可能是一个单元格范围顶点的一部分。
+
+    let sortedList = this.depGraph.sortSubgraph(simpleAddr);
+    return sortedList.forEach(function(sorted){
+      return that._evaluateOneByOne(sorted);
+    })
   }
 
   _evaluateOneByOne(sorted) {

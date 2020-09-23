@@ -81,23 +81,63 @@ class DependencyGraph {
    * @param {SimpleCellAddress} cellAddress 图中的出发节点。
    */
   sortSubgraph(cellAddress) {
-    const subgraph = this._copyFilteredSubgraph(cellAddress);
-    return this._sortGraph(subgraph);
+    const that = this;
+    const subgraphList = this._copyFilteredSubgraph(cellAddress);
+    return subgraphList.map(function(subgraph) {
+      return that._sortGraph(subgraph);
+    })
   }
 
+  /**
+   * TODO: 与函数 addCellDependencies 存在部分重复的逻辑。
+   * @param {*} cellAddress 
+   */
+  _lookupCellRangeNode(cellAddress) {
+    const foundNodes = [];
+    let existingNodes = this.graph.nodes(); //nodes(); nodeDatas
+    if (existingNodes) {
+      for (let i = 0; i < existingNodes.length; i++) {
+        let cellData = existingNodes[i].data;
+        let n = cellData.cellAddress;
+        if (this._isCellRange(n) && this._isInRange(n, cellAddress)) {
+          foundNodes.push(existingNodes[i]);
+        }
+      }
+    }
+
+    return foundNodes;
+  }
   /**
    * 根据起始顶点的 [入度] 提炼依赖关系子图。
    * 
    * @param {SimpleCellAddress} cellAddress 图中的出发节点。
    */
   _copyFilteredSubgraph(cellAddress) {
+    const that = this;
     const startNode = this.graph.lookup(new CellData(cellAddress));
-    if (!startNode) {
-      return undefined;
+    const subgraphList = [];
+    let startNodeList = [];
+    if (startNode) {
+      startNodeList.push(startNode);
+
+    } else {
+      // 检查是否有满足条件的单元格范围顶点
+      let ranges = this._lookupCellRangeNode(cellAddress);
+      if (ranges.length <= 0) {
+        return undefined;
+      }
+
+      startNodeList = ranges;
     }
-    const subgraph = new Graph(this._hashFn);
-    this._copySearchedNode(startNode, subgraph);
-    return subgraph;
+
+    startNodeList.forEach(function(startNode){
+      const subgraph = new Graph(that._hashFn);
+      that._copySearchedNode(startNode, subgraph);
+      subgraphList.push(subgraph);
+    })
+
+    
+    return subgraphList;
   }
 
   /**

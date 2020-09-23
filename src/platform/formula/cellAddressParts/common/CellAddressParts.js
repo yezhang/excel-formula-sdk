@@ -4,7 +4,7 @@ const types = require('base/common/types');
 
 const Syntax = require('platform/formula/core/syntax').Syntax;
 const SingleFormulaContext = require('platform/formula/core/SingleFormulaContext').SingleFormulaContext;
-const { RelativeColumnIdentifier, RelativeRowIdentifier } = require('platform/formula/core/SingleFormulaAST');
+const { CellAddressIdentifier, CellRangeIdentifier,RelativeColumnIdentifier, RelativeRowIdentifier } = require('platform/formula/core/SingleFormulaAST');
 
 class TranslateError extends Error {
   constructor(message) {
@@ -696,6 +696,21 @@ SimpleCellAddress.build = function build(sheetName, column, row) {
   return new SimpleCellAddress(sheetName, convertToNumberWhenColumnLetters(column), row);
 }
 
+/**
+ * 根据单元格地址的 AST 节点结构，构造 SimpleCellAddress。
+ */
+SimpleCellAddress.buildFromASTNode = function buildFromASTNode(sheetName, node) {
+  let sheet = sheetName;
+  if(node.sheetName){
+    sheet = node.sheetName.toString();
+  }
+
+  let a1ref = node.a1Reference;
+  let column = a1ref.columnRef.text;
+  let row = a1ref.rowRef.line;
+  return SimpleCellAddress.build(sheet, column, row);
+}
+
 SimpleCellAddress.defaultHashFn = function defaultHashFn(cellAddress) {
   return cellAddress.hashcode();
 }
@@ -812,6 +827,28 @@ SimpleCellRange.build = function (sheetName, column1, row1, column2, row2) {
       column: convertToNumberWhenColumnLetters(column2),
       row: row2
     });
+}
+
+SimpleCellRange.buildFromASTNode = function buildFromASTNode(sheetName, node) {
+  if(!(node instanceof CellRangeIdentifier)) {
+    return undefined;
+  }
+
+  let sheet = sheetName;
+  if(node.sheetName){
+    sheet = node.sheetName.toString();
+  }
+
+  //
+  let a1ref = node.startRef;
+  let column1 = a1ref.columnRef.text;
+  let row1 = a1ref.rowRef.line;
+
+  a1ref = node.endRef;
+  let column2 = a1ref.columnRef.text;
+  let row2 = a1ref.rowRef.line;
+
+  return SimpleCellRange.build(sheet, column1, row1, column2, row2);
 }
 
 /**

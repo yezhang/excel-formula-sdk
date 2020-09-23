@@ -383,7 +383,7 @@ describe('公式引擎-常用场景', function () {
           return this.datas[cell.column - 1][cell.row - 1];
         },
         getCellRangeValues: function (cellRange) {
-
+          return this.datas[cellRange.start.column-1];
         },
         setCellValue: function (cell, value) {
           B1Ret = value;
@@ -392,7 +392,7 @@ describe('公式引擎-常用场景', function () {
 
       // B1 = SUM(A1+A2)
       const B1 = { column: 2, row: 1 };
-      engine.setCellFormula(context, B1, '= SUM(A1+A2)');
+      engine.setCellFormula(context, B1, '= SUM(A1:A2)');
       engine.prepareToEvaluateTable(cellValueProvider);
       B1Ret = engine.evaluate(context, B1);
       expect(B1Ret).to.equal(3)

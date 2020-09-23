@@ -1,7 +1,7 @@
 const formulaFns = require('@formulajs/formulajs');
 
 const types = require('base/common/types');
-const {SimpleCellAddress} = require('platform/formula/cellAddressParts/common/CellAddressParts');
+const {SimpleCellAddress, SimpleCellRange} = require('platform/formula/cellAddressParts/common/CellAddressParts');
 const StringUtils = require('../../../base/StringUtils').StringUtils;
 
 const EvaluationErrors = require('platform/formula/cellEvaluation/EvaluationErrors');
@@ -74,27 +74,17 @@ class FormulaEvaluationVisitor {
    */
   _buildSimpleCellAddress(node) {
     // AST 与用户输入的文本保持一致，其中的节点可能有 sheetName，也可能没有 sheetName
+    return SimpleCellAddress.buildFromASTNode(this.ownerSheetName, node);
+  }
 
-    let sheetName = undefined;
-    if(node.sheetName){
-      sheetName = node.sheetName.toString();
-    }
-
-    if(!sheetName || sheetName.length === 0) {
-      sheetName = this.ownerSheetName;
-    }
-    
-    let a1ref = node.a1Reference;
-    let column = a1ref.columnRef.text;
-    let row = a1ref.rowRef.line;
-    return SimpleCellAddress.build(sheetName, column, row);
+  _buildSimpleCellRange(node) {
+    return SimpleCellRange.buildFromASTNode(this.ownerSheetName, node);
   }
 
   /**
    * 单元格地址：CellAddressLiteral
    */
   visitCellAddressIdentifier(node) {
-    // TODO: 从单元格取值
     // 转换为 SimpleCellAddress
     let addr = this._buildSimpleCellAddress(node);
     // 根据 SimpleCellAddress 从单元格取值
@@ -105,7 +95,10 @@ class FormulaEvaluationVisitor {
    * 单元格范围：CellRangeLiteral
    */
   visitCellRangeIdentifier(node) {
-    // TODO: 从单元格范围取值
+    // 转换为 SimpleCellRange
+    let addr = this._buildSimpleCellRange(node);
+    // 根据 SimpleCellRange 从单元格范围取值
+    return this.cellValueProxy.getCellRangeValues(addr);
   }
 
   visitA1ReferenceIdentifier(node) {
