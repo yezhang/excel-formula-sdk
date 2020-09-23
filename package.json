@@ -1,6 +1,6 @@
 {
   "name": "excel-formula-sdk",
-  "version": "0.0.8",
+  "version": "0.0.14",
   "description": "Excel 公式解析引擎（公式编辑器、公式计算）",
   "main": "./min/formula-sdk.js",
   "repository": {
@@ -9,15 +9,14 @@
   },
   "author": "zhangyef@yonyou.com",
   "license": "MIT",
-  "Keywords": ["excel", "formula", "sdk", "monaco"],
+  "keywords": ["excel", "formula", "sdk", "engine", "monaco"],
   "scripts": {
     "test": "node ./test/require-alias/loader.js --colors --config ./test/.mocharc.js",
     "coverage": "npx karma start karma.conf.js",
     "start": "webpack-dev-server --config build/webpack.config.dev.js",
     "build:dev": "webpack --config build/webpack.config.dist.dev.js",
     "build:min": "webpack --config build/webpack.config.dist.min.js",
-    "build-all": "npm run build:dev && npm run build:min",
-    "publish": "npm publish"
+    "build-all": "npm run build:dev && npm run build:min"
   },
   "dependencies": {
     "@formulajs/formulajs": "^2.4.3",

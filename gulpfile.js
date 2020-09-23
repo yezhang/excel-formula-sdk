@@ -13,6 +13,7 @@ const webpack = require('webpack');
 const webpackDevConfig = require('./build/webpack.config.dist.dev');
 const webpackMinConfig = require('./build/webpack.config.dist.min');
 
+let root = __dirname;
 
 function clean(cb) {
   let dir = path.join(__dirname, './dist');
@@ -69,13 +70,14 @@ const build = parallel(buildDev, buildMin);
 function extractSDK(cb) {
   const destFolder = './dist/excel-formula-sdk/';
 
-  gulp.src('./package.json')
-    .pipe(gulp.dest(destFolder));
-  gulp.src('./API_README.md')
-    .pipe(rename(function(path){
+  gulp.src(path.join(root, './package.json'))
+    .pipe(gulp.dest(destFolder, { overwrite: true }));
+
+  gulp.src(path.join(root, './API_README.md'))
+    .pipe(rename(function (path) {
       path.basename = 'README';
     }))
-    .pipe(gulp.dest(destFolder));
+    .pipe(gulp.dest(destFolder, { overwrite: true }));
 
   cb();
 }
@@ -85,11 +87,19 @@ function extractSDK(cb) {
  */
 function updateSemver(cb) {
   const options = {};
-  gulp
+  const stream = gulp
     .src(['./package.json'])
     .pipe(bump(options))
     .pipe(gulp.dest('./'));
-  cb();
+
+  stream.on('end', function () {
+    // 文件复制完成
+    cb();
+  });
+  stream.on('error', function (err) {
+    // 文件复制出错
+    cb(err);
+  });
 }
 
 function npmPublish(cb) {
