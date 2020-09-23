@@ -646,15 +646,8 @@ class SimpleCellRange {
     this.type = 'CellRefRange';
 
     this.sheet = sheetName;
-    this.start = {
-      column: startSimpleAddress.column,
-      row: startSimpleAddress.row
-    };
-
-    this.end = {
-      column: endSimpleAddress.column,
-      row: endSimpleAddress.row
-    }
+    this.start = SimpleCellAddress.build(this.sheet, startSimpleAddress.column, startSimpleAddress.row);
+    this.end = SimpleCellAddress.build(this.sheet, endSimpleAddress.column, endSimpleAddress.row);
   }
 
   setSheet(sheet) {
@@ -693,33 +686,55 @@ class SimpleCellRange {
     return this.hashcode() === other.hashcode();
   }
 
+  insertRows(activeSheetName, beforeWhich, numberOfRows) {
+    this.start.insertRowsWhenNecessary(activeSheetName, beforeWhich, numberOfRows);
+    this.end.insertRowsWhenNecessary(activeSheetName, beforeWhich, numberOfRows);
+  }
+
+  removeRows(activeSheetName, startFrom, numberOfRows) {
+    this.start.removeRowsWhenNecessary(activeSheetName, startFrom, numberOfRows);
+    this.end.removeRowsWhenNecessary(activeSheetName, startFrom, numberOfRows);
+  }
+
+  insertColumns(activeSheetName, beforeWhich, numberOfColumns) {
+    this.start.insertColumnsWhenNecessary(activeSheetName, beforeWhich, numberOfColumns);
+    this.end.insertColumnsWhenNecessary(activeSheetName, beforeWhich, numberOfColumns);
+  }
+
+  removeColumns(activeSheetName, startFrom, numberOfColumns) {
+    this.start.removeColumnsWhenNecessary(activeSheetName, startFrom, numberOfColumns);
+    this.end.removeColumnsWhenNecessary(activeSheetName, startFrom, numberOfColumns);
+  }
+
   /**
   * 判断当前地址是否受到 “插入行” 操作的影响
   */
   isAffactedByInsertingRows(activeSheetName, beforeWhich, numberOfRows) {
-    
+    return this.end.isAffactedByInsertingRows(activeSheetName, beforeWhich, numberOfRows);
   }
 
   /**
   * 判断当前地址是否受到 “删除行” 操作的影响
   */
   isAffactedByRemovingRows(activeSheetName, startFrom, numberOfRows) {
-
+    return this.end.isAffactedByRemovingRows(activeSheetName, startFrom, numberOfRows);
   }
 
   /**
  * 判断当前地址是否受到 “插入列” 操作的影响
  */
   isAffactedByInsertingColumns(activeSheetName, beforeWhich, numberOfColumns) {
-
+    return this.end.isAffactedByInsertingColumns(activeSheetName, beforeWhich, numberOfColumns);
   }
 
   /**
    * 判断当前地址是否受到 “删除列” 操作的影响
    */
   isAffactedByRemovingColumns(activeSheetName, startFrom, numberOfColumns) {
-    
+    return this.end.isAffactedByRemovingColumns(activeSheetName, startFrom, numberOfColumns);
   }
+
+
 }
 
 SimpleCellRange.build = function (sheetName, column1, row1, column2, row2) {

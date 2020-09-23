@@ -142,6 +142,26 @@ describe('公式引擎-常用场景', function () {
     expect(updatedCellAddressList[0]).to.have.property('row', 2);
   });
 
+  it('设计态-调整表结果-插入行（单元格范围)', function () {
+    // 测试用例描述:
+    // 1) C2 = SUM(A1:B2)
+    // 2) 选择第 1 行，向上增加 1 行
+    // 3) 期待 C3 = SUM(A2:B3)
+
+    let context = new WorkBookContext('sheet1');
+    let C2 = { column: 3, row: 2 }; // C2 = SUM(A1:B2)
+    let f = '= SUM(A1:B2)'
+    engine.setCellFormula(context, C2, f);
+
+    let updatedCellAddressList = engine.addRows(context, 1, 1);
+    let C3 = { column: 3, row: 3};
+    let innerFormula = engine.getCellFormula(context, C3);
+    expect(innerFormula).to.equal('=SUM(A2:B3)');
+
+    expect(updatedCellAddressList[0]).to.have.property('column', 3);
+    expect(updatedCellAddressList[0]).to.have.property('row', 3);
+  })
+
   it('设计态-调整表结构-删除行（没有删除单元格）', function () {
     // 测试用例：
     // 调整表结构后，受影响的单元格公式需要更新，指向新的单元格地址。
@@ -301,7 +321,7 @@ describe('公式引擎-常用场景', function () {
       let context = new WorkBookContext('sheet1');
       const cellValueProvider = {
         getCellValue: function (cell) {
-          if(cell.column === 2 && cell.row === 2){
+          if (cell.column === 2 && cell.row === 2) {
             expect.fail('B2 发生了计算');
           }
         },

@@ -33,6 +33,13 @@ describe('变更单元格结构', function() {
 
     it('插入行', function() {
       expect.fail();
+
+      // 测试用例描述:
+      // 1) C2 = SUM(A1:B2)
+      // 2) 选择第 1 行，向上增加 1 行
+      // 3) 期待 C3 = SUM(A2:B3)
+
+      
     });
 
     it('删除行', function() {
