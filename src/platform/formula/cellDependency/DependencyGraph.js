@@ -84,12 +84,12 @@ class DependencyGraph {
   sortSubgraph(cellAddress) {
     const that = this;
     const subgraphList = this._copyFilteredSubgraph(cellAddress);
-    if(subgraphList && types.isArray(subgraphList)) {
-      return subgraphList.map(function(subgraph) {
+    if (subgraphList && types.isArray(subgraphList)) {
+      return subgraphList.map(function (subgraph) {
         return that._sortGraph(subgraph);
       })
     }
-    
+
     return [];
   }
 
@@ -105,7 +105,7 @@ class DependencyGraph {
         let cellData = existingNodes[i].data;
         let n = cellData.cellAddress;
         // 如果不是当前工作表的范围，直接跳过
-        if(n.sheet !== cellAddress.sheet){
+        if (n.sheet !== cellAddress.sheet) {
           continue;
         }
         if (this._isCellRange(n) && this._isInRange(n, cellAddress)) {
@@ -139,13 +139,13 @@ class DependencyGraph {
       startNodeList = ranges;
     }
 
-    startNodeList.forEach(function(startNode){
+    startNodeList.forEach(function (startNode) {
       const subgraph = new Graph(that._hashFn);
       that._copySearchedNode(startNode, subgraph);
       subgraphList.push(subgraph);
     })
 
-    
+
     return subgraphList;
   }
 
@@ -357,7 +357,8 @@ class DependencyGraph {
    * @param {SimpleCellAddress} cellAddress
    */
   getCellFormula(activeSheetName, cellAddress) {
-    return this.getCellFormulaAST(activeSheetName, cellAddress).toString();
+    let ast = this.getCellFormulaAST(activeSheetName, cellAddress);
+    return ast ? ast.toString() : '';
   }
 
   /**

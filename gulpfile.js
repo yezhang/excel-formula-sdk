@@ -110,7 +110,6 @@ function npmPublish(cb) {
   spawn('npm', ['publish', './dist/excel-formula-sdk'], { stdio: 'inherit' }).on('close', function (err) {
     cb();
   });
-
 }
 
 const sdkDistro = series(clean, build, updateSemver, extractSDK);

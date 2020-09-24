@@ -1,3 +1,4 @@
+const types = require('base/common/types');
 const ArrayUtils = require('base/ArrayUtils');
 const { SimpleCellAddress } = require('platform/formula/cellAddressParts/common/CellAddressParts');
 
@@ -49,6 +50,10 @@ class DependencyTransformer {
       let depmap = node.incoming;
       for (let { fromNode, props } of depmap.values()) {
         let carryList = props; // props 的具体值，是 DependencyBuilder.addOrUpdateDependencies 设置的。
+        if (!types.isArray(carryList)) {
+          continue;
+        }
+        
         carryList.forEach(function (cellCarry) {
           depActionFn(cellCarry, addrSelf);
         });
