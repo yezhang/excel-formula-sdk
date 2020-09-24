@@ -50,6 +50,8 @@ class DependencyTransformer {
       let depmap = node.incoming;
       for (let { fromNode, props } of depmap.values()) {
         let carryList = props; // props 的具体值，是 DependencyBuilder.addOrUpdateDependencies 设置的。
+
+        // 对于从 [单元格范围 -> 具体单元格] 的边，是没有 ast 节点属性的。
         if (!types.isArray(carryList)) {
           continue;
         }

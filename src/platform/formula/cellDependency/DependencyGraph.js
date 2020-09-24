@@ -286,7 +286,7 @@ class DependencyGraph {
         existingNodes.forEach(function (cellData) {
           let n = cellData.cellAddress;
           if (that._isCellRange(n) && that._isInRange(n, cellAddress)) {
-            that.graph.insertEdge(cellData, new CellData(cellAddress))
+            that.graph.insertEdge(cellData, new CellData(cellAddress));
           }
         })
       }
