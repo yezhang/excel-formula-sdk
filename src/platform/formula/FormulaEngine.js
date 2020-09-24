@@ -10,6 +10,8 @@ const AutoFillTransformer = require('platform/formula/generation/AutoFillTransfo
 
 const DependencyGraph = require('./cellDependency/DependencyGraph').DependencyGraph;
 
+const AutoFixFormulaTool = require('platform/formula/autofix/AutoFixFormulaTool').AutoFixFormulaTool;
+
 /**
  * 操作全部的公式。
  */
@@ -83,6 +85,10 @@ class FormulaEngine {
       throw new Error('输入的公式存在错误');
     }
     const ast = new SingleFormulaAST(parseTree, activeSheetName);
+
+    // 调整 Range 的 start.end 顺序
+    const fixer = new AutoFixFormulaTool();
+    fixer.fixCellRangeInPlace(ast);
 
     const builder = new CellDependencyBuilder(this.depGraph);
     builder.setFormulaAST(ast);

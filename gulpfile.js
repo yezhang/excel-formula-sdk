@@ -73,7 +73,7 @@ function extractSDK(cb) {
   gulp.src(path.join(root, './package.json'))
     .pipe(gulp.dest(destFolder, { overwrite: true }));
 
-  gulp.src(path.join(root, './API_README.md'))
+  gulp.src(path.join(root, './API.md'))
     .pipe(rename(function (path) {
       path.basename = 'README';
     }))

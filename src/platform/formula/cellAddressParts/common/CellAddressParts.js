@@ -716,7 +716,8 @@ SimpleCellAddress.defaultHashFn = function defaultHashFn(cellAddress) {
 }
 
 /**
- * 简单单元格范围表示法
+ * 简单单元格范围表示法。
+ * 
  */
 class SimpleCellRange {
   /**
@@ -726,8 +727,50 @@ class SimpleCellRange {
     this.type = 'CellRefRange';
 
     this.sheet = sheetName;
+
+    // assert 保证 start 是左上角起始点
+    // assert 保证 end 是右下角终止点
     this.start = SimpleCellAddress.build(this.sheet, startSimpleAddress.column, startSimpleAddress.row);
     this.end = SimpleCellAddress.build(this.sheet, endSimpleAddress.column, endSimpleAddress.row);
+  }
+
+  /**
+   * 返回左上角地址。
+   * 
+   * @return {Object} {column: <1..n>, row: <1..n>}
+   */
+  topLeft() {
+    return {
+      column: Math.min(this.start.column, this.end.column),
+      row: Math.min(this.start.row, this.end.row)
+    }
+  }
+  /**
+   * 返回右下角地址。
+   * 
+   * @return {Object} {column: <1..n>, row: <1..n>}
+   */
+  bottomRight() {
+    return {
+      column: Math.max(this.start.column, this.end.column),
+      row: Math.max(this.start.row, this.end.row)
+    }
+  }
+
+  pickAddressOnRight() {
+    if(this.start.column >= this.end.column) {
+      return this.start;
+    }
+
+    return this.end;
+  }
+
+  pickAddressAtBottom() {
+    if(this.start.row >= this.end.row) {
+      return this.start;
+    }
+
+    return this.end;
   }
 
   setSheet(sheet) {
@@ -790,28 +833,32 @@ class SimpleCellRange {
   * 判断当前地址是否受到 “插入行” 操作的影响
   */
   isAffactedByInsertingRows(activeSheetName, beforeWhich, numberOfRows) {
-    return this.end.isAffactedByInsertingRows(activeSheetName, beforeWhich, numberOfRows);
+    const bottomAddress = this.pickAddressAtBottom();
+    return bottomAddress.isAffactedByInsertingRows(activeSheetName, beforeWhich, numberOfRows);
   }
 
   /**
   * 判断当前地址是否受到 “删除行” 操作的影响
   */
   isAffactedByRemovingRows(activeSheetName, startFrom, numberOfRows) {
-    return this.end.isAffactedByRemovingRows(activeSheetName, startFrom, numberOfRows);
+    const bottomAddress = this.pickAddressAtBottom();
+    return bottomAddress.isAffactedByRemovingRows(activeSheetName, startFrom, numberOfRows);
   }
 
   /**
  * 判断当前地址是否受到 “插入列” 操作的影响
  */
   isAffactedByInsertingColumns(activeSheetName, beforeWhich, numberOfColumns) {
-    return this.end.isAffactedByInsertingColumns(activeSheetName, beforeWhich, numberOfColumns);
+    const rightAddress = this.pickAddressOnRight();
+    return rightAddress.isAffactedByInsertingColumns(activeSheetName, beforeWhich, numberOfColumns);
   }
 
   /**
    * 判断当前地址是否受到 “删除列” 操作的影响
    */
   isAffactedByRemovingColumns(activeSheetName, startFrom, numberOfColumns) {
-    return this.end.isAffactedByRemovingColumns(activeSheetName, startFrom, numberOfColumns);
+    const rightAddress = this.pickAddressOnRight();
+    return rightAddress.isAffactedByRemovingColumns(activeSheetName, startFrom, numberOfColumns);
   }
 
 

@@ -14,6 +14,7 @@
 function traverse(node, func) {
   let option = func(node);
   if(option === OPTIONS.BREAK){
+    // 不在执行孩子节点的访问。
     return;
   }
   for (var key in node) {

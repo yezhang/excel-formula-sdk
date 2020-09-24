@@ -293,10 +293,16 @@ SingleFormulaAST.prototype.toString = function toString() {
  */
 SingleFormulaAST.prototype.findAllCellRefNodes = function () {
   let cellRefNodes = [];
+  cellRefNodes.rangeNodes = [];
+  cellRefNodes.addressNodes = [];
+
   ASTWalker.traverse(this.content, function (node) {
     switch (node.type) {
       case Syntax.CellAddressIdentifier:
+        cellRefNodes.addressNodes.push(node);
       case Syntax.CellRangeIdentifier:
+        cellRefNodes.rangeNodes.push(node);
+        
         cellRefNodes.push(node);
         return ASTWalker.OPTIONS.BREAK;
       default:
