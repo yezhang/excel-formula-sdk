@@ -1,10 +1,10 @@
 {
   "name": "excel-formula-sdk",
-  "version": "0.0.16",
+  "version": "0.0.13",
   "description": "Excel 公式解析引擎（公式编辑器、公式计算）",
   "main": "./min/formula-sdk.js",
   "repository": {
-    "url": "git@git.yonyou.com:e-invoice-FE/FormulaTextArea.git",
+    "url": "https://github.com/yezhang/excel-formula-sdk.git",
     "type": "git"
   },
   "author": "zhangyef@yonyou.com",
