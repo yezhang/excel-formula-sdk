@@ -1,6 +1,7 @@
 /**
  * 存储单元格依赖关系；支持拓扑排序；支持单元格地址的引用变更；支持序列化存储。 
  */
+const types = require('base/common/types');
 const Graph = require('platform/formula/cellDependency/common/Graph').Graph;
 const Search = require('platform/formula/cellDependency/common/ElementaryCircuitsSearch').ElementaryCircuitsSearch;
 const SimpleCellRange = require('platform/formula/cellAddressParts/common/CellAddressParts').SimpleCellRange;
@@ -83,14 +84,18 @@ class DependencyGraph {
   sortSubgraph(cellAddress) {
     const that = this;
     const subgraphList = this._copyFilteredSubgraph(cellAddress);
-    return subgraphList.map(function(subgraph) {
-      return that._sortGraph(subgraph);
-    })
+    if(subgraphList && types.isArray(subgraphList)) {
+      return subgraphList.map(function(subgraph) {
+        return that._sortGraph(subgraph);
+      })
+    }
+    
+    return [];
   }
 
   /**
    * TODO: 与函数 addCellDependencies 存在部分重复的逻辑。
-   * @param {*} cellAddress 
+   * @param {SimpleCellAddress} cellAddress
    */
   _lookupCellRangeNode(cellAddress) {
     const foundNodes = [];

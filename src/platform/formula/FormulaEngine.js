@@ -88,7 +88,7 @@ class FormulaEngine {
 
     // 调整 Range 的 start.end 顺序
     const fixer = new AutoFixFormulaTool();
-    fixer.fixCellRangeInPlace(ast);
+    fixer.fixCellRangeInPlace(activeSheetName, ast);
 
     const builder = new CellDependencyBuilder(this.depGraph);
     builder.setFormulaAST(ast);

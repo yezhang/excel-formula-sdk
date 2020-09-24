@@ -2,6 +2,7 @@
  * 自动修复公式中的单元格范围
  */
 const {SimpleCellRange} = require('platform/formula/cellAddressParts/common/CellAddressParts');
+const {A1ReferenceIdentifier} = require('platform/formula/core/SingleFormulaAST');
 
 class AutoFixFormulaTool {
 
@@ -19,7 +20,7 @@ class AutoFixFormulaTool {
    * 将 B3:A1 修正为 A1:B3
    * 将 E4:G2 修正为 E2:G4
    */
-  fixCellRangeInPlace(formulaAST) {
+  fixCellRangeInPlace(activeSheetName, formulaAST) {
     let cellRefRangeNodes = formulaAST.findAllCellRefNodes().rangeNodes;
 
     /**
@@ -27,7 +28,7 @@ class AutoFixFormulaTool {
      * @param {CellRangeIdentifier} rangeNode 
      */
     function _fixRange(rangeNode){
-      const range = SimpleCellRange.buildFromASTNode(rangeNode);
+      const range = SimpleCellRange.buildFromASTNode(activeSheetName, rangeNode);
       
       const startRefId = rangeNode.startRef;
       const column1Id = startRefId.columnRef;

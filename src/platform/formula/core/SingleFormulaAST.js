@@ -300,9 +300,10 @@ SingleFormulaAST.prototype.findAllCellRefNodes = function () {
     switch (node.type) {
       case Syntax.CellAddressIdentifier:
         cellRefNodes.addressNodes.push(node);
+        cellRefNodes.push(node);
+        return ASTWalker.OPTIONS.BREAK;
       case Syntax.CellRangeIdentifier:
         cellRefNodes.rangeNodes.push(node);
-        
         cellRefNodes.push(node);
         return ASTWalker.OPTIONS.BREAK;
       default:

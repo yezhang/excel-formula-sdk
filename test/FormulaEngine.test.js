@@ -405,6 +405,38 @@ describe('公式引擎-常用场景', function () {
       engine.reEvaluateAll(context, A1);
 
       expect(B1Ret).to.equal(5);
+    });
+
+    it('无依赖关系的单元格', function() {
+      // 测试用例描述：
+      // 1) 设置 A3 = A1 + A2;
+      // 2) 编辑单元格 A1，期待公式正确计算
+      // 3) 编辑单元格 A4，期待公式不计算
+
+      let context = new WorkBookContext('sheet1');
+      let A3Ret = undefined;
+      const cellValueProvider = {
+        datas: [[1, 2]],
+        getCellValue: function (cell) {
+          return this.datas[cell.column - 1][cell.row - 1];
+        },
+        getCellRangeValues: function (cellRange) {
+          return this.datas[cellRange.start.column-1];
+        },
+        setCellValue: function (cell, value) {
+          A3Ret = value;
+        }
+      };
+
+      // A3 = A1 + A2
+      const A3 = { column: 1, row: 3 };
+      engine.setCellFormula(context, A3, '=A1 + A2');
+      engine.prepareToEvaluateTable(cellValueProvider);
+      A3Ret = engine.evaluate(context, A3);
+      expect(A3Ret).to.equal(3)
+
+      const A4 = { column: 1, row: 4};
+      engine.reEvaluateAll(context, A4);
     })
   });
 
