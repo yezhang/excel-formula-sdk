@@ -3,8 +3,17 @@
  */
 const expect = require('chai').expect;
 
-describe('变更单元格结构', function() {
+describe('[DependencyTransformer] 变更单元格结构', function() {
   describe('单元格地址', function(){
+    beforeEach(function () {
+
+    });
+
+    afterEach(function () {
+
+    });
+
+
     it('插入行', function() {
       expect.fail();
     })

@@ -14,7 +14,7 @@ const { CellAddressIdentifier, A1ReferenceIdentifier, SheetNameIdentifier,
 const { SimpleCellAddress, SimpleCellRange } = require('platform/formula/cellAddressParts/common/CellAddressParts');
 
 
-describe('依赖图的构建', function () {
+describe('[DependencyBuilder] 依赖图的构建', function () {
 
   function buildRelativeAddressAST(sheetName, columnText, rowLine) {
     return new CellAddressIdentifier(new SheetNameIdentifier(sheetName), new A1ReferenceIdentifier(
@@ -205,6 +205,8 @@ describe('依赖图的构建', function () {
   });
 
   it('删除工作表', function() {
+    // 测试用例描述：
+    // 
     expect.fail();
   });
 

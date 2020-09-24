@@ -1,7 +1,7 @@
 const formulaFns = require('@formulajs/formulajs');
 
 const types = require('base/common/types');
-const {SimpleCellAddress, SimpleCellRange} = require('platform/formula/cellAddressParts/common/CellAddressParts');
+const { SimpleCellAddress, SimpleCellRange } = require('platform/formula/cellAddressParts/common/CellAddressParts');
 const StringUtils = require('../../../base/StringUtils').StringUtils;
 
 const EvaluationErrors = require('platform/formula/cellEvaluation/EvaluationErrors');
@@ -60,7 +60,10 @@ class FormulaEvaluationVisitor {
   }
 
   visitPlainTextIdentifier(node) {
-    return node.name;
+    // return node.name;
+    // TODO: 支持自定义变量取数
+
+    throw new EvaluationErrors.NameError(`无法识别的符号 ${node.name}`);
   }
 
   visitRefItemIdentifier(node) {
@@ -82,23 +85,44 @@ class FormulaEvaluationVisitor {
   }
 
   /**
-   * 单元格地址：CellAddressLiteral
+   * 单元格地址：CellAddressIdentifier
    */
   visitCellAddressIdentifier(node) {
+    if (node.isLost()) {
+      throw EvaluationErrors.RefError(`单元格无法找到: ${node.toString()}`)
+    }
     // 转换为 SimpleCellAddress
     let addr = this._buildSimpleCellAddress(node);
     // 根据 SimpleCellAddress 从单元格取值
-    return this.cellValueProxy.getCellValue(addr);
+    let cellValue = undefined;
+    try {
+      cellValue = this.cellValueProxy.getCellValue(addr);
+      if (typeof cellValue === 'undefined') {
+        throw new EvaluationErrors.ValueError(`无法获取单元格的值: ${node.toString()}`);
+      }
+    } catch (e) {
+      throw new EvaluationErrors.ValueError(`无法获取单元格的值: ${node.toString()}`);
+    }
+    return cellValue;
   }
 
   /**
-   * 单元格范围：CellRangeLiteral
+   * 单元格范围：CellRangeIdentifier
    */
   visitCellRangeIdentifier(node) {
     // 转换为 SimpleCellRange
     let addr = this._buildSimpleCellRange(node);
     // 根据 SimpleCellRange 从单元格范围取值
-    return this.cellValueProxy.getCellRangeValues(addr);
+    let cellValue = undefined;
+    try {
+      cellValue = this.cellValueProxy.getCellRangeValues(addr);
+      if (typeof cellValue === 'undefined') {
+        throw new EvaluationErrors.ValueError(`无法获取单元格范围的值: ${node.toString()}`);
+      }
+    } catch (e) {
+      throw new EvaluationErrors.ValueError(`无法获取单元格范围的值: ${node.toString()}`);
+    }
+    return cellValue;
   }
 
   visitA1ReferenceIdentifier(node) {
@@ -146,6 +170,9 @@ class FormulaEvaluationVisitor {
       case '*':
         return leftValue * rightValue;
       case '/':
+        if (rightValue === 0) {
+          throw new EvaluationErrors.DivideByZeroError(`${leftValue} / 0`);
+        }
         return leftValue / rightValue;
       case '%':
         return leftValue % rightValue;
@@ -204,7 +231,7 @@ class FormulaEvaluationVisitor {
    * null, boolean, string(包括字符串两侧的双引号或单引号), number
    */
   visitLiteral(node) {
-    if(types.isString(node.value)){
+    if (types.isString(node.value)) {
       // 字符串类型包含所有字符串两侧的单引号或双引号
       return StringUtils.unwrapText(node.value);
     }
@@ -235,7 +262,7 @@ class FormulaEvaluationVisitor {
     // not implemented yet
   }
 
-  
+
   // visitChildren(ctx) {
   //   if (!ctx) {
   //     return;

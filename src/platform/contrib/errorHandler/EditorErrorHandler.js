@@ -14,7 +14,7 @@ EditorErrorHandler.prototype.handleEvaluateError = function(e) {
 }
 
 EditorErrorHandler.prototype.handleParseError = function handleParseError(input, line, column, message){
-  console.error('识别错误', message);
+  /** noop */
 }
 
 /**

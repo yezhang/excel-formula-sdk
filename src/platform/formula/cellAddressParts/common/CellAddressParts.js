@@ -698,6 +698,7 @@ SimpleCellAddress.build = function build(sheetName, column, row) {
 
 /**
  * 根据单元格地址的 AST 节点结构，构造 SimpleCellAddress。
+ * @param {CellAddressIdentifier} node
  */
 SimpleCellAddress.buildFromASTNode = function buildFromASTNode(sheetName, node) {
   let sheet = sheetName;
@@ -876,6 +877,11 @@ SimpleCellRange.build = function (sheetName, column1, row1, column2, row2) {
     });
 }
 
+/**
+ * 
+ * @param {*} sheetName 
+ * @param {CellRangeIdentifier} node 
+ */
 SimpleCellRange.buildFromASTNode = function buildFromASTNode(sheetName, node) {
   if(!(node instanceof CellRangeIdentifier)) {
     return undefined;
