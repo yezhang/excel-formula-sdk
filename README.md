@@ -4,61 +4,10 @@
 
 Excel 公式解析引擎，用于支持公式输入编辑器的智能提示、单元格之间的公式依赖计算、公式的求值。
 
-## 使用方法
-在使用本组件时，需要引用本组件。
+## API
+API 文档请参考[这里](./API.md)
 
-CommonJS 规范引入方法：
-```js
-const ExcelFormulaSDK = require('excel-formula-sdk');
-const FormulaEngine = ExcelFormulaSDK.FormulaEngine;
-```
-
-`<script/>` 引入方法:
-```html
-<script src="path/to/formula-sdk.js"></script>
-<script src="path/to/main.formula-sdk.js"></script>
-```
-通过 `<script/>` 标签引用，会形成 formulaSDK 全局变量，用于对公式 SDK 执行调用。
-
-
-
-## 与表格组件集成API
-
-当用户输入公式按下回车时，执行如下调用：
-```js
-// 工作簿上下文（包括“活动的工作表”，“活动的单元格”等信息）
-let context = new WorkBookContext('sheet1'); 
-// 当前单元格是 A1，公式为“=B1”，即 A1 = B1
-let A1CellRef = { column: 1, row: 1 }; 
-engine.setCellFormula(context, A1CellRef, '=B1');
-```
-
-如果输入的公式发生了错误，`engine.setCellFormula` 函数会抛出异常，提示禁止用户提交公式即可。
-
-
-当对单元格 A1 求值时，执行如下调用：
-```js
-let context = new WorkBookContext('sheet1');
-const A1CellRef = {
-  column: 1,
-  row: 1
-}
-engine.evaluate(context, A1CellRef);
-```
-
-在公式计算失败时，会排除异常；在异常中包含界面显示需要的文本。
-```js
-let ret = undefined;
-try{
-  ret = engine.evaluate(context, A1CellRef);
-}catch(e){
-  ret = e.getResult();
-}
-```
-
-
-## 与编辑器组件 monoca-editor 集成API
-
+## 贡献代码
 
 ## 错误处理方式
 
