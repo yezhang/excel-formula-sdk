@@ -9,6 +9,9 @@ API 文档请参考[这里](./API.md)
 
 ## 贡献代码
 
+* [提 BUG 或提需求](https://github.com/yezhang/excel-formula-sdk/issues)
+
+
 ## 错误处理方式
 
 当有公式的解析错误时，仍然需要使用 visitor 访问解析树。以便支持变量高亮等内容。
