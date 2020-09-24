@@ -115,6 +115,30 @@ class FormulaEngine {
    * @return 自动向下填充后的公式。如果 formula 参数非法，则抛出异常。
    */
   autofillDown(workBookContext, formula, step) {
+    return this._doAutofill(workBookContext, formula, function(transform){
+      return transform.getFormulaAfterFillingDown(step);
+    });
+  }
+
+  autofillUp(workBookContext, formula, step) {
+    return this._doAutofill(workBookContext, formula, function(transform){
+      return transform.getFormulaAfterFillingUp(step);
+    });
+  }
+
+  autofillLeft(workBookContext, formula, step) {
+    return this._doAutofill(workBookContext, formula, function(transform){
+      return transform.getFormulaAfterFillingLeft(step);
+    });
+  }
+
+  autofillRight(workBookContext, formula, step) {
+    return this._doAutofill(workBookContext, formula, function(transform){
+      return transform.getFormulaAfterFillingRight(step);
+    });
+  }
+
+  _doAutofill(workBookContext, formula, fillFn) {
     const activeSheetName = workBookContext.activeSheetName;
     const parseTree = SingleFormulaCoreInst.parse(formula);
     if(SingleFormulaCoreInst.hasErrors()) {
@@ -122,19 +146,7 @@ class FormulaEngine {
     }
     const ast = new SingleFormulaAST(parseTree, activeSheetName);
     const transform = new AutoFillTransformer(ast, activeSheetName);
-    return transform.getFormulaAfterFillingDown(step);
-  }
-
-  autofillUp(workBookContext, formula, step) {
-
-  }
-
-  autofillLeft(workBookContext, formula, step) {
-
-  }
-
-  autofillRight(workBookContext, formula, step) {
-
+    return fillFn(transform);
   }
 
   /**

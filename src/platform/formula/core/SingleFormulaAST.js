@@ -2,13 +2,10 @@ const antlr4 = require('antlr4');
 const CellAddressLexer = require('platform/formula/runtime/CellAddressLexer').CellAddressLexer;
 const CellAddressParser = require('platform/formula/runtime/CellAddressParser').CellAddressParser;
 const CellAddressVisitor = require('platform/formula/runtime/CellAddressVisitor').CellAddressVisitor;
-// const CellAddressVisitor = require('platform/formula/cellAddressParts/common/CelladdressPartsVisitor').CellAddressLiteralVisitor;
-
-const Syntax = require('./syntax').Syntax;
-const ReportFormulaParserVisitor = require('platform/formula/runtime/ReportFormulaParserVisitor').ReportFormulaParserVisitor;
+const FormulaParserVisitor = require('platform/formula/runtime/ReportFormulaParserVisitor').ReportFormulaParserVisitor;
 
 const ASTWalker = require('platform/formula/core/ASTWalker');
-
+const Syntax = require('./syntax').Syntax;
 
 /**
  * 生成单元格地址、单元格范围的 AST 节点。
@@ -108,8 +105,10 @@ function buildCellAddress(input) {
   return tree.accept(new CellAddressLiteralVisitor());
 }
 
-
-class ASTVisitor extends ReportFormulaParserVisitor {
+/**
+ * 解析公式“解析树”使用。
+ */
+class ASTVisitor extends FormulaParserVisitor {
   visitFormulaExpr(ctx) {
     let body = ctx.expressionStatement().accept(this);
     return new FormulaProgram(body);
@@ -122,7 +121,6 @@ class ASTVisitor extends ReportFormulaParserVisitor {
 
   visitExpressionSequence(ctx) {
     return ctx.singleExpression().accept(this);
-    // return new SequenceExpression([singleExpression]);
   }
 
   visitArgumentsExpression(ctx) {
@@ -265,8 +263,6 @@ class ASTVisitor extends ReportFormulaParserVisitor {
   visitBasicNumberLiteralExpression(ctx) {
     return new Literal(Number(ctx.getText()));
   }
-
-
 }
 
 /**
@@ -286,7 +282,6 @@ SingleFormulaAST.prototype.accept = function accept(visitor) {
 SingleFormulaAST.prototype.toString = function toString() {
   return this.content.toString();
 }
-
 
 /**
  * 查找全部的单元格引用节点

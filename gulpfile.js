@@ -102,6 +102,10 @@ function updateSemver(cb) {
   });
 }
 
+/**
+ * 发布到 npm 仓库
+ * @param {*} cb 
+ */
 function npmPublish(cb) {
   spawn('npm', ['publish', './dist/excel-formula-sdk'], { stdio: 'inherit' }).on('close', function (err) {
     cb();

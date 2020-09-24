@@ -1,5 +1,14 @@
 /**
  * 公式计算错误：
+ * 共 7 种。
+ * (1) 除数为 0 的错误。 DivideByZeroError
+ * (2) 数值类型错误。 NotANumberError
+ * (3) 非法的符号。 NameError
+ * (4) 空错误。 NullError
+ * (5) 参数错误。 NumberError
+ * (6) 单元格地址错误。 RefError
+ * (7) 单元格数据类型错误。 ValueError
+ * 
  * https://support.microsoft.com/zh-cn/office/检测公式中的错误-3a8acca5-1d61-4702-80e0-99a36a2822c1
  */
 
@@ -20,6 +29,9 @@ class EvaluationError extends Error {
   }
 }
 
+/**
+ * 除数为 0 的错误
+ */
 class DivideByZeroError extends EvaluationError{
   constructor(msg){
     super(msg);
@@ -90,6 +102,7 @@ class ValueError extends EvaluationError {
 }
 
 exports.EvaluationError = EvaluationError;
+
 exports.DivideByZeroError = DivideByZeroError;
 exports.NotANumberError = NotANumberError;
 exports.NameError = NameError;

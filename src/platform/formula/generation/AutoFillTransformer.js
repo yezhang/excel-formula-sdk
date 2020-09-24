@@ -31,25 +31,37 @@ class AutoFillTransformer {
     return cellRef;
   }
 
-  getFormulaAfterFillingDown(step){
+  _doFormulaTranslate(translateDirectionFn) {
     if(types.isArray(this._cellRefs)){
       this._cellRefs.forEach(function(cellRefCarry){
-        cellRefCarry.translateDown(step);
+        translateDirectionFn(cellRefCarry);
       });
     }
     return this.formulaAST.toString();
   }
 
-  getFormulaAfterFillingUp(step){
+  getFormulaAfterFillingDown(step){
+    return this._doFormulaTranslate(function(cellRefCarry){
+      cellRefCarry.translateDown(step);
+    });
+  }
 
+  getFormulaAfterFillingUp(step){
+    return this._doFormulaTranslate(function(cellRefCarry){
+      cellRefCarry.translateUp(step);
+    });
   }
 
   getFormulaAfterFillingLeft(step){
-
+    return this._doFormulaTranslate(function(cellRefCarry){
+      cellRefCarry.translateLeft(step);
+    });
   }
 
   getFormulaAfterFillingRight(step){
-
+    return this._doFormulaTranslate(function(cellRefCarry){
+      cellRefCarry.translateRight(step);
+    });
   }
 }
 
