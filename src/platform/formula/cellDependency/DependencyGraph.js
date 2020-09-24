@@ -99,6 +99,10 @@ class DependencyGraph {
       for (let i = 0; i < existingNodes.length; i++) {
         let cellData = existingNodes[i].data;
         let n = cellData.cellAddress;
+        // 如果不是当前工作表的范围，直接跳过
+        if(n.sheet !== cellAddress.sheet){
+          continue;
+        }
         if (this._isCellRange(n) && this._isInRange(n, cellAddress)) {
           foundNodes.push(existingNodes[i]);
         }
