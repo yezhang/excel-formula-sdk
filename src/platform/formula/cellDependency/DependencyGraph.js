@@ -327,7 +327,7 @@ class DependencyGraph {
 
   removeSheets(unusedSheetNames) {
     const that = this;
-    let namesSet = Object.create(null);
+    let namesSet = Object.create({});
     if (unusedSheetNames) {
       unusedSheetNames.forEach(function (name) {
         namesSet[name] = name;

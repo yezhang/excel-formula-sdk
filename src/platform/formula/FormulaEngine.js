@@ -69,7 +69,7 @@ class FormulaEngine {
   removeSheets(workBookContext, sheets) {
     const activeSheetName = workBookContext.activeSheetName;
     const builder = new CellDependencyBuilder(this.depGraph);
-    builder.clear(activeSheetName, sheets);
+    builder.removeSheets(activeSheetName, sheets);
   }
   /**
    * @description: 报表重命名，当报表重命名时调用
