@@ -1,13 +1,15 @@
 # excel-formula-sdk
 
-**注意：** 本项目接口仍处于不稳定阶段，接口会随时发生调整。
-
-Excel 公式解析引擎，用于支持公式输入编辑器的智能提示、单元格之间的公式依赖计算、公式的求值。
-
 <p align="center">
 <img alt="JavaScript" src="https://img.shields.io/badge/language-JavaScript-brightgreen.svg">
 <img alt="license" src="https://img.shields.io/badge/license-MIT-blue.svg">
 </p>
+
+**注意：** 本项目接口仍处于不稳定阶段，接口会随时发生调整。
+
+Excel 公式解析引擎，用于支持公式输入编辑器的智能提示、单元格之间的公式依赖计算、公式的求值。
+
+
 
 本 SDK 可以与各类编辑器（或输入框）、表格组件配合使用。
 支持公式的语法解析、单元格地址解析、单元格范围解析、单元格公式之间的依赖关系管理等。
@@ -27,6 +29,3 @@ API 文档请参考[这里](./API.md)
 
 ## 贡献代码
 * [提 BUG 或提需求](https://github.com/yezhang/excel-formula-sdk/issues)
-
-
-
