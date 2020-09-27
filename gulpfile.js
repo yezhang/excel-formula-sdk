@@ -112,7 +112,7 @@ function npmPublish(cb) {
   });
 }
 
-const sdkDistro = series(clean, build, updateSemver, extractSDK);
+const sdkDistro = series(clean, build, updateSemver, extractSDK, npmPublish);
 
 exports.clean = clean;
 exports.build = build;
