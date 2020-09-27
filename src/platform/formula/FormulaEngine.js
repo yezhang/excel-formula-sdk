@@ -36,7 +36,7 @@ class FormulaEngine {
     // 存储单元格的所有设置的公式
     // key: cellAddress
     // value: formula 文本
-    this.formulas = {}; 
+    this.formulas = {};
 
     /**
      * 当本公式引擎与表格组件配合使用时，需要提供表格数据采集器。
@@ -71,6 +71,18 @@ class FormulaEngine {
     const builder = new CellDependencyBuilder(this.depGraph);
     builder.clear(activeSheetName, sheets);
   }
+  /**
+   * @description: 报表重命名，当报表重命名时调用
+   * @param {Object} workBookContext 工作簿上下文，包含当前激活的工作表
+   * @param {String} oldSheetName 修改前的工作表名
+   * @param {String} newSheetName 修改后的工作表名
+   * @return {type}
+   */
+  renameSheet(workBookContext, oldSheetName, newSheetName) {
+    const activeSheetName = workBookContext.activeSheetName;
+    const builder = new CellDependencyBuilder(this.depGraph);
+    builder.renameSheet(activeSheetName, oldSheetName, newSheetName);
+  }
 
   /**
    * 用户输入一个公式后调用。
@@ -81,7 +93,7 @@ class FormulaEngine {
   setCellFormula(workBookContext, cellAddr, formula) {
     const activeSheetName = workBookContext.activeSheetName;
     const parseTree = SingleFormulaCoreInst.parse(formula);
-    if(SingleFormulaCoreInst.hasErrors()) {
+    if (SingleFormulaCoreInst.hasErrors()) {
       throw new Error('输入的公式存在错误');
     }
     const ast = new SingleFormulaAST(parseTree, activeSheetName);
@@ -115,25 +127,25 @@ class FormulaEngine {
    * @return 自动向下填充后的公式。如果 formula 参数非法，则抛出异常。
    */
   autofillDown(workBookContext, formula, step) {
-    return this._doAutofill(workBookContext, formula, function(transform){
+    return this._doAutofill(workBookContext, formula, function (transform) {
       return transform.getFormulaAfterFillingDown(step);
     });
   }
 
   autofillUp(workBookContext, formula, step) {
-    return this._doAutofill(workBookContext, formula, function(transform){
+    return this._doAutofill(workBookContext, formula, function (transform) {
       return transform.getFormulaAfterFillingUp(step);
     });
   }
 
   autofillLeft(workBookContext, formula, step) {
-    return this._doAutofill(workBookContext, formula, function(transform){
+    return this._doAutofill(workBookContext, formula, function (transform) {
       return transform.getFormulaAfterFillingLeft(step);
     });
   }
 
   autofillRight(workBookContext, formula, step) {
-    return this._doAutofill(workBookContext, formula, function(transform){
+    return this._doAutofill(workBookContext, formula, function (transform) {
       return transform.getFormulaAfterFillingRight(step);
     });
   }
@@ -141,7 +153,7 @@ class FormulaEngine {
   _doAutofill(workBookContext, formula, fillFn) {
     const activeSheetName = workBookContext.activeSheetName;
     const parseTree = SingleFormulaCoreInst.parse(formula);
-    if(SingleFormulaCoreInst.hasErrors()) {
+    if (SingleFormulaCoreInst.hasErrors()) {
       throw new Error('输入的公式存在错误');
     }
     const ast = new SingleFormulaAST(parseTree, activeSheetName);
@@ -152,7 +164,7 @@ class FormulaEngine {
   /**
    * 对指定单元格的公式求值；
    * 如果指定单元格处没有公式，则直接从单元格处取值。
-   * @param {WorkBookContext} workBookContext 
+   * @param {WorkBookContext} workBookContext
    * @param {Object} cellAddr 单元格地址对象 {column:<1..n>, row:<1..n>}
    */
   evaluate(workBookContext, cellAddr) {
@@ -175,7 +187,10 @@ class FormulaEngine {
   }
 
   _assertCellValueProvider(provider) {
-    assert.ok(provider, '需要调用 prepareToEvaluateTable 方法, 提供 tableCellValueProvider');
+    assert.ok(
+      provider,
+      '需要调用 prepareToEvaluateTable 方法, 提供 tableCellValueProvider'
+    );
   }
 
   evaluateAll(workBookContext) {
@@ -185,7 +200,7 @@ class FormulaEngine {
     const evaluator = new Evaluator(this.depGraph, this.tableCellValueProvider);
     return evaluator.evaluateAll();
   }
- 
+
   /**
    * 用户调整表结构：增加行
    */
@@ -210,7 +225,11 @@ class FormulaEngine {
   addColumns(workBookContext, columnRowIndex, columnCount) {
     const activeSheetName = workBookContext.activeSheetName;
     const transform = new DependencyTransformer(this.depGraph);
-    return transform.insertColumns(activeSheetName, columnRowIndex, columnCount);
+    return transform.insertColumns(
+      activeSheetName,
+      columnRowIndex,
+      columnCount
+    );
   }
 
   /**
@@ -219,7 +238,11 @@ class FormulaEngine {
   removeColumns(workBookContext, columnRowIndex, columnCount) {
     const activeSheetName = workBookContext.activeSheetName;
     const transform = new DependencyTransformer(this.depGraph);
-    return transform.removeColumns(activeSheetName, columnRowIndex, columnCount);
+    return transform.removeColumns(
+      activeSheetName,
+      columnRowIndex,
+      columnCount
+    );
   }
   /**
    * 用户调整表结构：移动列
