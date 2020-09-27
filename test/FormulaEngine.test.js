@@ -340,7 +340,6 @@ describe('公式引擎-常用场景', function () {
       // 2) 设置 C1 的值
       // 3) 期待：只计算 B1, A1 单元格处的公式, B2 不应该计算。
 
-
       const cellValueProvider = {
         getCellValue: function (cell) {
           if (cell.column === 2 && cell.row === 2) {
