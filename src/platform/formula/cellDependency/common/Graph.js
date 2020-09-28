@@ -147,6 +147,7 @@ class Graph {
     node.outgoing.clear();
     node.outgoing = syncedOutgoing;
   }
+  
   /**
    * 刷新图的状态：用于根据图中的节点，更新图的 hashkey。
    * 

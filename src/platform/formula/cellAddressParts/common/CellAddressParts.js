@@ -4,7 +4,7 @@ const types = require('base/common/types');
 
 const Syntax = require('platform/formula/core/syntax').Syntax;
 const SingleFormulaContext = require('platform/formula/core/SingleFormulaContext').SingleFormulaContext;
-const { CellAddressIdentifier, CellRangeIdentifier,RelativeColumnIdentifier, RelativeRowIdentifier } = require('platform/formula/core/SingleFormulaAST');
+const { CellAddressIdentifier, CellRangeIdentifier, RelativeColumnIdentifier, RelativeRowIdentifier } = require('platform/formula/core/SingleFormulaAST');
 
 class TranslateError extends Error {
   constructor(message) {
@@ -221,13 +221,13 @@ class RelativeCellRowTranslator {
   }
 
   translateUp(step) {
-    if(this._rowIdentifier instanceof RelativeRowIdentifier){
+    if (this._rowIdentifier instanceof RelativeRowIdentifier) {
       this._celllRowTranslatorProxy.translateUp(step);
     }
   }
 
   translateDown(step) {
-    if(this._rowIdentifier instanceof RelativeRowIdentifier){
+    if (this._rowIdentifier instanceof RelativeRowIdentifier) {
       this._celllRowTranslatorProxy.translateDown(step);
     }
   }
@@ -240,7 +240,7 @@ class IA1ReferenceTranslator {
     this.$init();
   }
 
-  $init(){ /** protected, no op */}
+  $init() { /** protected, no op */ }
   toString() {
     return this.a1Reference.toString();
   }
@@ -371,7 +371,7 @@ class IA1ReferenceTranslator {
 /**
  * 不包括表名的单元格地址引用
  */
-class A1ReferenceTranslator extends IA1ReferenceTranslator{
+class A1ReferenceTranslator extends IA1ReferenceTranslator {
   constructor(a1Reference) {
     super(a1Reference);
   }
@@ -702,7 +702,7 @@ SimpleCellAddress.build = function build(sheetName, column, row) {
  */
 SimpleCellAddress.buildFromASTNode = function buildFromASTNode(sheetName, node) {
   let sheet = sheetName;
-  if(node.sheetName){
+  if (node.sheetName) {
     sheet = node.sheetName.toString();
   }
 
@@ -759,7 +759,7 @@ class SimpleCellRange {
   }
 
   pickAddressOnRight() {
-    if(this.start.column >= this.end.column) {
+    if (this.start.column >= this.end.column) {
       return this.start;
     }
 
@@ -767,7 +767,7 @@ class SimpleCellRange {
   }
 
   pickAddressAtBottom() {
-    if(this.start.row >= this.end.row) {
+    if (this.start.row >= this.end.row) {
       return this.start;
     }
 
@@ -883,12 +883,12 @@ SimpleCellRange.build = function (sheetName, column1, row1, column2, row2) {
  * @param {CellRangeIdentifier} node 
  */
 SimpleCellRange.buildFromASTNode = function buildFromASTNode(sheetName, node) {
-  if(!(node instanceof CellRangeIdentifier)) {
+  if (!(node instanceof CellRangeIdentifier)) {
     return undefined;
   }
 
   let sheet = sheetName;
-  if(node.sheetName){
+  if (node.sheetName) {
     sheet = node.sheetName.toString();
   }
 
@@ -905,6 +905,21 @@ SimpleCellRange.buildFromASTNode = function buildFromASTNode(sheetName, node) {
 }
 
 /**
+ * 变更表格名称。
+ */
+class SheetNameTranslator {
+  constructor(sheetNameIdentifier) {
+    this.sheetNameIdentifier = sheetNameIdentifier;
+  }
+
+  setSheet(sheetName) {
+    if(this.sheetNameIdentifier) {
+      this.sheetNameIdentifier.name = sheetName;
+    }
+    
+  }
+}
+/**
  * 所有单元格引用的基类。
  * 用于对单元格地址的语法树节点进行功能增强。
  */
@@ -919,6 +934,7 @@ class CellAddressCarrier extends CellRefDecorator {
   constructor(cellAddressIdentifier, A1ReferenceTranslatorCtor) {
     super();
     this.cellAddress = cellAddressIdentifier;
+    this.sheetNameTranslator = new SheetNameTranslator(this.cellAddress.sheetName);
     this.a1RefTranslator = new A1ReferenceTranslatorCtor(this.cellAddress.a1Reference);
     this._workingContext = undefined; //工作单元格的上下文，包括当前的工作表，活动单元格等界面操作信息。
   }
@@ -958,6 +974,10 @@ class CellAddressCarrier extends CellRefDecorator {
 
   getWorkingContext() {
     return this._workingContext;
+  }
+
+  setSheetName(name) {
+    this.sheetNameTranslator.setSheet(name);
   }
 
   translateUp(step) {
@@ -1021,6 +1041,8 @@ class CellRangeCarrier extends CellRefDecorator {
     super();
     this.cellRange = cellRangeRef;
 
+    this.sheetNameTranslator = new SheetNameTranslator(this.cellRange.sheetName);
+    
     this.startRefTranslator = new A1ReferenceTranslatorCtor(this.cellRange.startRef);
     this.endRefTranslator = new A1ReferenceTranslatorCtor(this.cellRange.endRef);
 
@@ -1038,6 +1060,10 @@ class CellRangeCarrier extends CellRefDecorator {
 
   getWorkingContext() {
     return this._workingContext;
+  }
+
+  setSheetName(name) {
+    this.sheetNameTranslator.setSheet(name);
   }
 
   toSimpleAddress() {
@@ -1156,7 +1182,7 @@ function _doBuildCellRefCarrier(cellRef, a1RefTranslatorCtor) {
  */
 function buildCellRefDecorator(cellRef) {
   return _doBuildCellRefCarrier(cellRef, A1ReferenceTranslator);
-  
+
 }
 
 /**

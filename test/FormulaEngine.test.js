@@ -255,6 +255,37 @@ describe('公式引擎-常用场景', function () {
       let formula = engine.getCellFormula(context, affactedCells[0]);
       expect(formula).to.equal('=A1');
     });
+  
+    it('设计态-调整表结构-表名重命名', function(){
+      // 测试用例描绘：
+      // (1), 活动工作表, sheet1
+      // (2), 设置公式 A1 = sheet2!B1 * 2
+      // (3), sheet2!B1 = 3;
+      // (4), 期待 A1 = 6.
+      // (5), 重命名 sheet2 为 sheet3
+      // (6), 期待 A1 公式变更为 sheet3!B1 * 2
+      // (7)，重命名 sheet1 为 sheet2
+      // (8), 期待 sheet2!A1 的公式为 sheet3!B1 * 2
+
+      let context = new WorkBookContext('sheet1');
+      let A1 = { column: 1, row: 1 }; // A1 = sheet2!B1 * 2
+      let f = '= sheet2!B1 * 2';
+      engine.setCellFormula(context, A1, f);
+
+      // sheet1
+      // sheet2 --> sheet3
+      engine.renameSheet(context, 'sheet2', 'sheet3');
+      const updateF1 = engine.getCellFormula(context, A1);
+
+      const expectedF = '=sheet3!B1*2';
+      expect(updateF1).to.equal(expectedF);
+
+      engine.renameSheet(context, 'sheet1', 'sheet2');
+      context = new WorkBookContext('sheet2');
+      
+      const updateF2 = engine.getCellFormula(context, A1);
+      expect(updateF2).to.equal(expectedF);
+    })
   });
 
   describe('运行态', function () {
@@ -344,6 +375,16 @@ describe('公式引擎-常用场景', function () {
         getCellValue: function (cell) {
           if (cell.column === 2 && cell.row === 2) {
             expect.fail('B2 发生了计算');
+          }
+
+          if(cell.column === 3 && cell.row === 1) {
+            // C1
+            return 1;
+          }
+
+          if(cell.column === 2 && cell.row === 1) {
+            // B1
+            return 1;
           }
         },
         getCellRangeValues: function (cellRange) {

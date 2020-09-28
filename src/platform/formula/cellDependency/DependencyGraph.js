@@ -309,22 +309,6 @@ class DependencyGraph {
     this.graph.refreshNodes();
   }
 
-  renameSheet(oldSheetName, newSheetName) {
-    const that = this;
-    let cellDatas = this.graph.nodeDatas();
-    cellDatas.forEach(function (data) {
-      let cellAddress = data.cellAddress;
-      let sheetName = cellAddress.sheet;
-      if (oldSheetName === sheetName) {
-        // 需要重命名该节点
-        let newCellData = data.shallowClone();
-        newCellData.cellAddress.setSheet(newSheetName);
-
-        that.graph.moveNode(data, newCellData);
-      }
-    })
-  }
-
   removeSheets(unusedSheetNames) {
     const that = this;
     let namesSet = {};

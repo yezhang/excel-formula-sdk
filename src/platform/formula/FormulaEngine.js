@@ -80,7 +80,7 @@ class FormulaEngine {
    */
   renameSheet(workBookContext, oldSheetName, newSheetName) {
     const activeSheetName = workBookContext.activeSheetName;
-    const builder = new CellDependencyBuilder(this.depGraph);
+    const builder = new DependencyTransformer(this.depGraph);
     builder.renameSheet(activeSheetName, oldSheetName, newSheetName);
   }
 

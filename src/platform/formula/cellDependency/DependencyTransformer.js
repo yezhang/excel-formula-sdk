@@ -44,7 +44,7 @@ class DependencyTransformer {
       let addrSelf = cellData.cellAddress;
 
       // 变更自身位置
-      addrSelfActionFn(addrSelf);
+      addrSelfActionFn(addrSelf, node);
 
       // 变更受影响的公式
       let depmap = node.incoming;
@@ -55,7 +55,7 @@ class DependencyTransformer {
         if (!types.isArray(carryList)) {
           continue;
         }
-        
+
         carryList.forEach(function (cellCarry) {
           depActionFn(cellCarry, addrSelf);
         });
@@ -80,6 +80,21 @@ class DependencyTransformer {
     // updatedFormulaAddress 去重
     updatedFormulaAddress = ArrayUtils.uniqueArray(updatedFormulaAddress, SimpleCellAddress.defaultHashFn);
     return updatedFormulaAddress;
+  }
+
+  renameSheet(activeSheetName, oldSheetName, newSheetName) {
+
+    let affectedCellList = this._findDirtyCells(function (cellAddress) {
+      return oldSheetName === cellAddress.sheet;
+    });
+
+    return this._doTransformation(affectedCellList,
+      function (addrSelf) {
+        addrSelf.setSheet(newSheetName);
+      },
+      function (cellCarry) {
+        cellCarry.setSheetName(newSheetName);
+      });
   }
 
   /**
