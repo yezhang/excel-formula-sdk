@@ -25,7 +25,7 @@ const { FormulaEngine, WorkBookContext } = formulaSDK;
 
 ## 与表格组件集成API
 
-**场景**
+**场景**  
 当用户输入公式按下回车时，执行如下调用：
 ```js
 const engine = new FormulaEngine();
