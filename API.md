@@ -4,8 +4,16 @@
 
 Excel 公式解析引擎，用于支持公式输入编辑器的智能提示、单元格之间的公式依赖计算、公式的求值。
 
-## 使用方法
-在使用本组件时，需要引用本组件。
+本 SDK 可以与各类编辑器（或输入框）、表格组件配合使用。
+- [x] 支持公式的语法解析、单元格地址解析、单元格范围解析、单元格公式之间的依赖关系管理等。
+- [x] 支持嵌套公式的解析、公式的求值。
+- [x] 支持自动补全、函数签名提示、鼠标浮动提示等 IntelliSense 功能所需要的核心信息，包括当前光标所在的函数上下文、当前光标的参数索引。
+
+使用场景概述：
+- 与 [monaco-editor](https://www.npmjs.com/package/monaco-editor)/[code mirror](https://www.npmjs.com/package/codemirror) 编辑器配合使用，提供智能提示的功能。
+- 与 [handsontable](https://www.npmjs.com/package/handsontable) 配合使用，提供公式的联动计算。
+
+## 安装
 
 CommonJS 规范引入方法：
 ```js
@@ -60,7 +68,7 @@ engine.reEvaluateAll(context, C1);
 engine.reEvaluateAll(...) 函数可能会抛出计算异常，处理方法同 engine.evaluate(...)。
 
 **场景**  
-在公式计算失败时，会排除异常；在异常中包含界面显示需要的文本。
+在公式计算失败时，会抛出异常；在异常中包含界面显示需要的文本。
 ```js
 const engine = new FormulaEngine();
 const context = new WorkBookContext('sheet1');
@@ -73,7 +81,18 @@ try{
 ```
 
 **场景**  
-自动填充单元格。
+自动填充单元格。当希望在表格组件中，拖动鼠标，从当前选中单元格开始向下填充单元格公式时，
+使用 `engine.autofillDown(context, formulaText, rowNumber)` 函数自动生成新单元格的公式。
+随着鼠标不断向下移动，循环调用该 `engine.autofillDown` 函数，并传递逐渐递增的参数 `rowNumber`。
+
+例如，向下 1 行填充公式。
+```js
+let f = '= C3 + D3 + SUM(C3:D3) + MIN($C3:D$3)';
+let context = new WorkBookContext('sheet1');
+let downRet = engine.autofillDown(context, f, 1);
+// downRet = '=C4+D4+SUM(C4:D4)+MIN($C4:D$3)';
+```
+
 
 
 ## 与编辑器组件 monoca-editor 集成API
