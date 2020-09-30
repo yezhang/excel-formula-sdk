@@ -52,7 +52,22 @@ engine.setCellFormula(context, A1CellRef, '=B1');
 const engine = new FormulaEngine();
 const context = new WorkBookContext('sheet1');
 const A1CellRef = { column: 1, row: 1 };
-engine.evaluate(context, A1CellRef);
+
+// 当对公式求值时，engine 会自动回调该对象的方法，用于获取某个单元格的值。
+const cellValueProvider = {
+  getCellValue: function (cell) {
+    // {column, row} = cell
+    // column in [1..n]
+    // row in [1..n]
+  },
+  getCellRangeValues: function (cellRange) {
+
+  }
+};
+engine.prepareToEvaluateTable(cellValueProvider);
+
+// 求值结果存放至 ret 变量中。
+let ret = engine.evaluate(context, A1CellRef);
 ```
 
 **场景**  
@@ -96,6 +111,47 @@ let downRet = engine.autofillDown(context, f, 1);
 
 
 ## 与编辑器组件 monoca-editor 集成API
+
+```js
+require(['vs/editor/editor.main'], function () {
+
+  formulaSDK.contrib.init(monaco);
+
+  // 定义 monaco editor 的主题颜色
+  monaco.editor.defineTheme('theme1', {
+    base: 'vs',
+    inherit: false,
+    rules: [{
+        token: 'basicnumberliteral.formula',
+        foreground: '1155cc' //#1155cc
+      },
+      {
+        token: 'unexpectedcharacter.formula',
+        foreground: 'ff0000' //#ff0000
+      },
+      {
+        token: 'fnidentifier.formula',
+        foreground: '000000' //#000000
+      },
+      {
+        token: 'error.formula',
+        foreground: 'ff0000'
+      }
+    ]
+  });      
+  var editor = monaco.editor.create(document.getElementById('container'), {
+    value: [
+      'IF(C7 <  E7, MIN( ABS(E7 -C7),D7), 0)',
+    ].join('\n'),
+    language: 'lang-formula',
+    theme: 'theme1'
+  });
+
+  // 初始化编辑器，提供自动补全、函数参数提示等功能。
+  formulaSDK.contrib.initEditor(monaco, editor);
+});
+
+```
 
 
 ## 联系方式

@@ -42,6 +42,9 @@ class Evaluator {
     return formulaAST.accept(new FormulaEvaluationVisitor(this.cellValueProxy, ownerSheetName));
   }
 
+  /**
+   * 重新计算受影响的单元格
+   */
   reEvaluateAll(activeSheetName, fromCellAddr) {
     const that = this;
     let simpleAddr = SimpleCellAddress.build(activeSheetName, fromCellAddr.column, fromCellAddr.row);
@@ -78,6 +81,9 @@ class Evaluator {
     }
   }
 
+  /**
+   * 执行全部单元格的重新计算
+   */
   evaluateAll() {
     let sorted = this.depGraph.sort();
     return this._evaluateOneByOne(sorted);
