@@ -1,6 +1,7 @@
 # excel-formula-sdk
 
 **注意：** 本项目接口仍处于不稳定阶段，接口会随时发生调整。
+由于本项目会长期维护，如果您有疑问或功能需求，欢迎在 [issue](https://github.com/yezhang/excel-formula-sdk/issues) 提问。
 
 ### 基本功能
 Excel 公式解析引擎，用于支持公式输入编辑器的智能提示、单元格之间的公式依赖计算、公式的求值。

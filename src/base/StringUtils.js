@@ -1,5 +1,7 @@
 /**
+ * 字符串处理工具类。
  * 
+ * 可能用到的工具：punycode。
  */
 
 function StringUtils (){}

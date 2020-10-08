@@ -1,14 +1,13 @@
 const assert = require('base/common/assert');
 
-const SingleFormulaCoreInst = require('./core/SingleFormulaCore').INSTANCE;
+const SingleFormulaCoreInst = require('platform/formula/core/SingleFormulaCore').INSTANCE;
 const SingleFormulaAST = require('platform/formula/core/SingleFormulaAST').SingleFormulaAST;
-const CellDependencyBuilder = require('./cellDependency/DependencyBuilder').DependencyBuilder;
-const CellDependencyFinder = require('./cellDependency/DependencyFinder').DependencyFinder;
+const CellDependencyBuilder = require('platform/formula/cellDependency/DependencyBuilder').DependencyBuilder;
+const DependencyGraph = require('platform/formula/cellDependency/DependencyGraph').DependencyGraph;
+const CellDependencyFinder = require('platform/formula/cellDependency/DependencyFinder').DependencyFinder;
 const DependencyTransformer = require('platform/formula/cellDependency/DependencyTransformer').DependencyTransformer;
 const Evaluator = require('platform/formula/cellEvaluation/Evaluator').Evaluator;
 const AutoFillTransformer = require('platform/formula/generation/AutoFillTransformer').AutoFillTransformer;
-
-const DependencyGraph = require('./cellDependency/DependencyGraph').DependencyGraph;
 
 const AutoFixFormulaTool = require('platform/formula/autofix/AutoFixFormulaTool').AutoFixFormulaTool;
 
