@@ -7,8 +7,6 @@ const CellValueProviderProxy = require('platform/formula/cellEvaluation/CellValu
 const FormulaEvaluationVisitor = require('platform/formula/cellEvaluation/FormulaEvaluationVisitor').FormulaEvaluationVisitor;
 const { SimpleCellAddress } = require('platform/formula/cellAddressParts/common/CellAddressParts');
 
-
-
 /**
  * 根据依赖图对单元格求值。
  * 本“求值器”依赖于单元格依赖关系构建器。

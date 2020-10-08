@@ -2,9 +2,11 @@
 
 **注意：** 本项目接口仍处于不稳定阶段，接口会随时发生调整。
 
+### 基本功能
 Excel 公式解析引擎，用于支持公式输入编辑器的智能提示、单元格之间的公式依赖计算、公式的求值。
 
-本 SDK 可以与各类编辑器（或输入框）、表格组件配合使用。
+### 集成用法
+本 SDK 还可以与各类编辑器（或输入框）、表格组件配合使用。
 - [x] 支持公式的语法解析、单元格地址解析、单元格范围解析、单元格公式之间的依赖关系管理等。
 - [x] 支持嵌套公式的解析、公式的求值。
 - [x] 支持自动补全、函数签名提示、鼠标浮动提示等 IntelliSense 功能所需要的核心信息，包括当前光标所在的函数上下文、当前光标的参数索引。
@@ -13,15 +15,26 @@ Excel 公式解析引擎，用于支持公式输入编辑器的智能提示、�
 - 与 [monaco-editor](https://www.npmjs.com/package/monaco-editor)/[code mirror](https://www.npmjs.com/package/codemirror) 编辑器配合使用，提供智能提示的功能。
 - 与 [handsontable](https://www.npmjs.com/package/handsontable) 配合使用，提供公式的联动计算。
 
+
+### 函数的扩展性
+本 SDK 支持 Excel 内置函数的解析，还支持其他「任何」函数调用语法，可用于扩展支持项目个性化函数。
+例如，项目中需要一个“根据用户ID查询用户名”的函数 getUserNameById('id')。
+并且，输入的公式为 “= getUserNameById('u001')”。该函数及参数是可以解析的。
+
+### 变量的扩展性
+本 SDK 支持特殊变量的解析。当变量以 '@' 符号开头时，将解析为特殊变量。
+例如，公式为 '= @lastyear'。
+
+
 ## 安装
 
-CommonJS 规范引入方法：
+CommonJS 规范：
 ```js
 const formulaSDK = require('excel-formula-sdk');
 const { FormulaEngine, WorkBookContext } = formulaSDK;
 ```
 
-`<script/>` 引入方法:
+`<script/>` 引入:
 ```html
 <script src="path/to/formula-sdk.js"></script>
 ```
