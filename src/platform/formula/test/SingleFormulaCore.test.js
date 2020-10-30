@@ -217,7 +217,7 @@ describe('一般常量', function () {
 
 });
 
-describe('识别变量', function () {
+describe('识别变量(SingleFormulaCore.test.js)', function () {
   let core;
   beforeEach(function () {
     core = new FormulaCore();
@@ -294,6 +294,27 @@ describe('识别变量', function () {
       },
     ], 'identifier');
   });
+
+  it('浮动单元格范围', function(){
+    assertRecognitionList(core, [
+      {
+        rawValue: 'A1->B1',
+        expected: 'A1->B1'
+      },
+      {
+        rawValue: 'Sheet1!A1->B1',
+        expected: 'Sheet1!A1->B1'
+      },
+      {
+        rawValue: 'Sheet1!A$1->$B1',
+        expected: 'Sheet1!A$1->$B1'
+      },
+      {
+        rawValue: 'Sheet1!$A$1->$B$1',
+        expected: 'Sheet1!$A$1->$B$1'
+      },
+    ], 'identifier');
+  })
 
   describe('报表项', function () {
 

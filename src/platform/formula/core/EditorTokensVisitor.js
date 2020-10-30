@@ -22,6 +22,9 @@ EditorTokensState.prototype.getTokenList = function () {
   return this._tokenList;
 }
 
+/**
+ * 用于支持编辑器的功能
+ */
 class EditorTokensVisitor extends ReportFormulaParserVisitor {
   constructor() {
     super();

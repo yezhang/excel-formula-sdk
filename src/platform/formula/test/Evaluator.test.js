@@ -30,7 +30,7 @@ describe('公式求值', function () {
     // 全部重新计算
 
     
-    expect.fail('全部重算');
+    expect.fail();
   })
 
   describe('[常量+运算符]', function () {

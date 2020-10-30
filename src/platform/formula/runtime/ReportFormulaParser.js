@@ -8,7 +8,7 @@ var grammarFileName = "ReportFormulaParser.g4";
 
 
 var serializedATN = ["\u0003\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964",
-    "\u00037\u00e6\u0004\u0002\t\u0002\u0004\u0003\t\u0003\u0004\u0004\t",
+    "\u00039\u00e7\u0004\u0002\t\u0002\u0004\u0003\t\u0003\u0004\u0004\t",
     "\u0004\u0004\u0005\t\u0005\u0004\u0006\t\u0006\u0004\u0007\t\u0007\u0004",
     "\b\t\b\u0004\t\t\t\u0004\n\t\n\u0004\u000b\t\u000b\u0004\f\t\f\u0004",
     "\r\t\r\u0004\u000e\t\u000e\u0004\u000f\t\u000f\u0004\u0010\t\u0010\u0004",
@@ -37,30 +37,30 @@ var serializedATN = ["\u0003\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964",
     "\f\u0003\f\u0003\f\u0005\f\u00b9\n\f\u0003\r\u0003\r\u0003\r\u0003\r",
     "\u0003\r\u0003\r\u0003\r\u0005\r\u00c2\n\r\u0003\u000e\u0003\u000e\u0005",
     "\u000e\u00c6\n\u000e\u0003\u000f\u0003\u000f\u0003\u000f\u0003\u000f",
-    "\u0005\u000f\u00cc\n\u000f\u0003\u0010\u0003\u0010\u0003\u0010\u0003",
-    "\u0011\u0003\u0011\u0003\u0011\u0003\u0011\u0005\u0011\u00d5\n\u0011",
-    "\u0003\u0012\u0003\u0012\u0005\u0012\u00d9\n\u0012\u0003\u0013\u0003",
-    "\u0013\u0003\u0013\u0003\u0014\u0003\u0014\u0005\u0014\u00e0\n\u0014",
-    "\u0003\u0015\u0003\u0015\u0003\u0016\u0003\u0016\u0003\u0016\u0002\u0003",
-    "\b\u0017\u0002\u0004\u0006\b\n\f\u000e\u0010\u0012\u0014\u0016\u0018",
-    "\u001a\u001c\u001e \"$&(*\u0002\u0007\u0003\u0002\u0018\u001a\u0003",
-    "\u0002\u0015\u0016\u0003\u0002\u001c\u001f\u0003\u0002 !\u0003\u0003",
-    "\u000b\u000b\u0002\u00fa\u0002-\u0003\u0002\u0002\u0002\u00042\u0003",
-    "\u0002\u0002\u0002\u00064\u0003\u0002\u0002\u0002\bC\u0003\u0002\u0002",
-    "\u0002\nj\u0003\u0002\u0002\u0002\f|\u0003\u0002\u0002\u0002\u000e~",
-    "\u0003\u0002\u0002\u0002\u0010\u008e\u0003\u0002\u0002\u0002\u0012\u0095",
-    "\u0003\u0002\u0002\u0002\u0014\u00ac\u0003\u0002\u0002\u0002\u0016\u00b8",
-    "\u0003\u0002\u0002\u0002\u0018\u00c1\u0003\u0002\u0002\u0002\u001a\u00c5",
-    "\u0003\u0002\u0002\u0002\u001c\u00cb\u0003\u0002\u0002\u0002\u001e\u00cd",
-    "\u0003\u0002\u0002\u0002 \u00d4\u0003\u0002\u0002\u0002\"\u00d8\u0003",
-    "\u0002\u0002\u0002$\u00da\u0003\u0002\u0002\u0002&\u00df\u0003\u0002",
-    "\u0002\u0002(\u00e1\u0003\u0002\u0002\u0002*\u00e3\u0003\u0002\u0002",
-    "\u0002,.\u0007\r\u0002\u0002-,\u0003\u0002\u0002\u0002-.\u0003\u0002",
-    "\u0002\u0002./\u0003\u0002\u0002\u0002/0\u0005\u0004\u0003\u000201\u0007",
-    "\u0002\u0002\u00031\u0003\u0003\u0002\u0002\u000223\u0005\u0006\u0004",
-    "\u00023\u0005\u0003\u0002\u0002\u000245\u0005\b\u0005\u00025\u0007\u0003",
-    "\u0002\u0002\u000267\b\u0005\u0001\u000278\u0007\u0015\u0002\u00028",
-    "D\u0005\b\u0005\u00129:\u0007\u0016\u0002\u0002:D\u0005\b\u0005\u0011",
+    "\u0003\u000f\u0005\u000f\u00cd\n\u000f\u0003\u0010\u0003\u0010\u0003",
+    "\u0010\u0003\u0011\u0003\u0011\u0003\u0011\u0003\u0011\u0005\u0011\u00d6",
+    "\n\u0011\u0003\u0012\u0003\u0012\u0005\u0012\u00da\n\u0012\u0003\u0013",
+    "\u0003\u0013\u0003\u0013\u0003\u0014\u0003\u0014\u0005\u0014\u00e1\n",
+    "\u0014\u0003\u0015\u0003\u0015\u0003\u0016\u0003\u0016\u0003\u0016\u0002",
+    "\u0003\b\u0017\u0002\u0004\u0006\b\n\f\u000e\u0010\u0012\u0014\u0016",
+    "\u0018\u001a\u001c\u001e \"$&(*\u0002\u0007\u0003\u0002\u0018\u001a",
+    "\u0003\u0002\u0015\u0016\u0003\u0002\u001c\u001f\u0003\u0002 !\u0003",
+    "\u0003\u000b\u000b\u0002\u00fc\u0002-\u0003\u0002\u0002\u0002\u0004",
+    "2\u0003\u0002\u0002\u0002\u00064\u0003\u0002\u0002\u0002\bC\u0003\u0002",
+    "\u0002\u0002\nj\u0003\u0002\u0002\u0002\f|\u0003\u0002\u0002\u0002\u000e",
+    "~\u0003\u0002\u0002\u0002\u0010\u008e\u0003\u0002\u0002\u0002\u0012",
+    "\u0095\u0003\u0002\u0002\u0002\u0014\u00ac\u0003\u0002\u0002\u0002\u0016",
+    "\u00b8\u0003\u0002\u0002\u0002\u0018\u00c1\u0003\u0002\u0002\u0002\u001a",
+    "\u00c5\u0003\u0002\u0002\u0002\u001c\u00cc\u0003\u0002\u0002\u0002\u001e",
+    "\u00ce\u0003\u0002\u0002\u0002 \u00d5\u0003\u0002\u0002\u0002\"\u00d9",
+    "\u0003\u0002\u0002\u0002$\u00db\u0003\u0002\u0002\u0002&\u00e0\u0003",
+    "\u0002\u0002\u0002(\u00e2\u0003\u0002\u0002\u0002*\u00e4\u0003\u0002",
+    "\u0002\u0002,.\u0007\r\u0002\u0002-,\u0003\u0002\u0002\u0002-.\u0003",
+    "\u0002\u0002\u0002./\u0003\u0002\u0002\u0002/0\u0005\u0004\u0003\u0002",
+    "01\u0007\u0002\u0002\u00031\u0003\u0003\u0002\u0002\u000223\u0005\u0006",
+    "\u0004\u00023\u0005\u0003\u0002\u0002\u000245\u0005\b\u0005\u00025\u0007",
+    "\u0003\u0002\u0002\u000267\b\u0005\u0001\u000278\u0007\u0015\u0002\u0002",
+    "8D\u0005\b\u0005\u00129:\u0007\u0016\u0002\u0002:D\u0005\b\u0005\u0011",
     ";D\u0005\u001c\u000f\u0002<D\u0005 \u0011\u0002=D\u0005\u0010\t\u0002",
     ">D\u0005\u000e\b\u0002?@\u0007\u0005\u0002\u0002@A\u0005\u0006\u0004",
     "\u0002AB\u0007\u0006\u0002\u0002BD\u0003\u0002\u0002\u0002C6\u0003\u0002",
@@ -125,7 +125,7 @@ var serializedATN = ["\u0003\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964",
     "\u00b5\u00b6\u0007\u000f\u0002\u0002\u00b6\u00b7\u0005\b\u0005\u0002",
     "\u00b7\u00b9\u0003\u0002\u0002\u0002\u00b8\u00ae\u0003\u0002\u0002\u0002",
     "\u00b8\u00b2\u0003\u0002\u0002\u0002\u00b9\u0017\u0003\u0002\u0002\u0002",
-    "\u00ba\u00c2\u0005\u001a\u000e\u0002\u00bb\u00c2\u00074\u0002\u0002",
+    "\u00ba\u00c2\u0005\u001a\u000e\u0002\u00bb\u00c2\u00076\u0002\u0002",
     "\u00bc\u00c2\u0005\"\u0012\u0002\u00bd\u00be\u0007\u0007\u0002\u0002",
     "\u00be\u00bf\u0005\b\u0005\u0002\u00bf\u00c0\u0007\b\u0002\u0002\u00c0",
     "\u00c2\u0003\u0002\u0002\u0002\u00c1\u00ba\u0003\u0002\u0002\u0002\u00c1",
@@ -133,27 +133,28 @@ var serializedATN = ["\u0003\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964",
     "\u00bd\u0003\u0002\u0002\u0002\u00c2\u0019\u0003\u0002\u0002\u0002\u00c3",
     "\u00c6\u0005\u001c\u000f\u0002\u00c4\u00c6\u0005&\u0014\u0002\u00c5",
     "\u00c3\u0003\u0002\u0002\u0002\u00c5\u00c4\u0003\u0002\u0002\u0002\u00c6",
-    "\u001b\u0003\u0002\u0002\u0002\u00c7\u00cc\u0005\u001e\u0010\u0002\u00c8",
-    "\u00cc\u0007(\u0002\u0002\u00c9\u00cc\u0007\'\u0002\u0002\u00ca\u00cc",
-    "\u00073\u0002\u0002\u00cb\u00c7\u0003\u0002\u0002\u0002\u00cb\u00c8",
-    "\u0003\u0002\u0002\u0002\u00cb\u00c9\u0003\u0002\u0002\u0002\u00cb\u00ca",
-    "\u0003\u0002\u0002\u0002\u00cc\u001d\u0003\u0002\u0002\u0002\u00cd\u00ce",
-    "\u0007\u0011\u0002\u0002\u00ce\u00cf\u00073\u0002\u0002\u00cf\u001f",
-    "\u0003\u0002\u0002\u0002\u00d0\u00d5\u0007&\u0002\u0002\u00d1\u00d5",
-    "\u0007%\u0002\u0002\u00d2\u00d5\u00074\u0002\u0002\u00d3\u00d5\u0005",
-    "\"\u0012\u0002\u00d4\u00d0\u0003\u0002\u0002\u0002\u00d4\u00d1\u0003",
-    "\u0002\u0002\u0002\u00d4\u00d2\u0003\u0002\u0002\u0002\u00d4\u00d3\u0003",
-    "\u0002\u0002\u0002\u00d5!\u0003\u0002\u0002\u0002\u00d6\u00d9\u0005",
-    "$\u0013\u0002\u00d7\u00d9\u0007)\u0002\u0002\u00d8\u00d6\u0003\u0002",
-    "\u0002\u0002\u00d8\u00d7\u0003\u0002\u0002\u0002\u00d9#\u0003\u0002",
-    "\u0002\u0002\u00da\u00db\u0007)\u0002\u0002\u00db\u00dc\u0007\u001a",
-    "\u0002\u0002\u00dc%\u0003\u0002\u0002\u0002\u00dd\u00e0\u0005(\u0015",
-    "\u0002\u00de\u00e0\u0007%\u0002\u0002\u00df\u00dd\u0003\u0002\u0002",
-    "\u0002\u00df\u00de\u0003\u0002\u0002\u0002\u00e0\'\u0003\u0002\u0002",
-    "\u0002\u00e1\u00e2\u0007$\u0002\u0002\u00e2)\u0003\u0002\u0002\u0002",
-    "\u00e3\u00e4\t\u0006\u0002\u0002\u00e4+\u0003\u0002\u0002\u0002\u0019",
-    "-Cegptv|\u0084\u0087\u008a\u0095\u0099\u009e\u00a3\u00a9\u00b8\u00c1",
-    "\u00c5\u00cb\u00d4\u00d8\u00df"].join("");
+    "\u001b\u0003\u0002\u0002\u0002\u00c7\u00cd\u0005\u001e\u0010\u0002\u00c8",
+    "\u00cd\u0007*\u0002\u0002\u00c9\u00cd\u0007(\u0002\u0002\u00ca\u00cd",
+    "\u0007)\u0002\u0002\u00cb\u00cd\u00075\u0002\u0002\u00cc\u00c7\u0003",
+    "\u0002\u0002\u0002\u00cc\u00c8\u0003\u0002\u0002\u0002\u00cc\u00c9\u0003",
+    "\u0002\u0002\u0002\u00cc\u00ca\u0003\u0002\u0002\u0002\u00cc\u00cb\u0003",
+    "\u0002\u0002\u0002\u00cd\u001d\u0003\u0002\u0002\u0002\u00ce\u00cf\u0007",
+    "\u0011\u0002\u0002\u00cf\u00d0\u00075\u0002\u0002\u00d0\u001f\u0003",
+    "\u0002\u0002\u0002\u00d1\u00d6\u0007\'\u0002\u0002\u00d2\u00d6\u0007",
+    "&\u0002\u0002\u00d3\u00d6\u00076\u0002\u0002\u00d4\u00d6\u0005\"\u0012",
+    "\u0002\u00d5\u00d1\u0003\u0002\u0002\u0002\u00d5\u00d2\u0003\u0002\u0002",
+    "\u0002\u00d5\u00d3\u0003\u0002\u0002\u0002\u00d5\u00d4\u0003\u0002\u0002",
+    "\u0002\u00d6!\u0003\u0002\u0002\u0002\u00d7\u00da\u0005$\u0013\u0002",
+    "\u00d8\u00da\u0007+\u0002\u0002\u00d9\u00d7\u0003\u0002\u0002\u0002",
+    "\u00d9\u00d8\u0003\u0002\u0002\u0002\u00da#\u0003\u0002\u0002\u0002",
+    "\u00db\u00dc\u0007+\u0002\u0002\u00dc\u00dd\u0007\u001a\u0002\u0002",
+    "\u00dd%\u0003\u0002\u0002\u0002\u00de\u00e1\u0005(\u0015\u0002\u00df",
+    "\u00e1\u0007&\u0002\u0002\u00e0\u00de\u0003\u0002\u0002\u0002\u00e0",
+    "\u00df\u0003\u0002\u0002\u0002\u00e1\'\u0003\u0002\u0002\u0002\u00e2",
+    "\u00e3\u0007%\u0002\u0002\u00e3)\u0003\u0002\u0002\u0002\u00e4\u00e5",
+    "\t\u0006\u0002\u0002\u00e5+\u0003\u0002\u0002\u0002\u0019-Cegptv|\u0084",
+    "\u0087\u008a\u0095\u0099\u009e\u00a3\u00a9\u00b8\u00c1\u00c5\u00cc\u00d5",
+    "\u00d9\u00e0"].join("");
 
 
 var atn = new antlr4.atn.ATNDeserializer().deserialize(serializedATN);
@@ -166,7 +167,8 @@ var literalNames = [ null, null, null, "'('", "')'", "'['", "']'", "'{'",
                      "'}'", "';'", "','", "'='", "'?'", "':'", "'$'", "'@'", 
                      "'.'", "'++'", "'--'", "'+'", "'-'", "'!'", "'*'", 
                      "'/'", "'%'", "'**'", "'<'", "'>'", "'<='", "'>='", 
-                     "'=='", "'!='", "'&&'", "'||'", "'if'", null, "'null'" ];
+                     "'=='", "'!='", "'&&'", "'||'", "'->'", "'if'", null, 
+                     "'null'" ];
 
 var symbolicNames = [ null, "MultiLineComment", "SingleLineComment", "OpenParen", 
                       "CloseParen", "OpenBracket", "CloseBracket", "OpenBrace", 
@@ -175,10 +177,11 @@ var symbolicNames = [ null, "MultiLineComment", "SingleLineComment", "OpenParen"
                       "Plus", "Minus", "Not", "Multiply", "Divide", "Modulus", 
                       "Power", "LessThan", "MoreThan", "LessThanEquals", 
                       "GreaterThanEquals", "Equals_", "NotEquals", "And", 
-                      "Or", "If", "BooleanLiteral", "NullLiteral", "CellRangeLiteral", 
-                      "CellAddressLiteral", "BasicNumberLiteral", "DecimalLiteral", 
-                      "HexIntegerLiteral", "OctalIntegerLiteral", "OctalIntegerLiteral2", 
-                      "BinaryIntegerLiteral", "BigHexIntegerLiteral", "BigOctalIntegerLiteral", 
+                      "Or", "ArrayRight", "If", "BooleanLiteral", "NullLiteral", 
+                      "CellRangeLiteral", "CellFloatRangeLiteral", "CellAddressLiteral", 
+                      "BasicNumberLiteral", "DecimalLiteral", "HexIntegerLiteral", 
+                      "OctalIntegerLiteral", "OctalIntegerLiteral2", "BinaryIntegerLiteral", 
+                      "BigHexIntegerLiteral", "BigOctalIntegerLiteral", 
                       "BigBinaryIntegerLiteral", "BigDecimalIntegerLiteral", 
                       "Identifier", "StringLiteral", "WhiteSpaces", "LineTerminator", 
                       "UnexpectedCharacter" ];
@@ -242,26 +245,28 @@ ReportFormulaParser.Equals_ = 30;
 ReportFormulaParser.NotEquals = 31;
 ReportFormulaParser.And = 32;
 ReportFormulaParser.Or = 33;
-ReportFormulaParser.If = 34;
-ReportFormulaParser.BooleanLiteral = 35;
-ReportFormulaParser.NullLiteral = 36;
-ReportFormulaParser.CellRangeLiteral = 37;
-ReportFormulaParser.CellAddressLiteral = 38;
-ReportFormulaParser.BasicNumberLiteral = 39;
-ReportFormulaParser.DecimalLiteral = 40;
-ReportFormulaParser.HexIntegerLiteral = 41;
-ReportFormulaParser.OctalIntegerLiteral = 42;
-ReportFormulaParser.OctalIntegerLiteral2 = 43;
-ReportFormulaParser.BinaryIntegerLiteral = 44;
-ReportFormulaParser.BigHexIntegerLiteral = 45;
-ReportFormulaParser.BigOctalIntegerLiteral = 46;
-ReportFormulaParser.BigBinaryIntegerLiteral = 47;
-ReportFormulaParser.BigDecimalIntegerLiteral = 48;
-ReportFormulaParser.Identifier = 49;
-ReportFormulaParser.StringLiteral = 50;
-ReportFormulaParser.WhiteSpaces = 51;
-ReportFormulaParser.LineTerminator = 52;
-ReportFormulaParser.UnexpectedCharacter = 53;
+ReportFormulaParser.ArrayRight = 34;
+ReportFormulaParser.If = 35;
+ReportFormulaParser.BooleanLiteral = 36;
+ReportFormulaParser.NullLiteral = 37;
+ReportFormulaParser.CellRangeLiteral = 38;
+ReportFormulaParser.CellFloatRangeLiteral = 39;
+ReportFormulaParser.CellAddressLiteral = 40;
+ReportFormulaParser.BasicNumberLiteral = 41;
+ReportFormulaParser.DecimalLiteral = 42;
+ReportFormulaParser.HexIntegerLiteral = 43;
+ReportFormulaParser.OctalIntegerLiteral = 44;
+ReportFormulaParser.OctalIntegerLiteral2 = 45;
+ReportFormulaParser.BinaryIntegerLiteral = 46;
+ReportFormulaParser.BigHexIntegerLiteral = 47;
+ReportFormulaParser.BigOctalIntegerLiteral = 48;
+ReportFormulaParser.BigBinaryIntegerLiteral = 49;
+ReportFormulaParser.BigDecimalIntegerLiteral = 50;
+ReportFormulaParser.Identifier = 51;
+ReportFormulaParser.StringLiteral = 52;
+ReportFormulaParser.WhiteSpaces = 53;
+ReportFormulaParser.LineTerminator = 54;
+ReportFormulaParser.UnexpectedCharacter = 55;
 
 ReportFormulaParser.RULE_formulaExpr = 0;
 ReportFormulaParser.RULE_expressionStatement = 1;
@@ -1320,6 +1325,7 @@ ReportFormulaParser.prototype.singleExpression = function(_p) {
             break;
         case ReportFormulaParser.At:
         case ReportFormulaParser.CellRangeLiteral:
+        case ReportFormulaParser.CellFloatRangeLiteral:
         case ReportFormulaParser.CellAddressLiteral:
         case ReportFormulaParser.Identifier:
             localctx = new IdentifierExpressionContext(this, localctx);
@@ -1650,7 +1656,7 @@ ReportFormulaParser.prototype.arguments = function() {
         this.state = 116;
         this._errHandler.sync(this);
         _la = this._input.LA(1);
-        if((((_la) & ~0x1f) == 0 && ((1 << _la) & ((1 << ReportFormulaParser.OpenParen) | (1 << ReportFormulaParser.OpenBracket) | (1 << ReportFormulaParser.OpenBrace) | (1 << ReportFormulaParser.At) | (1 << ReportFormulaParser.Plus) | (1 << ReportFormulaParser.Minus))) !== 0) || ((((_la - 35)) & ~0x1f) == 0 && ((1 << (_la - 35)) & ((1 << (ReportFormulaParser.BooleanLiteral - 35)) | (1 << (ReportFormulaParser.NullLiteral - 35)) | (1 << (ReportFormulaParser.CellRangeLiteral - 35)) | (1 << (ReportFormulaParser.CellAddressLiteral - 35)) | (1 << (ReportFormulaParser.BasicNumberLiteral - 35)) | (1 << (ReportFormulaParser.Identifier - 35)) | (1 << (ReportFormulaParser.StringLiteral - 35)))) !== 0)) {
+        if((((_la) & ~0x1f) == 0 && ((1 << _la) & ((1 << ReportFormulaParser.OpenParen) | (1 << ReportFormulaParser.OpenBracket) | (1 << ReportFormulaParser.OpenBrace) | (1 << ReportFormulaParser.At) | (1 << ReportFormulaParser.Plus) | (1 << ReportFormulaParser.Minus))) !== 0) || ((((_la - 36)) & ~0x1f) == 0 && ((1 << (_la - 36)) & ((1 << (ReportFormulaParser.BooleanLiteral - 36)) | (1 << (ReportFormulaParser.NullLiteral - 36)) | (1 << (ReportFormulaParser.CellRangeLiteral - 36)) | (1 << (ReportFormulaParser.CellFloatRangeLiteral - 36)) | (1 << (ReportFormulaParser.CellAddressLiteral - 36)) | (1 << (ReportFormulaParser.BasicNumberLiteral - 36)) | (1 << (ReportFormulaParser.Identifier - 36)) | (1 << (ReportFormulaParser.StringLiteral - 36)))) !== 0)) {
             this.state = 105;
             this.argument();
             this.state = 110;
@@ -1865,7 +1871,7 @@ ReportFormulaParser.prototype.objectLiteral = function() {
         this.state = 133;
         this._errHandler.sync(this);
         _la = this._input.LA(1);
-        if(_la===ReportFormulaParser.OpenBracket || _la===ReportFormulaParser.At || ((((_la - 34)) & ~0x1f) == 0 && ((1 << (_la - 34)) & ((1 << (ReportFormulaParser.If - 34)) | (1 << (ReportFormulaParser.BooleanLiteral - 34)) | (1 << (ReportFormulaParser.CellRangeLiteral - 34)) | (1 << (ReportFormulaParser.CellAddressLiteral - 34)) | (1 << (ReportFormulaParser.BasicNumberLiteral - 34)) | (1 << (ReportFormulaParser.Identifier - 34)) | (1 << (ReportFormulaParser.StringLiteral - 34)))) !== 0)) {
+        if(_la===ReportFormulaParser.OpenBracket || _la===ReportFormulaParser.At || ((((_la - 35)) & ~0x1f) == 0 && ((1 << (_la - 35)) & ((1 << (ReportFormulaParser.If - 35)) | (1 << (ReportFormulaParser.BooleanLiteral - 35)) | (1 << (ReportFormulaParser.CellRangeLiteral - 35)) | (1 << (ReportFormulaParser.CellFloatRangeLiteral - 35)) | (1 << (ReportFormulaParser.CellAddressLiteral - 35)) | (1 << (ReportFormulaParser.BasicNumberLiteral - 35)) | (1 << (ReportFormulaParser.Identifier - 35)) | (1 << (ReportFormulaParser.StringLiteral - 35)))) !== 0)) {
             this.state = 125;
             this.propertyAssignment();
             this.state = 130;
@@ -2077,7 +2083,7 @@ ReportFormulaParser.prototype.elementList = function() {
         this.state = 151;
         this._errHandler.sync(this);
         _la = this._input.LA(1);
-        if((((_la) & ~0x1f) == 0 && ((1 << _la) & ((1 << ReportFormulaParser.OpenParen) | (1 << ReportFormulaParser.OpenBracket) | (1 << ReportFormulaParser.OpenBrace) | (1 << ReportFormulaParser.At) | (1 << ReportFormulaParser.Plus) | (1 << ReportFormulaParser.Minus))) !== 0) || ((((_la - 35)) & ~0x1f) == 0 && ((1 << (_la - 35)) & ((1 << (ReportFormulaParser.BooleanLiteral - 35)) | (1 << (ReportFormulaParser.NullLiteral - 35)) | (1 << (ReportFormulaParser.CellRangeLiteral - 35)) | (1 << (ReportFormulaParser.CellAddressLiteral - 35)) | (1 << (ReportFormulaParser.BasicNumberLiteral - 35)) | (1 << (ReportFormulaParser.Identifier - 35)) | (1 << (ReportFormulaParser.StringLiteral - 35)))) !== 0)) {
+        if((((_la) & ~0x1f) == 0 && ((1 << _la) & ((1 << ReportFormulaParser.OpenParen) | (1 << ReportFormulaParser.OpenBracket) | (1 << ReportFormulaParser.OpenBrace) | (1 << ReportFormulaParser.At) | (1 << ReportFormulaParser.Plus) | (1 << ReportFormulaParser.Minus))) !== 0) || ((((_la - 36)) & ~0x1f) == 0 && ((1 << (_la - 36)) & ((1 << (ReportFormulaParser.BooleanLiteral - 36)) | (1 << (ReportFormulaParser.NullLiteral - 36)) | (1 << (ReportFormulaParser.CellRangeLiteral - 36)) | (1 << (ReportFormulaParser.CellFloatRangeLiteral - 36)) | (1 << (ReportFormulaParser.CellAddressLiteral - 36)) | (1 << (ReportFormulaParser.BasicNumberLiteral - 36)) | (1 << (ReportFormulaParser.Identifier - 36)) | (1 << (ReportFormulaParser.StringLiteral - 36)))) !== 0)) {
             this.state = 150;
             this.arrayElement();
         }
@@ -2449,6 +2455,7 @@ ReportFormulaParser.prototype.propertyName = function() {
         case ReportFormulaParser.If:
         case ReportFormulaParser.BooleanLiteral:
         case ReportFormulaParser.CellRangeLiteral:
+        case ReportFormulaParser.CellFloatRangeLiteral:
         case ReportFormulaParser.CellAddressLiteral:
         case ReportFormulaParser.Identifier:
             this.enterOuterAlt(localctx, 1);
@@ -2551,6 +2558,7 @@ ReportFormulaParser.prototype.identifierName = function() {
         switch(this._input.LA(1)) {
         case ReportFormulaParser.At:
         case ReportFormulaParser.CellRangeLiteral:
+        case ReportFormulaParser.CellFloatRangeLiteral:
         case ReportFormulaParser.CellAddressLiteral:
         case ReportFormulaParser.Identifier:
             this.enterOuterAlt(localctx, 1);
@@ -2744,6 +2752,41 @@ IdentifierPlainTextContext.prototype.accept = function(visitor) {
 };
 
 
+function IdentifierCellFloatRangeContext(parser, ctx) {
+	IdentifierContext.call(this, parser);
+    IdentifierContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+IdentifierCellFloatRangeContext.prototype = Object.create(IdentifierContext.prototype);
+IdentifierCellFloatRangeContext.prototype.constructor = IdentifierCellFloatRangeContext;
+
+ReportFormulaParser.IdentifierCellFloatRangeContext = IdentifierCellFloatRangeContext;
+
+IdentifierCellFloatRangeContext.prototype.CellFloatRangeLiteral = function() {
+    return this.getToken(ReportFormulaParser.CellFloatRangeLiteral, 0);
+};
+IdentifierCellFloatRangeContext.prototype.enterRule = function(listener) {
+    if(listener instanceof ReportFormulaParserListener ) {
+        listener.enterIdentifierCellFloatRange(this);
+	}
+};
+
+IdentifierCellFloatRangeContext.prototype.exitRule = function(listener) {
+    if(listener instanceof ReportFormulaParserListener ) {
+        listener.exitIdentifierCellFloatRange(this);
+	}
+};
+
+IdentifierCellFloatRangeContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof ReportFormulaParserVisitor ) {
+        return visitor.visitIdentifierCellFloatRange(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
+};
+
+
 
 ReportFormulaParser.IdentifierContext = IdentifierContext;
 
@@ -2752,7 +2795,7 @@ ReportFormulaParser.prototype.identifier = function() {
     var localctx = new IdentifierContext(this, this._ctx, this.state);
     this.enterRule(localctx, 26, ReportFormulaParser.RULE_identifier);
     try {
-        this.state = 201;
+        this.state = 202;
         this._errHandler.sync(this);
         switch(this._input.LA(1)) {
         case ReportFormulaParser.At:
@@ -2773,10 +2816,16 @@ ReportFormulaParser.prototype.identifier = function() {
             this.state = 199;
             this.match(ReportFormulaParser.CellRangeLiteral);
             break;
-        case ReportFormulaParser.Identifier:
-            localctx = new IdentifierPlainTextContext(this, localctx);
+        case ReportFormulaParser.CellFloatRangeLiteral:
+            localctx = new IdentifierCellFloatRangeContext(this, localctx);
             this.enterOuterAlt(localctx, 4);
             this.state = 200;
+            this.match(ReportFormulaParser.CellFloatRangeLiteral);
+            break;
+        case ReportFormulaParser.Identifier:
+            localctx = new IdentifierPlainTextContext(this, localctx);
+            this.enterOuterAlt(localctx, 5);
+            this.state = 201;
             this.match(ReportFormulaParser.Identifier);
             break;
         default:
@@ -2852,9 +2901,9 @@ ReportFormulaParser.prototype.refItemCode = function() {
     this.enterRule(localctx, 28, ReportFormulaParser.RULE_refItemCode);
     try {
         this.enterOuterAlt(localctx, 1);
-        this.state = 203;
-        this.match(ReportFormulaParser.At);
         this.state = 204;
+        this.match(ReportFormulaParser.At);
+        this.state = 205;
         this.match(ReportFormulaParser.Identifier);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
@@ -3042,31 +3091,31 @@ ReportFormulaParser.prototype.literal = function() {
     var localctx = new LiteralContext(this, this._ctx, this.state);
     this.enterRule(localctx, 30, ReportFormulaParser.RULE_literal);
     try {
-        this.state = 210;
+        this.state = 211;
         this._errHandler.sync(this);
         switch(this._input.LA(1)) {
         case ReportFormulaParser.NullLiteral:
             localctx = new NullLiteralExpressionContext(this, localctx);
             this.enterOuterAlt(localctx, 1);
-            this.state = 206;
+            this.state = 207;
             this.match(ReportFormulaParser.NullLiteral);
             break;
         case ReportFormulaParser.BooleanLiteral:
             localctx = new BooleanLiteralExpressionContext(this, localctx);
             this.enterOuterAlt(localctx, 2);
-            this.state = 207;
+            this.state = 208;
             this.match(ReportFormulaParser.BooleanLiteral);
             break;
         case ReportFormulaParser.StringLiteral:
             localctx = new StringLiteralExpressionContext(this, localctx);
             this.enterOuterAlt(localctx, 3);
-            this.state = 208;
+            this.state = 209;
             this.match(ReportFormulaParser.StringLiteral);
             break;
         case ReportFormulaParser.BasicNumberLiteral:
             localctx = new NumericLiteralExpressionContext(this, localctx);
             this.enterOuterAlt(localctx, 4);
-            this.state = 209;
+            this.state = 210;
             this.numericLiteral();
             break;
         default:
@@ -3188,21 +3237,21 @@ ReportFormulaParser.prototype.numericLiteral = function() {
     var localctx = new NumericLiteralContext(this, this._ctx, this.state);
     this.enterRule(localctx, 32, ReportFormulaParser.RULE_numericLiteral);
     try {
-        this.state = 214;
+        this.state = 215;
         this._errHandler.sync(this);
         var la_ = this._interp.adaptivePredict(this._input,21,this._ctx);
         switch(la_) {
         case 1:
             localctx = new PercentageLiteralExpressionContext(this, localctx);
             this.enterOuterAlt(localctx, 1);
-            this.state = 212;
+            this.state = 213;
             this.percentageLiteral();
             break;
 
         case 2:
             localctx = new BasicNumberLiteralExpressionContext(this, localctx);
             this.enterOuterAlt(localctx, 2);
-            this.state = 213;
+            this.state = 214;
             this.match(ReportFormulaParser.BasicNumberLiteral);
             break;
 
@@ -3277,9 +3326,9 @@ ReportFormulaParser.prototype.percentageLiteral = function() {
     this.enterRule(localctx, 34, ReportFormulaParser.RULE_percentageLiteral);
     try {
         this.enterOuterAlt(localctx, 1);
-        this.state = 216;
-        this.match(ReportFormulaParser.BasicNumberLiteral);
         this.state = 217;
+        this.match(ReportFormulaParser.BasicNumberLiteral);
+        this.state = 218;
         this.match(ReportFormulaParser.Modulus);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
@@ -3350,17 +3399,17 @@ ReportFormulaParser.prototype.reservedWord = function() {
     var localctx = new ReservedWordContext(this, this._ctx, this.state);
     this.enterRule(localctx, 36, ReportFormulaParser.RULE_reservedWord);
     try {
-        this.state = 221;
+        this.state = 222;
         this._errHandler.sync(this);
         switch(this._input.LA(1)) {
         case ReportFormulaParser.If:
             this.enterOuterAlt(localctx, 1);
-            this.state = 219;
+            this.state = 220;
             this.keyword();
             break;
         case ReportFormulaParser.BooleanLiteral:
             this.enterOuterAlt(localctx, 2);
-            this.state = 220;
+            this.state = 221;
             this.match(ReportFormulaParser.BooleanLiteral);
             break;
         default:
@@ -3432,7 +3481,7 @@ ReportFormulaParser.prototype.keyword = function() {
     this.enterRule(localctx, 38, ReportFormulaParser.RULE_keyword);
     try {
         this.enterOuterAlt(localctx, 1);
-        this.state = 223;
+        this.state = 224;
         this.match(ReportFormulaParser.If);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
@@ -3505,7 +3554,7 @@ ReportFormulaParser.prototype.eos = function() {
     var _la = 0; // Token type
     try {
         this.enterOuterAlt(localctx, 1);
-        this.state = 225;
+        this.state = 226;
         _la = this._input.LA(1);
         if(!(_la===ReportFormulaParser.EOF || _la===ReportFormulaParser.SemiColon)) {
         this._errHandler.recoverInline(this);

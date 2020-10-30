@@ -163,6 +163,20 @@ interface CellRangeIdentifier <: CellRef {
 sheetName 字段表示单元格名称。
 startRef 字段表示其实单元格地址的引用；endRef 表示结束单元格地址的引用。
 
+## 浮动单元格范围
+
+```js
+interface CellFloatRangeIdentifier <: CellRangeIdentifier {
+    type: "CellFloatRangeIdentifier";
+    sheetName: SheetName;
+    startRef: A1Reference;
+    endRef: A1Reference;
+}
+```
+
+sheetName 字段表示单元格名称。
+startRef 字段表示其实单元格地址的引用；endRef 表示结束单元格地址的引用。
+
 ## 一般标识符
 
 ```js

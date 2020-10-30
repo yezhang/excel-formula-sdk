@@ -29,6 +29,15 @@ CellAddressListener.prototype.exitCellRange = function(ctx) {
 };
 
 
+// Enter a parse tree produced by CellAddressParser#CellFloatRange.
+CellAddressListener.prototype.enterCellFloatRange = function(ctx) {
+};
+
+// Exit a parse tree produced by CellAddressParser#CellFloatRange.
+CellAddressListener.prototype.exitCellFloatRange = function(ctx) {
+};
+
+
 // Enter a parse tree produced by CellAddressParser#a1Reference.
 CellAddressListener.prototype.enterA1Reference = function(ctx) {
 };

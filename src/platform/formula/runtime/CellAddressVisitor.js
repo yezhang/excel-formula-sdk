@@ -24,6 +24,12 @@ CellAddressVisitor.prototype.visitCellRange = function(ctx) {
 };
 
 
+// Visit a parse tree produced by CellAddressParser#CellFloatRange.
+CellAddressVisitor.prototype.visitCellFloatRange = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
 // Visit a parse tree produced by CellAddressParser#a1Reference.
 CellAddressVisitor.prototype.visitA1Reference = function(ctx) {
   return this.visitChildren(ctx);

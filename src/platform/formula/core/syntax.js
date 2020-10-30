@@ -9,6 +9,7 @@ exports.Syntax = {
   AbsoluteRowIdentifier: 'AbsoluteRowIdentifier',
   RelativeRowIdentifier: 'RelativeRowIdentifier',
   CellRangeIdentifier: 'CellRangeIdentifier',
+  CellFloatRangeIdentifier: 'CellFloatRangeIdentifier',
   PlainTextIdentifier: 'PlainTextIdentifier',
   Literal: 'Literal',
   PercentageLiteral: 'PercentageLiteral',

@@ -308,6 +308,15 @@ ReportFormulaParserListener.prototype.exitIdentifierCellRange = function(ctx) {
 };
 
 
+// Enter a parse tree produced by ReportFormulaParser#IdentifierCellFloatRange.
+ReportFormulaParserListener.prototype.enterIdentifierCellFloatRange = function(ctx) {
+};
+
+// Exit a parse tree produced by ReportFormulaParser#IdentifierCellFloatRange.
+ReportFormulaParserListener.prototype.exitIdentifierCellFloatRange = function(ctx) {
+};
+
+
 // Enter a parse tree produced by ReportFormulaParser#IdentifierPlainText.
 ReportFormulaParserListener.prototype.enterIdentifierPlainText = function(ctx) {
 };

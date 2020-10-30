@@ -3,6 +3,7 @@ grammar CellAddress;
 cellReference
     : WorkSheetPrefix? a1Reference  EOF                                     #CellAddress
     | WorkSheetPrefix? startRef=a1Reference ':' endRef=a1Reference EOF      #CellRange
+    | WorkSheetPrefix? startRef=a1Reference '->' endRef=a1Reference EOF     #CellFloatRange
     ;
 
 // 不包括 sheet 名称的单元格地址
@@ -28,6 +29,7 @@ Colon:                          ':';
 Dollar:                         '$';   
 ExclamationMark:                '!';
 
+ArrowRight:                     '->';
 
 // 表格名称
 fragment SheetName

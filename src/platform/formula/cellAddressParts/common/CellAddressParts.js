@@ -1172,6 +1172,8 @@ function _doBuildCellRefCarrier(cellRef, a1RefTranslatorCtor) {
       return new CellAddressCarrier(cellRef, a1RefTranslatorCtor);
     case Syntax.CellRangeIdentifier:
       return new CellRangeCarrier(cellRef, a1RefTranslatorCtor);
+    case Syntax.CellFloatRangeIdentifier:
+      return new CellRangeCarrier(cellRef, a1RefTranslatorCtor); // 浮动单元格范围使用与普通单元格范围同样的移动策略
   }
 
   return undefined;

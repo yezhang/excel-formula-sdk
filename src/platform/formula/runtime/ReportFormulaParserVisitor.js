@@ -210,6 +210,12 @@ ReportFormulaParserVisitor.prototype.visitIdentifierCellRange = function(ctx) {
 };
 
 
+// Visit a parse tree produced by ReportFormulaParser#IdentifierCellFloatRange.
+ReportFormulaParserVisitor.prototype.visitIdentifierCellFloatRange = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
 // Visit a parse tree produced by ReportFormulaParser#IdentifierPlainText.
 ReportFormulaParserVisitor.prototype.visitIdentifierPlainText = function(ctx) {
   return this.visitChildren(ctx);

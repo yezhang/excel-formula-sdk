@@ -31,6 +31,15 @@ class CellAddressLiteralVisitor extends CellAddressVisitor {
 
   // 规则入口 2 - 单元格范围
   visitCellRange(ctx) {
+    return this._makeCellRange(ctx, CellRangeIdentifier)
+  }
+
+  // 规则入口 3 - 浮动单元格范围
+  visitCellFloatRange(ctx) {
+    return this._makeCellRange(ctx, CellFloatRangeIdentifier);
+  }
+
+  _makeCellRange(ctx, CellRangeCtor) {
     let prefix = ctx.WorkSheetPrefix();
     let sheetName = null;
     if (prefix) {
@@ -42,7 +51,7 @@ class CellAddressLiteralVisitor extends CellAddressVisitor {
     let startRef = ctx.startRef.accept(this);
     let endRef = ctx.endRef.accept(this);
 
-    return new CellRangeIdentifier(sheetName, startRef, endRef);
+    return new CellRangeCtor(sheetName, startRef, endRef);
   }
 
   visitA1Reference(ctx) {
@@ -159,6 +168,11 @@ class ASTVisitor extends FormulaParserVisitor {
   visitIdentifierCellRange(ctx) {
     let rangeAddr = ctx.getText();
     return buildCellAddress(rangeAddr);
+  }
+
+  visitIdentifierCellFloatRange(ctx) {
+    let floatRangeAddr = ctx.getText();
+    return buildCellAddress(floatRangeAddr);
   }
 
   // 返回数组
@@ -288,8 +302,9 @@ SingleFormulaAST.prototype.toString = function toString() {
  */
 SingleFormulaAST.prototype.findAllCellRefNodes = function () {
   let cellRefNodes = [];
-  cellRefNodes.rangeNodes = [];
-  cellRefNodes.addressNodes = [];
+  cellRefNodes.rangeNodes = []; //单元格范围
+  cellRefNodes.addressNodes = []; // 单元格地址
+  cellRefNodes.floatRangeNodes = []; //浮动单元格范围
 
   ASTWalker.traverse(this.content, function (node) {
     switch (node.type) {
@@ -299,6 +314,10 @@ SingleFormulaAST.prototype.findAllCellRefNodes = function () {
         return ASTWalker.OPTIONS.BREAK;
       case Syntax.CellRangeIdentifier:
         cellRefNodes.rangeNodes.push(node);
+        cellRefNodes.push(node);
+        return ASTWalker.OPTIONS.BREAK;
+      case Syntax.CellFloatRangeIdentifier:
+        cellrefNodes.floatRangeNodes.push(node);
         cellRefNodes.push(node);
         return ASTWalker.OPTIONS.BREAK;
       default:
@@ -542,6 +561,22 @@ class CellRangeIdentifier extends IAccessableType{
   }
 }
 
+class CellFloatRangeIdentifier extends CellRangeIdentifier {
+  constructor(sheetName, startRef, endRef) {
+    super(sheetName, startRef, endRef);
+    this.type = Syntax.CellFloatRangeIdentifier;
+  }
+
+  toString() {
+    if (this.isLost()) {
+      return Syntax.REF_ERROR;
+    }
+
+    let sheetName = this.sheetName ? this.sheetName.toString() + '!' : '';
+    return `${sheetName}${this.startRef.toString()}->${this.endRef.toString()}`;
+  }
+}
+
 class PlainTextIdentifier extends IAccessableType{
   constructor(name) {
     super();
@@ -753,5 +788,6 @@ exports.RelativeRowIdentifier = RelativeRowIdentifier;
 
 exports.CellAddressIdentifier = CellAddressIdentifier;
 exports.CellRangeIdentifier = CellRangeIdentifier;
+exports.CellFloatRangeIdentifier = CellFloatRangeIdentifier;
 exports.SingleFormulaAST = SingleFormulaAST;
 exports.buildCellAddress = buildCellAddress;

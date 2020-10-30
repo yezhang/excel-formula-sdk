@@ -8,38 +8,43 @@ var grammarFileName = "CellAddress.g4";
 
 
 var serializedATN = ["\u0003\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964",
-    "\u0003\b8\u0004\u0002\t\u0002\u0004\u0003\t\u0003\u0004\u0004\t\u0004",
+    "\u0003\t@\u0004\u0002\t\u0002\u0004\u0003\t\u0003\u0004\u0004\t\u0004",
     "\u0004\u0005\t\u0005\u0004\u0006\t\u0006\u0004\u0007\t\u0007\u0004\b",
     "\t\b\u0004\t\t\t\u0003\u0002\u0005\u0002\u0014\n\u0002\u0003\u0002\u0003",
     "\u0002\u0003\u0002\u0003\u0002\u0005\u0002\u001a\n\u0002\u0003\u0002",
-    "\u0003\u0002\u0003\u0002\u0003\u0002\u0003\u0002\u0005\u0002!\n\u0002",
-    "\u0003\u0003\u0003\u0003\u0003\u0003\u0003\u0004\u0003\u0004\u0005\u0004",
-    "(\n\u0004\u0003\u0005\u0003\u0005\u0005\u0005,\n\u0005\u0003\u0006\u0003",
-    "\u0006\u0003\u0007\u0003\u0007\u0003\u0007\u0003\b\u0003\b\u0003\t\u0003",
-    "\t\u0003\t\u0003\t\u0002\u0002\n\u0002\u0004\u0006\b\n\f\u000e\u0010",
-    "\u0002\u0002\u00024\u0002 \u0003\u0002\u0002\u0002\u0004\"\u0003\u0002",
-    "\u0002\u0002\u0006\'\u0003\u0002\u0002\u0002\b+\u0003\u0002\u0002\u0002",
-    "\n-\u0003\u0002\u0002\u0002\f/\u0003\u0002\u0002\u0002\u000e2\u0003",
-    "\u0002\u0002\u0002\u00104\u0003\u0002\u0002\u0002\u0012\u0014\u0007",
-    "\u0003\u0002\u0002\u0013\u0012\u0003\u0002\u0002\u0002\u0013\u0014\u0003",
-    "\u0002\u0002\u0002\u0014\u0015\u0003\u0002\u0002\u0002\u0015\u0016\u0005",
-    "\u0004\u0003\u0002\u0016\u0017\u0007\u0002\u0002\u0003\u0017!\u0003",
-    "\u0002\u0002\u0002\u0018\u001a\u0007\u0003\u0002\u0002\u0019\u0018\u0003",
-    "\u0002\u0002\u0002\u0019\u001a\u0003\u0002\u0002\u0002\u001a\u001b\u0003",
-    "\u0002\u0002\u0002\u001b\u001c\u0005\u0004\u0003\u0002\u001c\u001d\u0007",
-    "\u0006\u0002\u0002\u001d\u001e\u0005\u0004\u0003\u0002\u001e\u001f\u0007",
-    "\u0002\u0002\u0003\u001f!\u0003\u0002\u0002\u0002 \u0013\u0003\u0002",
-    "\u0002\u0002 \u0019\u0003\u0002\u0002\u0002!\u0003\u0003\u0002\u0002",
-    "\u0002\"#\u0005\u0006\u0004\u0002#$\u0005\b\u0005\u0002$\u0005\u0003",
-    "\u0002\u0002\u0002%(\u0005\n\u0006\u0002&(\u0005\f\u0007\u0002\'%\u0003",
-    "\u0002\u0002\u0002\'&\u0003\u0002\u0002\u0002(\u0007\u0003\u0002\u0002",
-    "\u0002),\u0005\u000e\b\u0002*,\u0005\u0010\t\u0002+)\u0003\u0002\u0002",
-    "\u0002+*\u0003\u0002\u0002\u0002,\t\u0003\u0002\u0002\u0002-.\u0007",
-    "\u0004\u0002\u0002.\u000b\u0003\u0002\u0002\u0002/0\u0007\u0007\u0002",
-    "\u000201\u0007\u0004\u0002\u00021\r\u0003\u0002\u0002\u000223\u0007",
-    "\u0005\u0002\u00023\u000f\u0003\u0002\u0002\u000245\u0007\u0007\u0002",
-    "\u000256\u0007\u0005\u0002\u00026\u0011\u0003\u0002\u0002\u0002\u0007",
-    "\u0013\u0019 \'+"].join("");
+    "\u0003\u0002\u0003\u0002\u0003\u0002\u0003\u0002\u0003\u0002\u0005\u0002",
+    "\"\n\u0002\u0003\u0002\u0003\u0002\u0003\u0002\u0003\u0002\u0003\u0002",
+    "\u0005\u0002)\n\u0002\u0003\u0003\u0003\u0003\u0003\u0003\u0003\u0004",
+    "\u0003\u0004\u0005\u00040\n\u0004\u0003\u0005\u0003\u0005\u0005\u0005",
+    "4\n\u0005\u0003\u0006\u0003\u0006\u0003\u0007\u0003\u0007\u0003\u0007",
+    "\u0003\b\u0003\b\u0003\t\u0003\t\u0003\t\u0003\t\u0002\u0002\n\u0002",
+    "\u0004\u0006\b\n\f\u000e\u0010\u0002\u0002\u0002>\u0002(\u0003\u0002",
+    "\u0002\u0002\u0004*\u0003\u0002\u0002\u0002\u0006/\u0003\u0002\u0002",
+    "\u0002\b3\u0003\u0002\u0002\u0002\n5\u0003\u0002\u0002\u0002\f7\u0003",
+    "\u0002\u0002\u0002\u000e:\u0003\u0002\u0002\u0002\u0010<\u0003\u0002",
+    "\u0002\u0002\u0012\u0014\u0007\u0003\u0002\u0002\u0013\u0012\u0003\u0002",
+    "\u0002\u0002\u0013\u0014\u0003\u0002\u0002\u0002\u0014\u0015\u0003\u0002",
+    "\u0002\u0002\u0015\u0016\u0005\u0004\u0003\u0002\u0016\u0017\u0007\u0002",
+    "\u0002\u0003\u0017)\u0003\u0002\u0002\u0002\u0018\u001a\u0007\u0003",
+    "\u0002\u0002\u0019\u0018\u0003\u0002\u0002\u0002\u0019\u001a\u0003\u0002",
+    "\u0002\u0002\u001a\u001b\u0003\u0002\u0002\u0002\u001b\u001c\u0005\u0004",
+    "\u0003\u0002\u001c\u001d\u0007\u0006\u0002\u0002\u001d\u001e\u0005\u0004",
+    "\u0003\u0002\u001e\u001f\u0007\u0002\u0002\u0003\u001f)\u0003\u0002",
+    "\u0002\u0002 \"\u0007\u0003\u0002\u0002! \u0003\u0002\u0002\u0002!\"",
+    "\u0003\u0002\u0002\u0002\"#\u0003\u0002\u0002\u0002#$\u0005\u0004\u0003",
+    "\u0002$%\u0007\t\u0002\u0002%&\u0005\u0004\u0003\u0002&\'\u0007\u0002",
+    "\u0002\u0003\')\u0003\u0002\u0002\u0002(\u0013\u0003\u0002\u0002\u0002",
+    "(\u0019\u0003\u0002\u0002\u0002(!\u0003\u0002\u0002\u0002)\u0003\u0003",
+    "\u0002\u0002\u0002*+\u0005\u0006\u0004\u0002+,\u0005\b\u0005\u0002,",
+    "\u0005\u0003\u0002\u0002\u0002-0\u0005\n\u0006\u0002.0\u0005\f\u0007",
+    "\u0002/-\u0003\u0002\u0002\u0002/.\u0003\u0002\u0002\u00020\u0007\u0003",
+    "\u0002\u0002\u000214\u0005\u000e\b\u000224\u0005\u0010\t\u000231\u0003",
+    "\u0002\u0002\u000232\u0003\u0002\u0002\u00024\t\u0003\u0002\u0002\u0002",
+    "56\u0007\u0004\u0002\u00026\u000b\u0003\u0002\u0002\u000278\u0007\u0007",
+    "\u0002\u000289\u0007\u0004\u0002\u00029\r\u0003\u0002\u0002\u0002:;",
+    "\u0007\u0005\u0002\u0002;\u000f\u0003\u0002\u0002\u0002<=\u0007\u0007",
+    "\u0002\u0002=>\u0007\u0005\u0002\u0002>\u0011\u0003\u0002\u0002\u0002",
+    "\b\u0013\u0019!(/3"].join("");
 
 
 var atn = new antlr4.atn.ATNDeserializer().deserialize(serializedATN);
@@ -48,10 +53,10 @@ var decisionsToDFA = atn.decisionToState.map( function(ds, index) { return new a
 
 var sharedContextCache = new antlr4.PredictionContextCache();
 
-var literalNames = [ null, null, null, null, "':'", "'$'", "'!'" ];
+var literalNames = [ null, null, null, null, "':'", "'$'", "'!'", "'->'" ];
 
 var symbolicNames = [ null, "WorkSheetPrefix", "CellColumnAddress", "CellRowAddress", 
-                      "Colon", "Dollar", "ExclamationMark" ];
+                      "Colon", "Dollar", "ExclamationMark", "ArrowRight" ];
 
 var ruleNames =  [ "cellReference", "a1Reference", "a1Column", "a1Row", 
                    "a1RelativeColumn", "a1AbsoluteColumn", "a1RelativeRow", 
@@ -82,6 +87,7 @@ CellAddressParser.CellRowAddress = 3;
 CellAddressParser.Colon = 4;
 CellAddressParser.Dollar = 5;
 CellAddressParser.ExclamationMark = 6;
+CellAddressParser.ArrowRight = 7;
 
 CellAddressParser.RULE_cellReference = 0;
 CellAddressParser.RULE_a1Reference = 1;
@@ -159,6 +165,62 @@ CellAddressContext.prototype.accept = function(visitor) {
 };
 
 
+function CellFloatRangeContext(parser, ctx) {
+	CellReferenceContext.call(this, parser);
+    this.startRef = null; // A1ReferenceContext;
+    this.endRef = null; // A1ReferenceContext;
+    CellReferenceContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+CellFloatRangeContext.prototype = Object.create(CellReferenceContext.prototype);
+CellFloatRangeContext.prototype.constructor = CellFloatRangeContext;
+
+CellAddressParser.CellFloatRangeContext = CellFloatRangeContext;
+
+CellFloatRangeContext.prototype.ArrowRight = function() {
+    return this.getToken(CellAddressParser.ArrowRight, 0);
+};
+
+CellFloatRangeContext.prototype.EOF = function() {
+    return this.getToken(CellAddressParser.EOF, 0);
+};
+
+CellFloatRangeContext.prototype.a1Reference = function(i) {
+    if(i===undefined) {
+        i = null;
+    }
+    if(i===null) {
+        return this.getTypedRuleContexts(A1ReferenceContext);
+    } else {
+        return this.getTypedRuleContext(A1ReferenceContext,i);
+    }
+};
+
+CellFloatRangeContext.prototype.WorkSheetPrefix = function() {
+    return this.getToken(CellAddressParser.WorkSheetPrefix, 0);
+};
+CellFloatRangeContext.prototype.enterRule = function(listener) {
+    if(listener instanceof CellAddressListener ) {
+        listener.enterCellFloatRange(this);
+	}
+};
+
+CellFloatRangeContext.prototype.exitRule = function(listener) {
+    if(listener instanceof CellAddressListener ) {
+        listener.exitCellFloatRange(this);
+	}
+};
+
+CellFloatRangeContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof CellAddressVisitor ) {
+        return visitor.visitCellFloatRange(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
+};
+
+
 function CellRangeContext(parser, ctx) {
 	CellReferenceContext.call(this, parser);
     this.startRef = null; // A1ReferenceContext;
@@ -224,9 +286,9 @@ CellAddressParser.prototype.cellReference = function() {
     this.enterRule(localctx, 0, CellAddressParser.RULE_cellReference);
     var _la = 0; // Token type
     try {
-        this.state = 30;
+        this.state = 38;
         this._errHandler.sync(this);
-        var la_ = this._interp.adaptivePredict(this._input,2,this._ctx);
+        var la_ = this._interp.adaptivePredict(this._input,3,this._ctx);
         switch(la_) {
         case 1:
             localctx = new CellAddressContext(this, localctx);
@@ -263,6 +325,27 @@ CellAddressParser.prototype.cellReference = function() {
             this.state = 27;
             localctx.endRef = this.a1Reference();
             this.state = 28;
+            this.match(CellAddressParser.EOF);
+            break;
+
+        case 3:
+            localctx = new CellFloatRangeContext(this, localctx);
+            this.enterOuterAlt(localctx, 3);
+            this.state = 31;
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if(_la===CellAddressParser.WorkSheetPrefix) {
+                this.state = 30;
+                this.match(CellAddressParser.WorkSheetPrefix);
+            }
+
+            this.state = 33;
+            localctx.startRef = this.a1Reference();
+            this.state = 34;
+            this.match(CellAddressParser.ArrowRight);
+            this.state = 35;
+            localctx.endRef = this.a1Reference();
+            this.state = 36;
             this.match(CellAddressParser.EOF);
             break;
 
@@ -337,9 +420,9 @@ CellAddressParser.prototype.a1Reference = function() {
     this.enterRule(localctx, 2, CellAddressParser.RULE_a1Reference);
     try {
         this.enterOuterAlt(localctx, 1);
-        this.state = 32;
+        this.state = 40;
         this.a1Column();
-        this.state = 33;
+        this.state = 41;
         this.a1Row();
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
@@ -410,17 +493,17 @@ CellAddressParser.prototype.a1Column = function() {
     var localctx = new A1ColumnContext(this, this._ctx, this.state);
     this.enterRule(localctx, 4, CellAddressParser.RULE_a1Column);
     try {
-        this.state = 37;
+        this.state = 45;
         this._errHandler.sync(this);
         switch(this._input.LA(1)) {
         case CellAddressParser.CellColumnAddress:
             this.enterOuterAlt(localctx, 1);
-            this.state = 35;
+            this.state = 43;
             this.a1RelativeColumn();
             break;
         case CellAddressParser.Dollar:
             this.enterOuterAlt(localctx, 2);
-            this.state = 36;
+            this.state = 44;
             this.a1AbsoluteColumn();
             break;
         default:
@@ -495,17 +578,17 @@ CellAddressParser.prototype.a1Row = function() {
     var localctx = new A1RowContext(this, this._ctx, this.state);
     this.enterRule(localctx, 6, CellAddressParser.RULE_a1Row);
     try {
-        this.state = 41;
+        this.state = 49;
         this._errHandler.sync(this);
         switch(this._input.LA(1)) {
         case CellAddressParser.CellRowAddress:
             this.enterOuterAlt(localctx, 1);
-            this.state = 39;
+            this.state = 47;
             this.a1RelativeRow();
             break;
         case CellAddressParser.Dollar:
             this.enterOuterAlt(localctx, 2);
-            this.state = 40;
+            this.state = 48;
             this.a1AbsoluteRow();
             break;
         default:
@@ -577,7 +660,7 @@ CellAddressParser.prototype.a1RelativeColumn = function() {
     this.enterRule(localctx, 8, CellAddressParser.RULE_a1RelativeColumn);
     try {
         this.enterOuterAlt(localctx, 1);
-        this.state = 43;
+        this.state = 51;
         this.match(CellAddressParser.CellColumnAddress);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
@@ -649,9 +732,9 @@ CellAddressParser.prototype.a1AbsoluteColumn = function() {
     this.enterRule(localctx, 10, CellAddressParser.RULE_a1AbsoluteColumn);
     try {
         this.enterOuterAlt(localctx, 1);
-        this.state = 45;
+        this.state = 53;
         this.match(CellAddressParser.Dollar);
-        this.state = 46;
+        this.state = 54;
         this.match(CellAddressParser.CellColumnAddress);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
@@ -719,7 +802,7 @@ CellAddressParser.prototype.a1RelativeRow = function() {
     this.enterRule(localctx, 12, CellAddressParser.RULE_a1RelativeRow);
     try {
         this.enterOuterAlt(localctx, 1);
-        this.state = 48;
+        this.state = 56;
         this.match(CellAddressParser.CellRowAddress);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
@@ -791,9 +874,9 @@ CellAddressParser.prototype.a1AbsoluteRow = function() {
     this.enterRule(localctx, 14, CellAddressParser.RULE_a1AbsoluteRow);
     try {
         this.enterOuterAlt(localctx, 1);
-        this.state = 50;
+        this.state = 58;
         this.match(CellAddressParser.Dollar);
-        this.state = 51;
+        this.state = 59;
         this.match(CellAddressParser.CellRowAddress);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
