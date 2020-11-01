@@ -93,7 +93,12 @@ class FormulaEngine {
     const activeSheetName = workBookContext.activeSheetName;
     const parseTree = SingleFormulaCoreInst.parse(formula);
     if (SingleFormulaCoreInst.hasErrors()) {
-      throw new Error('输入的公式存在错误');
+      // let errors = SingleFormulaCoreInst.getErrors();
+      // let aggregatedMessages = [];
+      // errors.forEach(function (errorMessage){
+      //   aggregatedMessages.push(JSON.stringify(errorMessage));
+      // })
+      throw new Error(`输入的公式存在错误: formula='${formula}'`);
     }
     const ast = new SingleFormulaAST(parseTree, activeSheetName);
 

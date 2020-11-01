@@ -15,13 +15,14 @@ EditorErrorHandler.prototype.handleEvaluateError = function(e) {
 
 EditorErrorHandler.prototype.handleParseError = function handleParseError(input, line, column, message){
   /** noop */
+  this._errors.push({input, line, column, message});
 }
 
 /**
  * 将收集到的错误返回。
  */
 EditorErrorHandler.prototype.getErrors = function getErrors() {
-
+  return this._errors;
 }
 
 /**

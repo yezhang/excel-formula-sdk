@@ -39,6 +39,10 @@ SingleFormulaCore.prototype.removeErrorHandler = function removeErrorHandler() {
   return this;
 }
 
+SingleFormulaCore.prototype.getErrors = function getErrors() {
+  return this.sharedErrorHandler.getErrors();
+}
+
 SingleFormulaCore.prototype.setCellValueProvider = function setCellValueProvider(valueProvider) {
   if (!valueProvider) {
     return this;

@@ -444,6 +444,28 @@ describe('公式引擎-常用场景', function () {
 
     });
 
+    it('公式求值-浮动单元格的值', function() {
+      // 测试用例描述
+      // 1) 设置公式 B1 = SUM(A7->A7)
+      // 2) 设置浮动单元格范围是 A7:A8
+      // 3) 填写浮动单元格的值，A7 = 1, A8 = 2
+      // 期待：B1 的值为 =SUM([1, 2]) = 3;
+      const cellValueProvider = {
+        getCellFloatRangeValues(cellRange) {
+          let start = cellRange.start;
+          let end = cellRange.end;
+          expect(start.column).to.equal(1);
+          expect(start.row).to.equal(7);
+          return [1, 2];
+        }
+      };
+
+      const B1 = { column: 2, row: 1 };
+      engine.setCellFormula(context, B1, '=SUM(A7->A7)');
+      engine.prepareToEvaluateTable(cellValueProvider);
+      let ret = engine.evaluate(context, B1);
+      expect(ret).to.equal(3);
+    })
   })
 
 

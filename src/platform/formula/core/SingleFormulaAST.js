@@ -318,7 +318,7 @@ SingleFormulaAST.prototype.findAllCellRefNodes = function () {
         cellRefNodes.push(node);
         return ASTWalker.OPTIONS.BREAK;
       case Syntax.CellFloatRangeIdentifier:
-        cellrefNodes.floatRangeNodes.push(node);
+        cellRefNodes.floatRangeNodes.push(node);
         cellRefNodes.push(node);
         return ASTWalker.OPTIONS.BREAK;
       default:

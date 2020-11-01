@@ -36,3 +36,5 @@ Go To Defination (Ctrl + Click)，在配置相对目录后，无法识别。但�
 
 配置完成后，重新打开文件夹，使得相对路径生效。
 
+FAQ：
+如果使用 vscode 调试时，发生 nvm 指定的 node 无法找到的情况,
