@@ -8,6 +8,8 @@ const EvaluationErrors = require('platform/formula/cellEvaluation/EvaluationErro
 
 /**
  * 针对单个公式求值。
+ * 
+ * 与 {SingleFormulaAST} 对象 配合使用。
  */
 class FormulaEvaluationVisitor {
   /**
@@ -106,16 +108,13 @@ class FormulaEvaluationVisitor {
     return cellValue;
   }
 
-  /**
-   * 单元格范围：CellRangeIdentifier
-   */
-  visitCellRangeIdentifier(node) {
+  __visitCellRangeValue(node, valueFetchFn) {
     // 转换为 SimpleCellRange
     let addr = this._buildSimpleCellRange(node);
     // 根据 SimpleCellRange 从单元格范围取值
     let cellValue = undefined;
     try {
-      cellValue = this.cellValueProxy.getCellRangeValues(addr);
+      cellValue = valueFetchFn(addr);
       if (typeof cellValue === 'undefined') {
         throw new EvaluationErrors.ValueError(`无法获取单元格范围的值: ${node.toString()}`);
       }
@@ -123,6 +122,25 @@ class FormulaEvaluationVisitor {
       throw new EvaluationErrors.ValueError(`无法获取单元格范围的值: ${node.toString()}`);
     }
     return cellValue;
+  }
+  /**
+   * 单元格范围：CellRangeIdentifier
+   */
+  visitCellRangeIdentifier(node) {
+    let _this = this;
+    return this.__visitCellRangeValue(node, function(simpleCellRangeAddr){
+      return _this.cellValueProxy.getCellRangeValues(simpleCellRangeAddr);
+    });
+  }
+
+  /**
+   * 浮动单元格范围：CellFloatRangeIdentifier
+   */
+  visitCellFloatRangeIdentifier(node) {
+    let _this = this;
+    return this.__visitCellRangeValue(node, function(simpleCellRangeAddr){
+      return _this.cellValueProxy.getCellFloatRangeValues(simpleCellRangeAddr);
+    });
   }
 
   visitA1ReferenceIdentifier(node) {

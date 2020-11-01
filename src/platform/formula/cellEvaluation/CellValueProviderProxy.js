@@ -28,6 +28,14 @@ class CellValueProviderProxy {
   }
 
   /**
+   * 获取浮动单元格范围的值，是一个数组。
+   * @param {SimpleCellRange} cellRange 
+   */
+  getCellFloatRangeValues(cellRange) {
+    return this.cellValueProvider.getCellFloatRangeValues(cellRange);
+  }
+
+  /**
    * 获取单元格的公式
    */
   getCellFormula(cellAddress) {

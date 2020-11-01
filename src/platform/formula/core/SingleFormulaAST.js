@@ -116,6 +116,7 @@ function buildCellAddress(input) {
 
 /**
  * 解析公式“解析树”使用。
+ * 将 antlr 生成的解析树，转换为自定义的语法树（SingleFormulaAST）
  */
 class ASTVisitor extends FormulaParserVisitor {
   visitFormulaExpr(ctx) {
