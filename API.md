@@ -77,7 +77,12 @@ const cellValueProvider = {
     // row in [1..n]
   },
   getCellRangeValues: function (cellRange) {
-
+    // 本函数用于获取单元格范围的具体数值，返回一维数组。
+    return [];
+  },
+  getCellFloatRangeValues: function (cellRange) {
+    // 本函数用于获取 “浮动单元格范围” 的具体数值，返回一维数组。
+    return [];
   }
 };
 engine.prepareToEvaluateTable(cellValueProvider);
