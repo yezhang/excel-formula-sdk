@@ -1,7 +1,7 @@
 # excel-formula-sdk
 
-**注意：** 本项目接口仍处于不稳定阶段，接口会随时发生调整。
-由于本项目会长期维护，如果您有疑问或功能需求，欢迎在 [issue](https://github.com/yezhang/excel-formula-sdk/issues) 提问。
+**注意：** 
+本项目长期维护，如果您有疑问或功能需求，欢迎在 [issue](https://github.com/yezhang/excel-formula-sdk/issues) 提问。
 
 ### 基本功能
 Excel 公式解析引擎，用于支持公式输入编辑器的智能提示、单元格之间的公式依赖计算、公式的求值。
@@ -13,6 +13,8 @@ Excel 公式解析引擎，用于支持公式输入编辑器的智能提示、�
 - [x] 支持自动补全、函数签名提示、鼠标浮动提示等 IntelliSense 功能所需要的核心信息，包括当前光标所在的函数上下文、当前光标的参数索引。
 
 使用场景概述：
+- 独立使用。
+- 与个人/公司项目中的表格组件、输入框组件配合使用。
 - 与 [monaco-editor](https://www.npmjs.com/package/monaco-editor)/[code mirror](https://www.npmjs.com/package/codemirror) 编辑器配合使用，提供智能提示的功能。
 - 与 [handsontable](https://www.npmjs.com/package/handsontable) 配合使用，提供公式的联动计算。
 
