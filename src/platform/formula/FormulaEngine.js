@@ -215,12 +215,30 @@ class FormulaEngine {
   }
 
   /**
+   * 用户调整表结构：增加浮动行
+   */
+  expandFloatRows(workBookContext, columnRowIndex, rowCount) {
+    const activeSheetName = workBookContext.activeSheetName;
+    const transform = new DependencyTransformer(this.depGraph);
+    return transform.expandRows(activeSheetName, columnRowIndex, rowCount);
+  }
+
+  /**
    * 用户调整表结构：删除行
    */
   removeRows(workBookContext, columnRowIndex, rowCount) {
     const activeSheetName = workBookContext.activeSheetName;
     const transform = new DependencyTransformer(this.depGraph);
     return transform.removeRows(activeSheetName, columnRowIndex, rowCount);
+  }
+
+  /**
+   * 用户调整表结构：减少浮动行
+   */
+  shrinkFloatRows(workBookContext, columnRowIndex, rowCount) {
+    const activeSheetName = workBookContext.activeSheetName;
+    const transform = new DependencyTransformer(this.depGraph);
+    return transform.shrinkRows(activeSheetName, columnRowIndex, rowCount);
   }
 
   /**

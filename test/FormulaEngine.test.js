@@ -171,6 +171,22 @@ describe('公式引擎-常用场景', function () {
       expect(updatedCellAddressList[0]).to.have.property('row', 3);
     })
 
+    it('设计态-调整表结构-删除行（单元格范围）', function(){
+      // 测试用例描述：
+      // 1) C2 = SUM(A1:B3)
+      // 2) 选择第三行，删除一行
+      // 3) 期待：C2 = SUM(A1:B2)
+
+      let context = new WorkBookContext('sheet1');
+      let C2 = { column: 3, row: 2 }; // C2 =SUM(A1:B3)
+      engine.setCellFormula(context, C2, '=SUM(A1:B3)');
+
+      engine.removeRows(context, 3, 1);
+
+      let innerFormula = engine.getCellFormula(context, C2);
+      expect(innerFormula).to.equal('=SUM(A1:B2)');
+    })
+
     it('设计态-调整表结构-删除行（没有删除单元格）', function () {
       // 测试用例：
       // 调整表结构后，受影响的单元格公式需要更新，指向新的单元格地址。
@@ -255,8 +271,8 @@ describe('公式引擎-常用场景', function () {
       let formula = engine.getCellFormula(context, affactedCells[0]);
       expect(formula).to.equal('=A1');
     });
-  
-    it('设计态-调整表结构-表名重命名', function(){
+
+    it('设计态-调整表结构-表名重命名', function () {
       // 测试用例描绘：
       // (1), 活动工作表, sheet1
       // (2), 设置公式 A1 = sheet2!B1 * 2
@@ -282,7 +298,7 @@ describe('公式引擎-常用场景', function () {
 
       engine.renameSheet(context, 'sheet1', 'sheet2');
       context = new WorkBookContext('sheet2');
-      
+
       const updateF2 = engine.getCellFormula(context, A1);
       expect(updateF2).to.equal(expectedF);
     })
@@ -377,12 +393,12 @@ describe('公式引擎-常用场景', function () {
             expect.fail('B2 发生了计算');
           }
 
-          if(cell.column === 3 && cell.row === 1) {
+          if (cell.column === 3 && cell.row === 1) {
             // C1
             return 1;
           }
 
-          if(cell.column === 2 && cell.row === 1) {
+          if (cell.column === 2 && cell.row === 1) {
             // B1
             return 1;
           }
@@ -431,7 +447,7 @@ describe('公式引擎-常用场景', function () {
       engine.setCellFormula(context, A1, '= 1/B2');
       engine.prepareToEvaluateTable(cellValueProvider);
       let ret = undefined;
-      expect(function() {
+      expect(function () {
         try {
           ret = engine.evaluate(context, A1);
         } catch (e) {
@@ -439,12 +455,12 @@ describe('公式引擎-常用场景', function () {
           throw e;
         };
       }).to.throw();
-      
+
       expect(ret).to.equal("#DIV/0!");
 
     });
 
-    it('公式求值-浮动单元格的值', function() {
+    it('公式求值-浮动单元格的值', function () {
       // 测试用例描述
       // 1) 设置公式 B1 = SUM(A7->A7)
       // 2) 设置浮动单元格范围是 A7:A8
@@ -465,6 +481,57 @@ describe('公式引擎-常用场景', function () {
       engine.prepareToEvaluateTable(cellValueProvider);
       let ret = engine.evaluate(context, B1);
       expect(ret).to.equal(3);
+    })
+
+    it('运行态-调整表结构-增加浮动行', function () {
+      // 测试用例描述：
+      // 1) 设置公式 B1 =SUM(A1->A1)+SUM(A1:A1)
+      // 2) 设置公式 B2 =SUM(A5->A5)
+      // 3) 在第二行增加浮动行的范围，即 A1->A1 变更为 A1->A2
+      // 预期：B1 =SUM(A1->A2)+SUM(A1:A1), B3 =SUM(A6->A6)
+
+      const B1 = { column: 2, row: 1 };
+      engine.setCellFormula(context, B1, '=SUM(A1->A1)+SUM(A1:A1)');
+
+      const B2 = { column: 2, row: 2 };
+      engine.setCellFormula(context, B2, '=SUM(A5->A5)');
+
+      // 选中浮动区域中的一行
+      engine.expandFloatRows(context, 1, 1);
+
+      let innerFormula = engine.getCellFormula(context, B1);
+      expect(innerFormula).to.equal('=SUM(A1->A2)+SUM(A1:A1)');
+
+      const B3 = { column: 2, row: 3 };
+      innerFormula = engine.getCellFormula(context, B3);
+      expect(innerFormula).to.equal('=SUM(A6->A6)');
+    })
+
+    xit('运行态-调整表结构-移除浮动行', function () {
+      // 测试用例描述：
+      // 1) 设置公式 B1 =SUM(A2->A3)+SUM(A1:A1)
+      // 2) 设置公式 B2 =SUM(A8->A8)
+      // 3) 在第 3 行移除浮动行的范围，即 A2->A3 变更为 A2->A2
+      // 预期：B1 =SUM(A2->A2)+SUM(A1:A1), B2 =SUM(A7->A7)
+
+      const B1 = { column: 2, row: 1 };
+      engine.setCellFormula(context, B1, '=SUM(A2->A3)+SUM(A1:A1)');
+
+      const B2 = { column: 2, row: 2 };
+      engine.setCellFormula(context, B2, '=SUM(A8->A8)');
+
+      // 选中浮动区域中的一行
+      engine.shrinkFloatRows(context, 3, 1);
+
+      let innerFormula = engine.getCellFormula(context, B1);
+      expect(innerFormula).to.equal('=SUM(A2->A2)+SUM(A1:A1)');
+
+      innerFormula = engine.getCellFormula(context, B2);
+      expect(innerFormula).to.equal('=SUM(A7->A7)');
+
+    })
+    it('公式求值-浮动单元格的值-重算', function () {
+
     })
   })
 

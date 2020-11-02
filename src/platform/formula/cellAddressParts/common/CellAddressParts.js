@@ -4,7 +4,8 @@ const types = require('base/common/types');
 
 const Syntax = require('platform/formula/core/syntax').Syntax;
 const SingleFormulaContext = require('platform/formula/core/SingleFormulaContext').SingleFormulaContext;
-const { CellAddressIdentifier, CellRangeIdentifier, RelativeColumnIdentifier, RelativeRowIdentifier } = require('platform/formula/core/SingleFormulaAST');
+const { CellAddressIdentifier, CellRangeIdentifier, CellFloatRangeIdentifier,
+  RelativeColumnIdentifier, RelativeRowIdentifier } = require('platform/formula/core/SingleFormulaAST');
 
 class TranslateError extends Error {
   constructor(message) {
@@ -574,6 +575,31 @@ class SimpleCellAddress {
     this.row += step;
   }
 
+  /**
+   * 如果单元格地址受到浮动影响，则执行移动
+   */
+  expandRowsWhenNecessary(activeSheetName, beforeWhich, numberOfRows) {
+    if (this.isAffactedByExpandingRows(activeSheetName, beforeWhich, numberOfRows)) {
+      this.translateDown(numberOfRows);
+    }
+  }
+
+  expandRows(activeSheetName, beforeWhich, numberOfRows) {
+    this.translateDown(numberOfRows);
+  }
+
+  // 注意：本函数无法处理当前单元格应该被删除的情况。
+  // 移动单元格位置，最多移动到删除的起始位置（startFrom）。
+  shrinkRowsWhenNecessary(activeSheetName, startFrom, numberOfRows) {
+    if (this.isAffactedByShrinkingRows(activeSheetName, startFrom, numberOfRows)) {
+      this.translateUp(Math.min(numberOfRows, this.row - startFrom));
+    }
+  }
+
+  shrinkRows(activeSheetName, startFrom, numberOfRows) {
+    this.translateUp(Math.min(numberOfRows, this.row - startFrom));
+  }
+
   insertRowsWhenNecessary(activeSheetName, beforeWhich, numberOfRows) {
     if (this.isAffactedByInsertingRows(activeSheetName, beforeWhich, numberOfRows)) {
       this.translateDown(numberOfRows);
@@ -648,6 +674,8 @@ class SimpleCellAddress {
     return beforeWhich <= this.row;
   }
 
+
+
   /**
    * 判断当前地址是否受到 “删除行” 操作的影响
    */
@@ -661,6 +689,31 @@ class SimpleCellAddress {
     }
 
     return startFrom <= this.row;
+  }
+
+  /**
+   * 判断当前地址是否受到 “插入浮动行” 操作的影响。
+   * 浮动行只能以紧邻的方式主键扩张。
+   */
+  isAffactedByExpandingRows(activeSheetName, beforeWhich, numberOfRows) {
+    if (activeSheetName !== this.sheet) {
+      return false;
+    }
+    if (numberOfRows <= 0) {
+      return false;
+    }
+
+    return beforeWhich <= this.row + 1; //单元格紧邻
+  }
+
+  /**
+   * 判断当前地址是否受到 “删除浮动行” 操作的影响。
+   * 浮动行只能以紧邻的方式主键收缩。
+   * 
+   * 与删除操作的判断逻辑相同。
+   */
+  isAffactedByShrinkingRows(activeSheetName, startFrom, numberOfRows) {
+    return this.isAffactedByRemovingRows(activeSheetName, startFrom, numberOfRows);
   }
 
   /**
@@ -716,6 +769,11 @@ SimpleCellAddress.defaultHashFn = function defaultHashFn(cellAddress) {
   return cellAddress.hashcode();
 }
 
+const CellRangePositionMode = {
+  STATIC: 'static', // 静态单元格,
+  FLOAT: 'float' // 浮动单元格
+}
+
 /**
  * 简单单元格范围表示法。
  * 
@@ -726,13 +784,32 @@ class SimpleCellRange {
    */
   constructor(sheetName, startSimpleAddress, endSimpleAddress) {
     this.type = 'CellRefRange';
-
+    this.position = CellRangePositionMode.STATIC; // static, 静态单元格
     this.sheet = sheetName;
 
     // assert 保证 start 是左上角起始点
     // assert 保证 end 是右下角终止点
     this.start = SimpleCellAddress.build(this.sheet, startSimpleAddress.column, startSimpleAddress.row);
     this.end = SimpleCellAddress.build(this.sheet, endSimpleAddress.column, endSimpleAddress.row);
+
+    this.state = CellAddressState.NORMAL;
+  }
+
+  // 单元格范围失效（单元格范围被删除）
+  lost() {
+    this.state = CellAddressState.LOST;
+  }
+
+  isLost() {
+    return this.state === CellAddressState.LOST;
+  }
+
+  changePositionModeToFloat() {
+    this.position = CellRangePositionMode.FLOAT; // 浮动单元格
+  }
+
+  isInFloatPositionMode() {
+    return this.position === CellRangePositionMode.FLOAT;
   }
 
   /**
@@ -789,7 +866,7 @@ class SimpleCellRange {
   }
 
   hashcode() {
-    return `${this.sheet}#${this.start.column},${this.start.row};${this.end.column},${this.end.row}`;
+    return `${this.sheet}#${this.start.column},${this.start.row};${this.end.column},${this.end.row};${this.position}`;
   }
 
   includes(simpleCellAddress) {
@@ -808,6 +885,24 @@ class SimpleCellRange {
     }
 
     return this.hashcode() === other.hashcode();
+  }
+
+  /**
+   * 扩展浮动行。
+   * 将单元格范围，按照浮动行的方式插入行。
+   */
+  expandFloatRows(activeSheetName, afterWhich, numberOfRows) {
+    this.end.expandRows(activeSheetName, afterWhich, numberOfRows);
+  }
+
+  /**
+   * 收缩浮动行。
+   * 将单元格范围，按照浮动行的方式删除行。
+   */
+  shrinkFloatRows(activeSheetName, startFrom, numberOfRows) {
+
+    this.end.shrinkRows(activeSheetName, startFrom, numberOfRows);
+
   }
 
   insertRows(activeSheetName, beforeWhich, numberOfRows) {
@@ -829,6 +924,47 @@ class SimpleCellRange {
     this.start.removeColumnsWhenNecessary(activeSheetName, startFrom, numberOfColumns);
     this.end.removeColumnsWhenNecessary(activeSheetName, startFrom, numberOfColumns);
   }
+
+  willBeRemovedWhenRemovingRows(activeSheetName, startFrom, numberOfRows) {
+    return this.start.willBeRemovedWhenRemovingRows(activeSheetName, startFrom, numberOfRows)
+      && this.end.willBeRemovedWhenRemovingrows(activeSheetName, startFrom, numberOfRows);
+  }
+
+  willBeRemovedWhenRemovingColumns(activeSheetName, startFrom, numberOfColumns) {
+    return this.start.willBeRemovedWhenRemovingColumns(activeSheetName, startFrom, numberOfColumns)
+      && this.end.willBeRemovedWhenRemovingColumns(activeSheetName, startFrom, numberOfColumns);
+  }
+
+  /**
+   * 判断当前范围是否受到扩展浮动行影响。
+   * 
+   * @param {*} activeSheetName 
+   * @param {*} onWhich 扩展行的参照行，从该行的上方或下方开始扩展浮动行。
+   * @param {*} numberOfRows 
+   */
+  isAffactedByExpandingRows(activeSheetName, onWhich, numberOfRows) {
+    if (activeSheetName !== this.sheet) {
+      return false;
+    }
+
+    if (numberOfRows <= 0) {
+      return false;
+    }
+
+    if (!this.isInFloatPositionMode()) {
+      return false;
+    }
+
+    return this.start.row <= onWhich && onWhich <= this.end.row;
+  }
+
+  /**
+   * 与扩展浮动行的判断条件相同
+   */
+  isAffactedByShrinkingRows(activeSheetName, startFrom, numberOfRows) {
+    return this.isAffactedByExpandingRows(activeSheetName, startFrom, numberOfRows);
+  }
+
 
   /**
   * 判断当前地址是否受到 “插入行” 操作的影响
@@ -913,10 +1049,10 @@ class SheetNameTranslator {
   }
 
   setSheet(sheetName) {
-    if(this.sheetNameIdentifier) {
+    if (this.sheetNameIdentifier) {
       this.sheetNameIdentifier.name = sheetName;
     }
-    
+
   }
 }
 /**
@@ -1035,14 +1171,14 @@ class CellAddressCarrier extends CellRefDecorator {
  */
 class CellRangeCarrier extends CellRefDecorator {
   /**
-   * @param {CellRangeIdentifier} cellRangeRef 
+   * @param {CellRangeIdentifier | CellFloatRangeIdentifier} cellRangeRef 
    */
   constructor(cellRangeRef, A1ReferenceTranslatorCtor) {
     super();
     this.cellRange = cellRangeRef;
 
     this.sheetNameTranslator = new SheetNameTranslator(this.cellRange.sheetName);
-    
+
     this.startRefTranslator = new A1ReferenceTranslatorCtor(this.cellRange.startRef);
     this.endRefTranslator = new A1ReferenceTranslatorCtor(this.cellRange.endRef);
 
@@ -1075,7 +1211,14 @@ class CellRangeCarrier extends CellRefDecorator {
 
     let simpleStart = new SimpleCellAddress(null, this.left(), this.top());
     let simpleEnd = new SimpleCellAddress(null, this.right(), this.bottom());
-    return new SimpleCellRange(sheetName, simpleStart, simpleEnd);
+    let range = new SimpleCellRange(sheetName, simpleStart, simpleEnd);
+
+    // 如果是浮动范围，标记为浮动
+    if (this.cellRange instanceof CellFloatRangeIdentifier) {
+      range.changePositionModeToFloat();
+    }
+
+    return range;
   }
 
   left() {
@@ -1124,6 +1267,17 @@ class CellRangeCarrier extends CellRefDecorator {
  */
   insertRows(beforeWhich, numberOfRows) {
     this.cellRangeTranslator.insertRows(beforeWhich, numberOfRows);
+  }
+
+  /**
+   * 浮动行扩展，只移动终止位置
+   */
+  expandRows(beforeWhich, numberOfRows) {
+    this.endRefTranslator.insertRows(beforeWhich, numberOfRows);
+  }
+
+  shrinkRows(startRow, numberOfRows) {
+    this.endRefTranslator.removeRowsByProperSteps(startRow, numberOfRows, true);
   }
 
   /**
