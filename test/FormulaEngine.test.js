@@ -171,11 +171,11 @@ describe('公式引擎-常用场景', function () {
       expect(updatedCellAddressList[0]).to.have.property('row', 3);
     })
 
-    it('设计态-调整表结构-删除行（单元格范围）', function(){
+    it('设计态-调整表结构-删除行（单元格范围）', function () {
       // 测试用例描述：
       // 1) C2 = SUM(A1:B3)
       // 2) 选择第三行，删除一行
-      // 3) 期待：C2 = SUM(A1:B2)
+      // 3) 期待：C2 = SUM(A1:B2); 依赖图中包含 2 个节点，一个 C2，一个 A1:B2
 
       let context = new WorkBookContext('sheet1');
       let C2 = { column: 3, row: 2 }; // C2 =SUM(A1:B3)
@@ -185,6 +185,7 @@ describe('公式引擎-常用场景', function () {
 
       let innerFormula = engine.getCellFormula(context, C2);
       expect(innerFormula).to.equal('=SUM(A1:B2)');
+
     })
 
     it('设计态-调整表结构-删除行（没有删除单元格）', function () {
@@ -507,12 +508,12 @@ describe('公式引擎-常用场景', function () {
       expect(innerFormula).to.equal('=SUM(A6->A6)');
     })
 
-    xit('运行态-调整表结构-移除浮动行', function () {
+    it('运行态-调整表结构-移除浮动行', function () {
       // 测试用例描述：
       // 1) 设置公式 B1 =SUM(A2->A3)+SUM(A1:A1)
       // 2) 设置公式 B2 =SUM(A8->A8)
-      // 3) 在第 3 行移除浮动行的范围，即 A2->A3 变更为 A2->A2
-      // 预期：B1 =SUM(A2->A2)+SUM(A1:A1), B2 =SUM(A7->A7)
+      // 3) 在第 3 行移除 2 行的浮动行范围，即 A2->A3 变更为 A2->A2
+      // 预期：B1 =SUM(A2->A2)+SUM(A1:A1), B2 =SUM(A6->A6)
 
       const B1 = { column: 2, row: 1 };
       engine.setCellFormula(context, B1, '=SUM(A2->A3)+SUM(A1:A1)');
@@ -527,7 +528,7 @@ describe('公式引擎-常用场景', function () {
       expect(innerFormula).to.equal('=SUM(A2->A2)+SUM(A1:A1)');
 
       innerFormula = engine.getCellFormula(context, B2);
-      expect(innerFormula).to.equal('=SUM(A7->A7)');
+      expect(innerFormula).to.equal('=SUM(A6->A6)');
 
     })
     it('公式求值-浮动单元格的值-重算', function () {

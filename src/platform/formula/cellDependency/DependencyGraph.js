@@ -94,6 +94,8 @@ class DependencyGraph {
   }
 
   /**
+   * 查找：给定的单元格地址所在的“单元格范围”节点集合。
+   * 
    * TODO: 与函数 addCellDependencies 存在部分重复的逻辑。
    * @param {SimpleCellAddress} cellAddress
    */
@@ -337,6 +339,13 @@ class DependencyGraph {
   }
 
   /**
+   * cellData = new CellData(cellAddress)
+   */
+  lookupCell(cellData) {
+    return this.graph.lookup(cellData);
+  }
+
+  /**
    * 获取某个单元格最新的公式。
    * @param {SimpleCellAddress} cellAddress
    */
@@ -360,3 +369,4 @@ class DependencyGraph {
 
 exports.CyclicDependencyError = CyclicDependencyError;
 exports.DependencyGraph = DependencyGraph;
+exports.CellData = CellData;

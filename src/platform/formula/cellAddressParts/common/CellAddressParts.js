@@ -592,12 +592,12 @@ class SimpleCellAddress {
   // 移动单元格位置，最多移动到删除的起始位置（startFrom）。
   shrinkRowsWhenNecessary(activeSheetName, startFrom, numberOfRows) {
     if (this.isAffactedByShrinkingRows(activeSheetName, startFrom, numberOfRows)) {
-      this.translateUp(Math.min(numberOfRows, this.row - startFrom));
+      this.translateUp(Math.min(numberOfRows, this.row - startFrom + 1));
     }
   }
 
   shrinkRows(activeSheetName, startFrom, numberOfRows) {
-    this.translateUp(Math.min(numberOfRows, this.row - startFrom));
+    this.translateUp(Math.min(numberOfRows, this.row - startFrom + 1));
   }
 
   insertRowsWhenNecessary(activeSheetName, beforeWhich, numberOfRows) {
@@ -614,12 +614,12 @@ class SimpleCellAddress {
   // 移动单元格位置，最多移动到删除的起始位置（startFrom）。
   removeRowsWhenNecessary(activeSheetName, startFrom, numberOfRows) {
     if (this.isAffactedByRemovingRows(activeSheetName, startFrom, numberOfRows)) {
-      this.translateUp(Math.min(numberOfRows, this.row - startFrom));
+      this.translateUp(Math.min(numberOfRows, this.row - startFrom + 1)); //TODO: BUG, 无法移除单元格地址本身
     }
   }
 
   removeRows(activeSheetName, startFrom, numberOfRows) {
-    this.translateUp(Math.min(numberOfRows, this.row - startFrom));
+    this.translateUp(Math.min(numberOfRows, this.row - startFrom + 1));
   }
 
   insertColumnsWhenNecessary(activeSheetName, beforeWhich, numberOfColumns) {
@@ -900,9 +900,7 @@ class SimpleCellRange {
    * 将单元格范围，按照浮动行的方式删除行。
    */
   shrinkFloatRows(activeSheetName, startFrom, numberOfRows) {
-
     this.end.shrinkRows(activeSheetName, startFrom, numberOfRows);
-
   }
 
   insertRows(activeSheetName, beforeWhich, numberOfRows) {
@@ -1277,7 +1275,7 @@ class CellRangeCarrier extends CellRefDecorator {
   }
 
   shrinkRows(startRow, numberOfRows) {
-    this.endRefTranslator.removeRowsByProperSteps(startRow, numberOfRows, true);
+    this.endRefTranslator.removeRowsByProperSteps(startRow, numberOfRows, false);
   }
 
   /**
