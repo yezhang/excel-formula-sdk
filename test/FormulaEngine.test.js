@@ -522,7 +522,7 @@ describe('公式引擎-常用场景', function () {
       engine.setCellFormula(context, B2, '=SUM(A8->A8)');
 
       // 选中浮动区域中的一行
-      engine.shrinkFloatRows(context, 3, 1);
+      engine.shrinkFloatRows(context, 3, 2);
 
       let innerFormula = engine.getCellFormula(context, B1);
       expect(innerFormula).to.equal('=SUM(A2->A2)+SUM(A1:A1)');
