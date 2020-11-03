@@ -114,6 +114,8 @@ class DependencyTransformer {
     // 1) 调整受影响浮动范围在依赖图中的节点，调整依赖单元格的公式。
     // 2) 调整不受「扩展」影响浮动单元格，以及普通单元格，执行插入行。
 
+    
+
     let affectedFloatCellList = this._findDirtyCells(function (addr) {
       if (!(addr instanceof SimpleCellRange)) {
         return false;
@@ -121,7 +123,7 @@ class DependencyTransformer {
       return addr.isAffactedByExpandingRows(activeSheetName, onWhich, numberOfRows);
     });
 
-    this._doTransformation(affectedFloatCellList,
+    let formulaUpdatedCellsByExpandingRows = this._doTransformation(affectedFloatCellList,
       function (addrSelf) {
         // 变更自身位置
         addrSelf.expandFloatRows(activeSheetName, onWhich, numberOfRows);
@@ -142,7 +144,7 @@ class DependencyTransformer {
       return addr.isAffactedByInsertingRows(activeSheetName, beforeWhich, numberOfRows);
     });
 
-    this._doTransformation(affectedCellList,
+    let formulaUpdatedCellsByInsertingRows = this._doTransformation(affectedCellList,
       function (addrSelf) {
         // 变更自身位置
         addrSelf.insertRows(activeSheetName, beforeWhich, numberOfRows);
@@ -153,7 +155,9 @@ class DependencyTransformer {
       }
     );
 
-    return void 0;
+    let formulaUpdatedCells = [].concat(formulaUpdatedCellsByExpandingRows, formulaUpdatedCellsByInsertingRows);
+
+    return ArrayUtils.uniqueArray(formulaUpdatedCells, SimpleCellAddress.defaultHashFn);
   }
 
   /**
@@ -171,7 +175,7 @@ class DependencyTransformer {
       return addr.isAffactedByShrinkingRows(activeSheetName, startFrom, numberOfRows);
     });
 
-    this._doTransformation(affectedFloatCellList,
+    let formulaUpdatedCellsByShrinkingRows = this._doTransformation(affectedFloatCellList,
       function (addrSelf) {
         // 变更自身位置
         addrSelf.shrinkFloatRows(activeSheetName, startFrom, numberOfRows);
@@ -191,7 +195,7 @@ class DependencyTransformer {
       return addr.isAffactedByRemovingRows(activeSheetName, startFrom, numberOfRows);
     });
 
-    this._doTransformation(affectedCellList,
+    let formulaUpdatedCellsByDeletingRows = this._doTransformation(affectedCellList,
       function (addrSelf) {
         if (addrSelf.willBeRemovedWhenRemovingRows(activeSheetName, startFrom, numberOfRows)) {
           addrSelf.lost();
@@ -209,7 +213,10 @@ class DependencyTransformer {
         cellCarry.removeRows(startFrom, numberOfRows);
       }
     );
-    return void 0;
+
+    let formulaUpdatedCells = [].concat(formulaUpdatedCellsByShrinkingRows, formulaUpdatedCellsByDeletingRows);
+
+    return ArrayUtils.uniqueArray(formulaUpdatedCells, SimpleCellAddress.defaultHashFn);
   }
 
   /**
