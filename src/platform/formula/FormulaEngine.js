@@ -90,6 +90,9 @@ class FormulaEngine {
    * @param {String} formula 公式文本（包含=）
    */
   setCellFormula(workBookContext, cellAddr, formula) {
+    // 处理单元格地址的简写
+    let fullCellAddr = this._parseCellAddr(cellAddr);
+
     const activeSheetName = workBookContext.activeSheetName;
     const parseTree = SingleFormulaCoreInst.parse(formula);
     if (SingleFormulaCoreInst.hasErrors()) {
@@ -108,7 +111,7 @@ class FormulaEngine {
 
     const builder = new CellDependencyBuilder(this.depGraph);
     builder.setFormulaAST(ast);
-    builder.build(activeSheetName, cellAddr);
+    builder.build(activeSheetName, fullCellAddr);
   }
 
   /**
@@ -117,9 +120,17 @@ class FormulaEngine {
    * @param {Object} cellAddr 单元格地址对象 {column:<1..n>, row:<1..n>}
    */
   getCellFormula(workBookContext, cellAddr) {
+    let fullCellAddr = this._parseCellAddr(cellAddr);
     const activeSheetName = workBookContext.activeSheetName;
     const finder = new CellDependencyFinder(this.depGraph);
-    return finder.getCellFormula(activeSheetName, cellAddr);
+    return finder.getCellFormula(activeSheetName, fullCellAddr);
+  }
+
+  _parseCellAddr(cellAddr) {
+    return {
+      column: cellAddr.column || cellAddr.c,
+      row: cellAddr.row || cellAddr.r
+    };
   }
 
   /**

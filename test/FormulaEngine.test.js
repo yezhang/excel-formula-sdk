@@ -308,8 +308,46 @@ describe('公式引擎-常用场景', function () {
   describe('运行态', function () {
     let engine;
     let context = undefined;
+    function SimpleEngine() { }
+
+    function rebuildSimpleEngine() {
+      let innerEngine = new FormulaEngine();
+      SimpleEngine.prototype = innerEngine;
+      innerEngine.constructor = SimpleEngine;
+
+      function _parseCellAddrWhenString(cellAddr) {
+        let fullCellAddr = undefined;
+        if (typeof cellAddr === 'string') {
+          const rx = /([a-zA-Z]+)(\d+)/g;
+          const groups = rx.exec(cellAddr);
+          const c = groups[1];
+          const r = groups[2];
+
+          fullCellAddr = {
+            column: c, row: r
+          };
+        } else {
+          fullCellAddr = cellAddr;
+        }
+
+
+        return fullCellAddr;
+      }
+      SimpleEngine.prototype.setf = function setCellFormula(workBookContext, cellAddr, formula) {
+        let fullCellAddr = _parseCellAddrWhenString(cellAddr);
+        return SimpleEngine.prototype.setCellFormula.call(this, workBookContext, fullCellAddr, formula);
+      }
+      SimpleEngine.prototype.getf = function getCellFormula(workBookContext, cellAddr) {
+        let fullCellAddr = _parseCellAddrWhenString(cellAddr);
+        return SimpleEngine.prototype.getCellFormula.call(this, workBookContext, fullCellAddr);
+      }
+
+    }
     beforeEach(function () {
-      engine = new FormulaEngine();
+      rebuildSimpleEngine();
+
+      engine = new SimpleEngine();
+
       context = new WorkBookContext('sheet1');
     });
 
@@ -484,6 +522,32 @@ describe('公式引擎-常用场景', function () {
       expect(ret).to.equal(3);
     })
 
+    it('运行态-调整表结构-增加浮动行（浮动行有普通公式）', function () {
+      // 测试用例描述：
+      // 1) 设置公式 B1 =SUM(B2->B2), D1 =B1+C1
+      // 2) 设置公式 D2 =B2+C2
+      // 3) 设置公式 B3 =SUM(B4->B4), D3 =B3+C3
+      // 3) 选中第二行，增加 1 个浮动行，即目的是 B2->B2 变更为 B2->B3
+      // 预期：B1 =SUM(B2->B3), B4 =SUM(B5->B5), D4 =B4+C4; 
+      // D1 处公式不变，为 =B1+C1, D2 =B2+C2
+
+      engine.setf(context, 'B1', '=SUM(B2->B2)');
+      engine.setf(context, 'D1', '=B1+C1');
+      engine.setf(context, 'D2', '=B2+C2');
+      engine.setf(context, 'B3', '=SUM(B4->B4)');
+      engine.setf(context, 'D3', '=B3+C3');
+
+      let affactedCells = engine.expandFloatRows(context, 2, 1);
+
+      expect(engine.getf(context, 'B1')).to.equal('=SUM(B2->B3)');
+      expect(engine.getf(context, 'B4')).to.equal('=SUM(B5->B5)');
+      expect(engine.getf(context, 'D4')).to.equal('=B4+C4');
+
+      expect(engine.getf(context, 'D1')).to.equal('=B1+C1');
+      expect(engine.getf(context, 'D2')).to.equal('=B2+C2');
+
+    });
+
     it('运行态-调整表结构-增加浮动行', function () {
       // 测试用例描述：
       // 1) 设置公式 B1 =SUM(A1->A1)+SUM(A1:A1)
@@ -544,12 +608,10 @@ describe('公式引擎-常用场景', function () {
   describe('表内公式', function () {
 
     let engine;
+    let context
     beforeEach(function () {
       engine = new FormulaEngine();
-    });
-
-    it('增值税纳税申报表主表:17=12+13-14-15+16', function () {
-
+      context = new WorkBookContext('sheet1');
     });
 
     it('自动填充公式-上、下、左、右', function () {
@@ -587,7 +649,7 @@ describe('公式引擎-常用场景', function () {
       // 1) B1 = SUM(A1+A2), A1 = 1, A2 = 2;
       // 2) 计算 B1 的值
 
-      let context = new WorkBookContext('sheet1');
+
       let B1Ret = undefined;
       const cellValueProvider = {
         datas: [[1, 2]],
@@ -652,6 +714,56 @@ describe('公式引擎-常用场景', function () {
         engine.reEvaluateAll(context, A4);
       }).to.not.throw();
 
+    })
+
+    it('浮动行联动计算', function () {
+      //           A              B              C
+      //    ┌──────────────┬──────────────┬─────────────┐
+      // 1  │ =SUM(A2->A2) │ =SUM(B2->B2) │  =A1+B1     │
+      //    ├──────────────┼──────────────┼─────────────┤
+      // 2  │      **      │              │  =A2+B2     │
+      //    ├──────────────┼──────────────┼─────────────┤
+      // 3  │              │              │             │
+      //    └──────────────┴──────────────┴─────────────┘
+
+      // 测试用例步骤：
+      // 1) 输入 A2 = 1
+      // 2) 期待：联动计算 A1 公式、C2 公式、C1 公式。
+
+
+      const A1 = { column: 1, row: 1 };
+      const B1 = { column: 2, row: 1 };
+      const C1 = { column: 3, row: 1 };
+      const C2 = { column: 3, row: 2 };
+      engine.setCellFormula(context, A1, '=SUM(A2->A2)');
+      engine.setCellFormula(context, B1, '=SUM(B2->B2)');
+      engine.setCellFormula(context, C1, '=A1+B1');
+      engine.setCellFormula(context, C2, '=A2+B2');
+
+      const A2_Input = { column: 1, row: 2 };
+      const updatedCellList = [];
+
+      const cellValueProvider = {
+        getCellValue: function (cell) {
+          return 1;
+        },
+        getCellRangeValues: function (cellRange) {
+          return [1];
+        },
+        getCellFloatRangeValues: function (cellRange) {
+          return [1];
+        },
+        setCellValue: function (cell, value) {
+          // 联动时，调用该方法设置单元格的值。
+          // 在本测试用例中，A1、C2、C1 单元格会被调用。
+          updatedCellList.push(cell);
+        }
+      };
+
+      engine.prepareToEvaluateTable(cellValueProvider);
+
+      engine.reEvaluateAll(context, A2_Input);
+      expect(updatedCellList).to.have.lengthOf(3);
     })
   });
 

@@ -41,12 +41,12 @@ class CellDependencyBuilder {
    * 清空当前工作单元格的依赖
    */
   clear(activeSheetName, workingCellRefAddr) {
-    let simpleCellAddress = new SimpleCellAddress(activeSheetName, workingCellRefAddr.column, workingCellRefAddr.row);
+    let simpleCellAddress =  SimpleCellAddress.build(activeSheetName, workingCellRefAddr.column, workingCellRefAddr.row);
     this._removeDependencies(simpleCellAddress);
   }
 
   build(activeSheetName, workingCellRefAddr) {
-    let simpleCellAddress = new SimpleCellAddress(activeSheetName, workingCellRefAddr.column, workingCellRefAddr.row);
+    let simpleCellAddress = SimpleCellAddress.build(activeSheetName, workingCellRefAddr.column, workingCellRefAddr.row);
 
     // 收集受影响的单元格
     // Array[ CellAddressIdentifier|CellRangeIdentifier]

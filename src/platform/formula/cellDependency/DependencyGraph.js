@@ -280,26 +280,47 @@ class DependencyGraph {
     const that = this;
 
     if (dependencyMap) {
+
+      let deps = Object.keys(dependencyMap);
+      let depDetailList = deps.map(function(depKey){
+        return dependencyMap[depKey];
+      })
+
       // 处理范围的依赖：
       // 如果当前工作单元格 cellAddress 处在某个范围顶点内，
       // 需要建立该单元格范围到本顶点的依赖。
       let existingNodes = this.graph.nodeDatas();
       if (existingNodes) {
-        existingNodes.forEach(function (cellData) {
+        let rangeNodeList = existingNodes.filter(function(cellData){
+           let n = cellData.cellAddress;
+           return that._isCellRange(n);
+        });
+        rangeNodeList.forEach(function (cellData) {
           let n = cellData.cellAddress;
-          if (that._isCellRange(n) && that._isInRange(n, cellAddress)) {
+          if (that._isInRange(n, cellAddress)) {
             that.graph.insertEdge(cellData, new CellData(cellAddress));
           }
-        })
+        });
+
+        // 如果公式中包含的单元格范围节点中，需要建立关联。
+        // 算法复杂度 O(n^2)
+        rangeNodeList.forEach(function (cellData) {
+          let n = cellData.cellAddress;
+          depDetailList.forEach(function (depDetail){
+            if (that._isInRange(n, depDetail.simple)) {
+              that.graph.insertEdge(cellData, new CellData(depDetail.simple));
+            }
+          })
+        });
       }
 
       // 建立本单元格对其他单元格的依赖关系
-      let deps = Object.keys(dependencyMap);
-      deps.forEach(function (dep) {
-        let depDetail = dependencyMap[dep];
+      depDetailList.forEach(function (depDetail) {
         that.graph.insertEdge(new CellData(cellAddress), new CellData(depDetail.simple), depDetail.deps);
         that.graph.updateNode(new CellData(cellAddress, formulaAst)); //将当前单元格的最新公式更新到节点中。
       })
+
+
     }
   }
 

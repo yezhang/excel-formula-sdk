@@ -114,8 +114,6 @@ class DependencyTransformer {
     // 1) 调整受影响浮动范围在依赖图中的节点，调整依赖单元格的公式。
     // 2) 调整不受「扩展」影响浮动单元格，以及普通单元格，执行插入行。
 
-    
-
     let affectedFloatCellList = this._findDirtyCells(function (addr) {
       if (!(addr instanceof SimpleCellRange)) {
         return false;

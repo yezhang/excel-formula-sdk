@@ -14,6 +14,8 @@ class TranslateError extends Error {
   }
 }
 
+
+
 /**
  * 把正数转换为列字母表示法
  */
@@ -50,6 +52,22 @@ function convertToNumberWhenColumnLetters(column) {
     return column;
   }
   return convertColumnLettersToNumber(column);
+}
+
+/**
+ * 兼容文本类型的行号。
+ */
+function convertToNumberWhenRowLetters(row) {
+  if (types.isString(row)) {
+    return parseInt(row);
+  }
+
+  // 注意：types.isInt 方法的意思是确定参数是否可以转换为整数。
+  // 在函数内部，会自动执行 parseFloat 方法，导致 1/"1" 都为 true。
+  // 因此，该方法要放在 isString 类型判断后面。
+  if (types.isInt(row)) {
+    return row;
+  }
 }
 
 /**
@@ -91,6 +109,8 @@ function _convertColumnIndex(column) {
   }
   return beforeWhichNum;
 }
+
+
 
 exports.convertColumnLettersToNumber = convertColumnLettersToNumber;
 exports.convertNumberToColumnLetters = convertNumberToColumnLetters;
@@ -746,7 +766,9 @@ class SimpleCellAddress {
 }
 
 SimpleCellAddress.build = function build(sheetName, column, row) {
-  return new SimpleCellAddress(sheetName, convertToNumberWhenColumnLetters(column), row);
+  return new SimpleCellAddress(sheetName,
+    convertToNumberWhenColumnLetters(column),
+    convertToNumberWhenRowLetters(row));
 }
 
 /**
@@ -1003,11 +1025,11 @@ SimpleCellRange.build = function (sheetName, column1, row1, column2, row2) {
   return new SimpleCellRange(sheetName,
     {
       column: convertToNumberWhenColumnLetters(column1),
-      row: row1
+      row: convertToNumberWhenRowLetters(row1)
     },
     {
       column: convertToNumberWhenColumnLetters(column2),
-      row: row2
+      row: convertToNumberWhenRowLetters(row2)
     });
 }
 
