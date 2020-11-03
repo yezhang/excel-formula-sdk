@@ -539,12 +539,16 @@ describe('公式引擎-常用场景', function () {
 
       let affactedCells = engine.expandFloatRows(context, 2, 1);
 
+      // B1/B4/D4 地址受到影响，需要重算。
+      expect(affactedCells).to.have.lengthOf(3);
+
       expect(engine.getf(context, 'B1')).to.equal('=SUM(B2->B3)');
       expect(engine.getf(context, 'B4')).to.equal('=SUM(B5->B5)');
       expect(engine.getf(context, 'D4')).to.equal('=B4+C4');
 
       expect(engine.getf(context, 'D1')).to.equal('=B1+C1');
       expect(engine.getf(context, 'D2')).to.equal('=B2+C2');
+
 
     });
 
@@ -716,6 +720,56 @@ describe('公式引擎-常用场景', function () {
 
     })
 
+    it('公式单元格支持用户输入', function() {
+      // 测试用例描述：
+      // 1) A1 =SUM(A2->A2)
+      // 2) C1 =A1+B1
+      // 3) 修改 A2 的值，执行联动计算，A1、C1 被计算
+      // 4) 修改 A1 的值，执行联动计算，C1 被计算，A1 不被计算。
+
+      engine.setCellFormula(context, {c: 'A', r: '1'}, '=SUM(A2->A2)');
+      engine.setCellFormula(context, {c: 'C', r: '1'}, '=A1+B1');
+
+      let fetchOperationCount = 0;
+      let fetchOperationCellList = [];
+      const cellValueProvider = {
+        getCellValue: function (cell) {
+          fetchOperationCount++;
+          fetchOperationCellList.push(cell);
+          return 0;
+        },
+        getCellRangeValues: function (cellRange) {
+          fetchOperationCount++;
+          fetchOperationCellList.push(cellRange);
+          return [0]
+        },
+        getCellFloatRangeValues: function (cellRange) {
+          fetchOperationCount++;
+          fetchOperationCellList.push(cellRange);
+          return [0];
+        },
+        setCellValue: function (cell, value) {
+
+        }
+      };
+
+      engine.prepareToEvaluateTable(cellValueProvider);
+
+      
+      // 修改 A2
+      fetchOperationCount = 0;
+      fetchOperationCellList = [];
+      engine.reEvaluateAll(context, {c: 1, r: 2});
+      expect(fetchOperationCount).to.equal(3);
+
+
+      // 修改 A1
+      fetchOperationCount = 0;
+      fetchOperationCellList = [];
+      engine.reEvaluateAll(context, {c: 1, r: 1});
+      expect(fetchOperationCount).to.equal(2);
+
+    })
     it('浮动行联动计算', function () {
       //           A              B              C
       //    ┌──────────────┬──────────────┬─────────────┐

@@ -50,7 +50,18 @@ class Evaluator {
     // fromCellAddr 可能是依赖图中的一个单元格顶点，也可能是一个单元格范围顶点的一部分。
     let sortedList = this.depGraph.sortSubgraph(simpleAddr);
     return sortedList.forEach(function(sorted){
-      return that._evaluateOneByOne(sorted);
+      // fromCellAddr 表示当前手工输入数据的单元格，此时，如果 fromCellAddr 包含公式，则不执行自身公式。
+      // 如果当前计算节点是 fromCellAddr，表明 sorted 节点不需要执行自身的公式。
+      // 支持的场景：自动计算的公式被用户手工修改了计算结果。
+      // sorted 表示一个图，由排序后的节点数组表示。
+      let filterStartNodeList = sorted.filter(function(cellData) {
+        let cellAddress = cellData.cellAddress;
+        if(simpleAddr.equals(cellAddress)){
+          return false;
+        }
+        return true;
+      });
+      return that._evaluateOneByOne(filterStartNodeList);
     })
   }
 

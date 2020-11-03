@@ -126,6 +126,10 @@ class FormulaEngine {
     return finder.getCellFormula(activeSheetName, fullCellAddr);
   }
 
+  /**
+   * 支持简写形式：
+   * {c:<1..n>, r:<1..n>}
+   */
   _parseCellAddr(cellAddr) {
     return {
       column: cellAddr.column || cellAddr.c,
@@ -195,10 +199,11 @@ class FormulaEngine {
    */
   reEvaluateAll(workBookContext, fromCellAddr) {
     this._assertCellValueProvider(this._assertCellValueProvider);
+    let fullCellAddr = this._parseCellAddr(fromCellAddr);
 
     const activeSheetName = workBookContext.activeSheetName;
     const evaluator = new Evaluator(this.depGraph, this.tableCellValueProvider);
-    return evaluator.reEvaluateAll(activeSheetName, fromCellAddr);
+    return evaluator.reEvaluateAll(activeSheetName, fullCellAddr);
   }
 
   _assertCellValueProvider(provider) {
