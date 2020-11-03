@@ -215,7 +215,7 @@ class FormulaEngine {
   }
 
   /**
-   * 用户调整表结构：增加浮动行
+   * 用户调整表结构：增加浮动行。
    */
   expandFloatRows(workBookContext, columnRowIndex, rowCount) {
     const activeSheetName = workBookContext.activeSheetName;

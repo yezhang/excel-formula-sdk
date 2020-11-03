@@ -131,6 +131,30 @@ let downRet = engine.autofillDown(context, f, 1);
 // downRet = '=C4+D4+SUM(C4:D4)+MIN($C4:D$3)';
 ```
 
+**场景「浮动范围」**
+本公式引擎支持「浮动范围」的概念。公式语法是使用箭头连接两个单元格地址，例如 A1->A1。
+浮动范围与“单元格范围（例如，A1:A1)”的用作类似，都具有覆盖范围内的所有单元格的作用。
+区别是，浮动范围的公式联动方式与单元格范围不同。
+
+样例：对于公式 B1 = A1->A1, B2 = A1:A1，  
+（1）操作方式1：当用户选择 A1 单元格所在的行，执行“增加浮动行”时，B1 处的公式发生联动变化，变更为 "=A1->A2"。
+B2 处的公式不发生变更，维持 "=A1:A1"。
+
+（2）操作方式2：当用户选择 A1 单元格所在的行，执行“插入行”时，B1 处的公式发生平移，变更为 "=A2->A2"。
+B2 处的公式发生变更，称为 "=A2:A2"。
+
+适用的业务：增值税申报表浮动行。
+
+```js
+const B1 = { column: 2, row: 1 };
+engine.setCellFormula(context, B1, '=SUM(A1->A1)+SUM(A1:A1)');
+
+const B2 = { column: 2, row: 2 };
+engine.setCellFormula(context, B2, '=SUM(A5->A5)');
+
+// 选中第 1 行，向下增加 2 个浮动行
+engine.expandFloatRows(context, 1, 2);
+```
 
 
 ## 与编辑器组件 monoca-editor 集成API
