@@ -2,7 +2,7 @@
  * 对于所有公开 API 的测试。
  */
 const expect = require('chai').expect;
-const { set } = require('lodash');
+const _ = require('lodash');
 const { WorkBookContext, FormulaEngine } = require('platform/formula/FormulaEngine');
 
 /**
@@ -498,12 +498,16 @@ describe('公式引擎-常用场景', function () {
       engine.setCellFormula(context, B2, '=SUM(A5->A5)');
 
       // 选中浮动区域中的一行
-      engine.expandFloatRows(context, 1, 1);
+      let affactedCells = engine.expandFloatRows(context, 1, 1);
+      expect(affactedCells[0]).to.include(B1);
 
+      // 判断数组中至少要包含元素 B1、B2
+      expect(_.some(affactedCells, B1)).to.be.true;
       let innerFormula = engine.getCellFormula(context, B1);
       expect(innerFormula).to.equal('=SUM(A1->A2)+SUM(A1:A1)');
 
       const B3 = { column: 2, row: 3 };
+      expect(_.some(affactedCells, B3)).to.be.true;
       innerFormula = engine.getCellFormula(context, B3);
       expect(innerFormula).to.equal('=SUM(A6->A6)');
     })
