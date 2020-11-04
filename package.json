@@ -1,6 +1,6 @@
 {
   "name": "excel-formula-sdk",
-  "version": "0.0.31",
+  "version": "0.0.33",
   "description": "Excel 公式解析引擎（公式编辑器、公式计算）",
   "main": "./min/formula-sdk.js",
   "repository": {
@@ -35,6 +35,9 @@
     "monaco-editor-core": "^0.20.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.12.3",
+    "@babel/preset-env": "^7.12.1",
+    "babel-loader": "^8.1.0",
     "bufferutil": "^4.0.1",
     "cd": "^0.3.3",
     "chai": "^4.2.0",
