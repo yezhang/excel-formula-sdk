@@ -61,6 +61,14 @@ class FormulaEvaluationVisitor {
     throw new EvaluationErrors.NameError('非法的函数，无法识别');
   }
 
+  /**
+   * 对普通括号表达式求值
+   */
+  visitParenthesizedExpression(node) {
+    let expression = node.expression;
+    return expression.accept(this);
+  }
+
   visitPlainTextIdentifier(node) {
     // return node.name;
     // TODO: 支持自定义变量取数

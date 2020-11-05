@@ -24,6 +24,7 @@ exports.Syntax = {
   LogicalExpression: 'LogicalExpression',
   ConditionalExpression: 'ConditionalExpression',
   CallExpression: 'CallExpression',
+  ParenthesizedExpression: 'ParenthesizedExpression',
   SequenceExpression: 'SequenceExpression',
   REF_ERROR: '#REF!'
 };

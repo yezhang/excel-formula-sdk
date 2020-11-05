@@ -139,6 +139,11 @@ class ASTVisitor extends FormulaParserVisitor {
     return new CallExpression(fnName, args);
   }
 
+  visitParenthesizedExpression(ctx) {
+    let expBody = ctx.expressionSequence().accept(this);
+    return new ParenthesizedExpression(expBody);
+  }
+
   visitIdentifierExpression(ctx) {
     return ctx.identifier().accept(this);
   }
@@ -760,6 +765,21 @@ class CallExpression extends IAccessableType{
     argsStr = '(' + argsStr.join(',') + ')';
 
     return this.callee.toString() + argsStr;
+  }
+}
+
+/**
+ * 括号表达式
+ */
+class ParenthesizedExpression extends IAccessableType {
+  constructor(expressionBody) {
+    super();
+    this.type = Syntax.ParenthesizedExpression;
+    this.expression = expressionBody;
+  }
+
+  toString() {
+    return ['(', this.expression.toString(), ')'].join('');
   }
 }
 

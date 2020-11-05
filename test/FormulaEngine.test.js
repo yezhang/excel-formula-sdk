@@ -96,6 +96,17 @@ describe('公式引擎-常用场景', function () {
       expect(other).to.equal('=SUM(A2:B3)');
     });
 
+    it('设计态-携带括号的公式', function () {
+      let context = new WorkBookContext('sheet1');
+      // 用例：带括号的公式
+      // 设置公式 I6  =(E6*F6-G6)*H6
+      let I6 = { c: 'I', r: '6' };
+      let I6_f = '=(E6*F6-G6)*H6';
+      engine.setCellFormula(context, I6, I6_f);
+      innerFormula = engine.getCellFormula(context, I6);
+      expect(innerFormula).to.equal(I6_f);
+      
+    })
     it('设计态-单元格输入公式完毕（纯单元格地址）', function () {
       let context = new WorkBookContext('sheet1');
       let A1CellRef = { column: 1, row: 1 }; // A1 = B1
@@ -720,15 +731,15 @@ describe('公式引擎-常用场景', function () {
 
     })
 
-    it('公式单元格支持用户输入', function() {
+    it('公式单元格支持用户输入', function () {
       // 测试用例描述：
       // 1) A1 =SUM(A2->A2)
       // 2) C1 =A1+B1
       // 3) 修改 A2 的值，执行联动计算，A1、C1 被计算
       // 4) 修改 A1 的值，执行联动计算，C1 被计算，A1 不被计算。
 
-      engine.setCellFormula(context, {c: 'A', r: '1'}, '=SUM(A2->A2)');
-      engine.setCellFormula(context, {c: 'C', r: '1'}, '=A1+B1');
+      engine.setCellFormula(context, { c: 'A', r: '1' }, '=SUM(A2->A2)');
+      engine.setCellFormula(context, { c: 'C', r: '1' }, '=A1+B1');
 
       let fetchOperationCount = 0;
       let fetchOperationCellList = [];
@@ -755,18 +766,18 @@ describe('公式引擎-常用场景', function () {
 
       engine.prepareToEvaluateTable(cellValueProvider);
 
-      
+
       // 修改 A2
       fetchOperationCount = 0;
       fetchOperationCellList = [];
-      engine.reEvaluateAll(context, {c: 1, r: 2});
+      engine.reEvaluateAll(context, { c: 1, r: 2 });
       expect(fetchOperationCount).to.equal(3);
 
 
       // 修改 A1
       fetchOperationCount = 0;
       fetchOperationCellList = [];
-      engine.reEvaluateAll(context, {c: 1, r: 1});
+      engine.reEvaluateAll(context, { c: 1, r: 1 });
       expect(fetchOperationCount).to.equal(2);
 
     })
