@@ -282,7 +282,7 @@ class DependencyGraph {
     if (dependencyMap) {
 
       let deps = Object.keys(dependencyMap);
-      let depDetailList = deps.map(function(depKey){
+      let depDetailList = deps.map(function (depKey) {
         return dependencyMap[depKey];
       })
 
@@ -291,9 +291,9 @@ class DependencyGraph {
       // 需要建立该单元格范围到本顶点的依赖。
       let existingNodes = this.graph.nodeDatas();
       if (existingNodes) {
-        let rangeNodeList = existingNodes.filter(function(cellData){
-           let n = cellData.cellAddress;
-           return that._isCellRange(n);
+        let rangeNodeList = existingNodes.filter(function (cellData) {
+          let n = cellData.cellAddress;
+          return that._isCellRange(n);
         });
         rangeNodeList.forEach(function (cellData) {
           let n = cellData.cellAddress;
@@ -302,16 +302,41 @@ class DependencyGraph {
           }
         });
 
-        // 如果公式中包含的单元格范围节点中，需要建立关联。
+        // 如果公式中包含的依赖，在单元格范围节点中，需要建立关联。
         // 算法复杂度 O(n^2)
         rangeNodeList.forEach(function (cellData) {
           let n = cellData.cellAddress;
-          depDetailList.forEach(function (depDetail){
+          depDetailList.forEach(function (depDetail) {
             if (that._isInRange(n, depDetail.simple)) {
               that.graph.insertEdge(cellData, new CellData(depDetail.simple));
             }
           })
         });
+
+        ////////////////////////////////////////////////////////////////
+        // 这里判断，如果公式中包含了单元格范围类型的依赖，需要建立该单元格范围到已有范围内节点的依赖。
+
+        // 从单元格依赖中，查找范围依赖。
+        // 如果本单元格所依赖的单元格中，包括单元格范围，
+        // 需要建立这些单元格范围对于其范围内的顶点的依赖关系。
+        let depRangeNodeList = depDetailList.filter(function (depDetail) {
+          return that._isCellRange(depDetail.simple);
+        });
+
+        let cellNodeList = existingNodes.filter(function (cellData) {
+          let n = cellData.cellAddress;
+          return !that._isCellRange(n);
+        });
+
+        cellNodeList.forEach(function(cellData) {
+          let n = cellData.cellAddress;
+          depRangeNodeList.forEach(function(depDetail){
+            let depRange = depDetail.simple;
+            if(that._isInRange(depRange, n)) {
+              that.graph.insertEdge(new CellData(depDetail.simple), cellData);
+            }
+          });
+        })
       }
 
       // 建立本单元格对其他单元格的依赖关系
@@ -319,6 +344,7 @@ class DependencyGraph {
         that.graph.insertEdge(new CellData(cellAddress), new CellData(depDetail.simple), depDetail.deps);
         that.graph.updateNode(new CellData(cellAddress, formulaAst)); //将当前单元格的最新公式更新到节点中。
       })
+
 
 
     }

@@ -105,7 +105,7 @@ describe('公式引擎-常用场景', function () {
       engine.setCellFormula(context, I6, I6_f);
       innerFormula = engine.getCellFormula(context, I6);
       expect(innerFormula).to.equal(I6_f);
-      
+
     })
     it('设计态-单元格输入公式完毕（纯单元格地址）', function () {
       let context = new WorkBookContext('sheet1');
@@ -831,19 +831,34 @@ describe('公式引擎-常用场景', function () {
       expect(updatedCellList).to.have.lengthOf(3);
     })
 
-    it('同时依赖：单元格范围 + 单元格', function() {
+    it('浮动行删除操作', function () {
+      //           A              B
+      //    ┌──────────────┬──────────────┐
+      // 1  │ =SUM(A2->A3) │              │
+      //    ├──────────────┼──────────────┤
+      // 2  │              │     =A2      │──▶ float
+      //    ├──────────────┼──────────────┤
+      // 3  │      **      │     =A3      │──▶ float
+      //    ├──────────────┼──────────────┤
+      // 4  │              │     =A4      │
+      //    └──────────────┴──────────────┘
+
+      // 测试用例描述：
+      // 
+    })
+
+    it('同时依赖：单元格范围 + 单元格', function () {
       // 测试用例描述：
       // 1) A4 = SUM(A2:A3), B2 = A2
       // 2) 修改 A2 的值
       // 预期结果：
       // B2 重算，A4 重算
 
-      const A4 = { column: 1, row: 4};
-      const B2 = { column: 2, row: 2};
+      const A4 = { column: 1, row: 4 };
+      const B2 = { column: 2, row: 2 };
 
-      engine.setCellFormula(context, A4, '=SUM(A2:A3)');
       engine.setCellFormula(context, B2, '=A2');
-
+      engine.setCellFormula(context, A4, '=SUM(A2:A3)');
 
       let newValueContainers = [];
       const cellValueProvider = {
@@ -860,7 +875,7 @@ describe('公式引擎-常用场景', function () {
 
       engine.prepareToEvaluateTable(cellValueProvider);
 
-      const A2_Input = { column: 1, row: 2}; // A2 单元格发生了输入。
+      const A2_Input = { column: 1, row: 2 }; // A2 单元格发生了输入。
       engine.reEvaluateAll(context, A2_Input);
 
       expect(newValueContainers).to.have.lengthOf(2);
