@@ -830,6 +830,49 @@ describe('公式引擎-常用场景', function () {
       engine.reEvaluateAll(context, A2_Input);
       expect(updatedCellList).to.have.lengthOf(3);
     })
+
+    it('同时依赖：单元格范围 + 单元格', function() {
+      // 测试用例描述：
+      // 1) A4 = SUM(A2:A3), B2 = A2
+      // 2) 修改 A2 的值
+      // 预期结果：
+      // B2 重算，A4 重算
+
+      const A4 = { column: 1, row: 4};
+      const B2 = { column: 2, row: 2};
+
+      engine.setCellFormula(context, A4, '=SUM(A2:A3)');
+      engine.setCellFormula(context, B2, '=A2');
+
+
+      let newValueContainers = [];
+      const cellValueProvider = {
+        getCellValue: function (cell) {
+          return 1;
+        },
+        getCellRangeValues: function (cellRange) {
+          return [1];
+        },
+        setCellValue: function (cell, value) {
+          newValueContainers.push(cell);
+        }
+      };
+
+      engine.prepareToEvaluateTable(cellValueProvider);
+
+      const A2_Input = { column: 1, row: 2}; // A2 单元格发生了输入。
+      engine.reEvaluateAll(context, A2_Input);
+
+      expect(newValueContainers).to.have.lengthOf(2);
+
+      function includes(array, cell) {
+        return -1 !== array.findIndex((addr) => {
+          return addr.column === cell.column && addr.row === cell.row;
+        });
+      }
+      expect(includes(newValueContainers, B2)).to.be.true;
+      expect(includes(newValueContainers, A4)).to.be.true;
+    })
   });
 
   describe('表间公式', function () {

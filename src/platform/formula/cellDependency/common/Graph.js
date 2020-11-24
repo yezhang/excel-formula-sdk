@@ -124,7 +124,7 @@ class Graph {
       return ret;
     }
 
-    
+
     // 刷新入度
     const incomingList = _valueList(node.incoming);
     const syncedInComing = new Map();
@@ -139,7 +139,7 @@ class Graph {
     // 刷新出度
     const outgoingList = _valueList(node.outgoing);
     const syncedOutgoing = new Map();
-    outgoingList.forEach(function (outgoing){
+    outgoingList.forEach(function (outgoing) {
       let toNode = outgoing.toNode;
       syncedOutgoing.set(that._hashFn(toNode.data), outgoing);
     })
@@ -147,7 +147,7 @@ class Graph {
     node.outgoing.clear();
     node.outgoing = syncedOutgoing;
   }
-  
+
   /**
    * 刷新图的状态：用于根据图中的节点，更新图的 hashkey。
    * 
@@ -218,7 +218,7 @@ class Graph {
     }
     const fromKey = this._hashFn(data);
     const outgoings = node.outgoing;
-    for (let { toNode } of outgoings.values()) { 
+    for (let { toNode } of outgoings.values()) {
       toNode.incoming.delete(fromKey);
       const toKey = this._hashFn(toNode.data);
       node.outgoing.delete(toKey);
@@ -272,6 +272,25 @@ class Graph {
     }
 
     return data.join('\n');
+  }
+
+  /**
+   * 输出 DOT 语言的有向图结构。
+   * @see https://graphviz.org/doc/info/lang.html
+   */
+  toDotString() {
+    let edges = [];
+    for (const entry of this._nodes) {
+      let fromkey = entry[0];
+      let value = entry[1];
+      let outgoing = value.outgoing.keys();
+      for (const going of outgoing) {
+        edges.push(`\"${fromkey}\" -> \"${going}\"`);
+      }
+    }
+    return `digraph g {` +
+      `${edges.join(';')}` +
+      `}`;
   }
 }
 
