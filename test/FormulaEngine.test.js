@@ -245,33 +245,40 @@ describe('公式引擎-常用场景', function () {
     });
 
     it('设计态-调整表结构-删除浮动行', function () {
-      // （1）设置公式 A1 = SUM(A2->A3)，B2 = A2，B3 = A3，B4 = A4，其中第2、3行为浮动行。
-      // （2）选中第 3 行，执行删除浮动行，删除一行，调用 shrinkFloatRows 方法执行删除浮动行动作。
-      // （3）受影响公式单元格为 A1，B3，期待 A1 = SUM(A2->A2)，B3(原B4) = A3。
+      // （1）设置公式 A1 = SUM(A2->A3)，B2 = A2，B3 = A3，其中第2行为浮动行。
+      // （2）选中第 2 行，向下增加一行，调用 expandFloatRows。
+      // （3）在新增的第 3 行，注册公式 B3 = A3。
+      // （4）选中第 3 行，执行删除浮动行，删除一行，调用 shrinkFloatRows 方法执行删除浮动行动作。
+      // （5）受影响公式单元格为 A1，B3，期待 A1 = SUM(A2->A2)，B3(原B4) = A3。
       let context = new WorkBookContext('sheet1');
       let A1CellRef = { column: 1, row: 1 }; // A1
-      let A1FormulaText = '=SUM(A2->A3)';
+      let A1FormulaText = '=SUM(A2->A2)';
       let B2CellRef = { column: 2, row: 2 }; // B2
       let B2FormulaText = '=A2';
       let B3CellRef = { column: 2, row: 3 }; // B3
       let B3FormulaText = '=A3';
       let B4CellRef = { column: 2, row: 4 }; // B4
-      let B4FormulaText = '=A4';
+      // let B4FormulaText = '=A4';
       engine.setCellFormula(context, A1CellRef, A1FormulaText);
       engine.setCellFormula(context, B2CellRef, B2FormulaText);
       engine.setCellFormula(context, B3CellRef, B3FormulaText);
-      engine.setCellFormula(context, B4CellRef, B4FormulaText);
+      // engine.setCellFormula(context, B4CellRef, B4FormulaText);
 
-      // 删除1行，从 3 行开始，删除 1 行
-      let updatedCellAddressList = engine.shrinkFloatRows(context, 3, 1);
-      expect(updatedCellAddressList).to.have.lengthOf(2);
+      // 先插入一行，
+      engine.expandFloatRows(context, 2, 1);
+      let A1newF = engine.getCellFormula(context, A1CellRef);
+      expect(A1newF).to.equal('=SUM(A2->A3)');
+      let B4newF = engine.getCellFormula(context, B4CellRef);
+      expect(B4newF).to.equal('=A4');
 
+      engine.setCellFormula(context, B3CellRef, B3FormulaText);
+
+      // 再删除1行，从 3 行开始，删除 1 行
+      engine.shrinkFloatRows(context, 3, 1);
       let A1f = engine.getCellFormula(context, A1CellRef);
-      console.log("🚀 ~ file: FormulaEngine.test.js ~ line 270 ~ A1f", A1f)
       expect(A1f).to.equal('=SUM(A2->A2)');
 
       let B3f = engine.getCellFormula(context, B3CellRef);
-      console.log("🚀 ~ file: FormulaEngine.test.js ~ line 274 ~ B3f", B3f)
       expect(B3f).to.equal('=A3');
 
     });
