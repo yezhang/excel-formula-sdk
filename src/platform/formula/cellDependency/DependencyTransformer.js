@@ -186,7 +186,7 @@ class DependencyTransformer {
       }
     );
 
-    
+
     let affectedCellList = this._findDirtyCells(function (addr) {
       if (addr instanceof SimpleCellRange) {
         if (addr.isAffactedByShrinkingRows(activeSheetName, startFrom, numberOfRows)) {
@@ -216,7 +216,7 @@ class DependencyTransformer {
     let formulaMovedCellsByDeletingRows = this._doTransformation(affectedCellList,
       function (addrSelf) {
         if (addrSelf.willBeRemovedWhenRemovingRows(activeSheetName, startFrom, numberOfRows)) {
-          
+
           return;
         }
 
@@ -233,7 +233,7 @@ class DependencyTransformer {
 
 
 
-    let formulaUpdatedCells = [].concat(formulaUpdatedCellsByShrinkingRows, 
+    let formulaUpdatedCells = [].concat(formulaUpdatedCellsByShrinkingRows,
       formulaUpdatedCellsByDeletingRows, formulaMovedCellsByDeletingRows);
 
     return ArrayUtils.uniqueArray(formulaUpdatedCells, SimpleCellAddress.defaultHashFn);
@@ -262,6 +262,7 @@ class DependencyTransformer {
   }
 
   removeRows(activeSheetName, startFrom, numberOfRows) {
+    const that = this;
     let affectedCellList = this._findDirtyCells(function (simpleCellAddress) {
       return simpleCellAddress.isAffactedByRemovingRows(activeSheetName, startFrom, numberOfRows);
     });
@@ -269,6 +270,8 @@ class DependencyTransformer {
       function (addrSelf) {
         if (addrSelf.willBeRemovedWhenRemovingRows(activeSheetName, startFrom, numberOfRows)) {
           addrSelf.lost();
+          // 从依赖图中移除
+          that.depGraph.lostCell(addrSelf);
           return;
         }
 
@@ -303,6 +306,7 @@ class DependencyTransformer {
   }
 
   removeColumns(activeSheetName, startFrom, numberOfColumns) {
+    const that = this;
     let affectedCellList = this._findDirtyCells(function (simpleCellAddress) {
       return simpleCellAddress.isAffactedByRemovingColumns(activeSheetName, startFrom, numberOfColumns);
     });
@@ -310,6 +314,8 @@ class DependencyTransformer {
       function (addrSelf) {
         if (addrSelf.willBeRemovedWhenRemovingColumns(activeSheetName, startFrom, numberOfColumns)) {
           addrSelf.lost();
+          // 从依赖图中移除
+          that.depGraph.lostCell(addrSelf);
           return;
         }
 
