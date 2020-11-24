@@ -244,6 +244,38 @@ describe('公式引擎-常用场景', function () {
       expect(innerFormula).to.equal(A2FormulaText);
     });
 
+    it('设计态-调整表结构-删除浮动行', function () {
+      // （1）设置公式 A1 = SUM(A2->A3)，B2 = A2，B3 = A3，B4 = A4，其中第2、3行为浮动行。
+      // （2）选中第 3 行，执行删除浮动行，删除一行，调用 shrinkFloatRows 方法执行删除浮动行动作。
+      // （3）受影响公式单元格为 A1，B3，期待 A1 = SUM(A2->A2)，B3(原B4) = A3。
+      let context = new WorkBookContext('sheet1');
+      let A1CellRef = { column: 1, row: 1 }; // A1
+      let A1FormulaText = '=SUM(A2->A3)';
+      let B2CellRef = { column: 2, row: 2 }; // B2
+      let B2FormulaText = '=A2';
+      let B3CellRef = { column: 2, row: 3 }; // B3
+      let B3FormulaText = '=A3';
+      let B4CellRef = { column: 2, row: 4 }; // B4
+      let B4FormulaText = '=A4';
+      engine.setCellFormula(context, A1CellRef, A1FormulaText);
+      engine.setCellFormula(context, B2CellRef, B2FormulaText);
+      engine.setCellFormula(context, B3CellRef, B3FormulaText);
+      engine.setCellFormula(context, B4CellRef, B4FormulaText);
+
+      // 删除1行，从 3 行开始，删除 1 行
+      let updatedCellAddressList = engine.shrinkFloatRows(context, 3, 1);
+      expect(updatedCellAddressList).to.have.lengthOf(2);
+
+      let A1f = engine.getCellFormula(context, A1CellRef);
+      console.log("🚀 ~ file: FormulaEngine.test.js ~ line 270 ~ A1f", A1f)
+      expect(A1f).to.equal('=SUM(A2->A2)');
+
+      let B3f = engine.getCellFormula(context, B3CellRef);
+      console.log("🚀 ~ file: FormulaEngine.test.js ~ line 274 ~ B3f", B3f)
+      expect(B3f).to.equal('=A3');
+
+    });
+
     it('设计态-调整表结构-插入列', function () {
       // 测试用例：
       // 调整表结构后，受影响的单元格公式需要更新，指向新的单元格地址。
@@ -885,6 +917,7 @@ describe('公式引擎-常用场景', function () {
           return addr.column === cell.column && addr.row === cell.row;
         });
       }
+      console.log(newValueContainers);
       expect(includes(newValueContainers, B2)).to.be.true;
       expect(includes(newValueContainers, A4)).to.be.true;
     })
