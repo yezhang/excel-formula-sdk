@@ -264,23 +264,26 @@ describe('公式引擎-常用场景', function () {
       engine.setCellFormula(context, B3CellRef, B3FormulaText);
       // engine.setCellFormula(context, B4CellRef, B4FormulaText);
 
-      // 先插入一行，
-      engine.expandFloatRows(context, 2, 1);
+      // 选中第 2 行，先插入一行
+      engine.expandFloatRows(context, 2, 5);
       let A1newF = engine.getCellFormula(context, A1CellRef);
-      expect(A1newF).to.equal('=SUM(A2->A3)');
-      let B4newF = engine.getCellFormula(context, B4CellRef);
-      expect(B4newF).to.equal('=A4');
+      expect(A1newF).to.equal('=SUM(A2->A7)');
+      let B8newF = engine.getCellFormula(context, { column: 2, row: 8 });
+      expect(B8newF).to.equal('=A8');
+      // 新插入的第 3、4、5、6、7 行 增加公式 B3 = A3 B4 = A4 B5 = A5 B6 = A6 B7 = A7
+      engine.setCellFormula(context, { column: 2, row: 3 }, '=A3');
+      engine.setCellFormula(context, { column: 2, row: 4 }, '=A4');
+      engine.setCellFormula(context, { column: 2, row: 5 }, '=A5');
+      engine.setCellFormula(context, { column: 2, row: 6 }, '=A6');
+      engine.setCellFormula(context, { column: 2, row: 7 }, '=A7');
 
-      engine.setCellFormula(context, B3CellRef, B3FormulaText);
-
-      // 再删除1行，从 3 行开始，删除 1 行
-      engine.shrinkFloatRows(context, 3, 1);
+      // 再删除1行，从 3 行开始，删除 5 行
+      engine.shrinkFloatRows(context, 2, 5);
       let A1f = engine.getCellFormula(context, A1CellRef);
       expect(A1f).to.equal('=SUM(A2->A2)');
 
       let B3f = engine.getCellFormula(context, B3CellRef);
       expect(B3f).to.equal('=A3');
-
     });
 
     it('设计态-调整表结构-插入列', function () {
