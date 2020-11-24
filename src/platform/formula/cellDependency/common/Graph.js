@@ -277,6 +277,7 @@ class Graph {
   /**
    * 输出 DOT 语言的有向图结构。
    * @see https://graphviz.org/doc/info/lang.html
+   * @see https://dreampuf.github.io/GraphvizOnline/
    */
   toDotString() {
     let edges = [];

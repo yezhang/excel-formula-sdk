@@ -250,6 +250,7 @@ class FormulaEngine {
 
   /**
    * 用户调整表结构：减少浮动行
+   * @param {Number<1..n>} columnRowIndex 当前操作行索引
    */
   shrinkFloatRows(workBookContext, columnRowIndex, rowCount) {
     const activeSheetName = workBookContext.activeSheetName;
