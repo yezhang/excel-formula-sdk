@@ -344,9 +344,6 @@ class DependencyGraph {
         that.graph.insertEdge(new CellData(cellAddress), new CellData(depDetail.simple), depDetail.deps);
         that.graph.updateNode(new CellData(cellAddress, formulaAst)); //将当前单元格的最新公式更新到节点中。
       })
-
-
-
     }
   }
 
@@ -376,6 +373,13 @@ class DependencyGraph {
         }
       })
     }
+  }
+
+  /**
+   * 单元格顶点受到“删除行、列”操作的影响，从依赖图中消失。
+   */
+  lostCell(simpleCellAddress) {
+    this.graph.removeNode(new CellData(simpleCellAddress));
   }
 
   /**

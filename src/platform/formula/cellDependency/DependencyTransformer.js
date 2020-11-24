@@ -166,6 +166,8 @@ class DependencyTransformer {
     // 1) 调整受影响浮动范围在依赖图中的节点，调整依赖单元格的公式。
     // 2) 调整不受「扩展」影响浮动单元格，以及普通单元格，执行删除行。
 
+    const that = this;
+
     let affectedFloatCellList = this._findDirtyCells(function (addr) {
       if (!(addr instanceof SimpleCellRange)) {
         return false;
@@ -184,6 +186,7 @@ class DependencyTransformer {
       }
     );
 
+    
     let affectedCellList = this._findDirtyCells(function (addr) {
       if (addr instanceof SimpleCellRange) {
         if (addr.isAffactedByShrinkingRows(activeSheetName, startFrom, numberOfRows)) {
@@ -193,10 +196,27 @@ class DependencyTransformer {
       return addr.isAffactedByRemovingRows(activeSheetName, startFrom, numberOfRows);
     });
 
+    // 先处理将要被删除的单元格
     let formulaUpdatedCellsByDeletingRows = this._doTransformation(affectedCellList,
       function (addrSelf) {
         if (addrSelf.willBeRemovedWhenRemovingRows(activeSheetName, startFrom, numberOfRows)) {
           addrSelf.lost();
+          // 从依赖图中移除
+          that.depGraph.lostCell(addrSelf);
+        }
+      },
+      function (cellCarry, addrSelf) {
+        if (addrSelf.isLost()) {
+          cellCarry.lost();
+        }
+      }
+    );
+
+    // 再处理需要移动的单元格
+    let formulaMovedCellsByDeletingRows = this._doTransformation(affectedCellList,
+      function (addrSelf) {
+        if (addrSelf.willBeRemovedWhenRemovingRows(activeSheetName, startFrom, numberOfRows)) {
+          
           return;
         }
 
@@ -204,7 +224,6 @@ class DependencyTransformer {
       },
       function (cellCarry, addrSelf) {
         if (addrSelf.isLost()) {
-          cellCarry.lost();
           return;
         }
 
@@ -212,7 +231,10 @@ class DependencyTransformer {
       }
     );
 
-    let formulaUpdatedCells = [].concat(formulaUpdatedCellsByShrinkingRows, formulaUpdatedCellsByDeletingRows);
+
+
+    let formulaUpdatedCells = [].concat(formulaUpdatedCellsByShrinkingRows, 
+      formulaUpdatedCellsByDeletingRows, formulaMovedCellsByDeletingRows);
 
     return ArrayUtils.uniqueArray(formulaUpdatedCells, SimpleCellAddress.defaultHashFn);
   }
