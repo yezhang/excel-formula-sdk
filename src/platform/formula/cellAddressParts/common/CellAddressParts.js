@@ -892,10 +892,11 @@ class SimpleCellRange {
   }
 
   includes(simpleCellAddress) {
+    let isSameSheet = this.sheet === simpleCellAddress.sheet;
     let inColumn = this.start.column <= simpleCellAddress.column && simpleCellAddress.column <= this.end.column;
     let inRow = this.start.row <= simpleCellAddress.row && simpleCellAddress.row <= this.end.row;
 
-    return inColumn && inRow;
+    return isSameSheet && inColumn && inRow;
   }
 
   equals(other) {
