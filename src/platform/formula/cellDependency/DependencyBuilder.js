@@ -54,6 +54,10 @@ class CellDependencyBuilder {
     this.addOrUpdateDependencies(simpleCellAddress, dependenciesList);
   }
 
+  check() {
+    this._checkCycleDepencies();
+  }
+
   /**
    * 将 "单元格引用字符串" 对象化、去除重复的依赖引用、简化地址表示法。
    * 
@@ -94,7 +98,6 @@ class CellDependencyBuilder {
 
     this._removeDependencies(workingCellAddr);
     this._addDependencies(workingCellAddr, depMap);
-    this._checkCycleDepencies();
   }
 
   _checkCycleDepencies() {

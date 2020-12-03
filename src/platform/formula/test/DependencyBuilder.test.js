@@ -139,6 +139,7 @@ describe('[DependencyBuilder] 依赖图的构建', function () {
 
     expect(function () {
       builder.addOrUpdateDependencies(C1, [B1]);
+      builder.check();
     }).to.throw(CyclicDependencyError, '单元格地址之间循环依赖');
   });
 

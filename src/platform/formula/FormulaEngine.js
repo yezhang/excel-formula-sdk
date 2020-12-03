@@ -90,6 +90,21 @@ class FormulaEngine {
    * @param {String} formula 公式文本（包含=）
    */
   setCellFormula(workBookContext, cellAddr, formula) {
+    this._innerSetFormula(workBookContext, cellAddr, formula);
+    this._checkSetFormula();
+  }
+  /**
+   * @description: 初始化设置公式使用。
+   * @param {*} workBookContext
+   * @param {*} cellAddr
+   * @param {*} formula
+   * @return {*}
+   */
+  initCellFormula(workBookContext, cellAddr, formula) {
+    this._innerSetFormula(workBookContext, cellAddr, formula);
+  }
+
+  _innerSetFormula(workBookContext, cellAddr, formula) {
     // 处理单元格地址的简写
     let fullCellAddr = this._parseCellAddr(cellAddr);
 
@@ -114,6 +129,11 @@ class FormulaEngine {
     builder.build(activeSheetName, fullCellAddr);
   }
 
+  _checkSetFormula() {
+    const builder = new CellDependencyBuilder(this.depGraph);
+    builder.check();
+  }
+
   /**
    * 获取最新的单元格公式。
    * @param {WorkBookContext} workBookContext 工作簿上下文，包含当前激活的工作表sheet。
@@ -133,7 +153,7 @@ class FormulaEngine {
   _parseCellAddr(cellAddr) {
     return {
       column: cellAddr.column || cellAddr.c,
-      row: cellAddr.row || cellAddr.r
+      row: cellAddr.row || cellAddr.r,
     };
   }
 
@@ -207,10 +227,7 @@ class FormulaEngine {
   }
 
   _assertCellValueProvider(provider) {
-    assert.ok(
-      provider,
-      '需要调用 prepareToEvaluateTable 方法, 提供 tableCellValueProvider'
-    );
+    assert.ok(provider, '需要调用 prepareToEvaluateTable 方法, 提供 tableCellValueProvider');
   }
 
   evaluateAll(workBookContext) {
@@ -264,11 +281,7 @@ class FormulaEngine {
   addColumns(workBookContext, columnRowIndex, columnCount) {
     const activeSheetName = workBookContext.activeSheetName;
     const transform = new DependencyTransformer(this.depGraph);
-    return transform.insertColumns(
-      activeSheetName,
-      columnRowIndex,
-      columnCount
-    );
+    return transform.insertColumns(activeSheetName, columnRowIndex, columnCount);
   }
 
   /**
@@ -277,11 +290,7 @@ class FormulaEngine {
   removeColumns(workBookContext, columnRowIndex, columnCount) {
     const activeSheetName = workBookContext.activeSheetName;
     const transform = new DependencyTransformer(this.depGraph);
-    return transform.removeColumns(
-      activeSheetName,
-      columnRowIndex,
-      columnCount
-    );
+    return transform.removeColumns(activeSheetName, columnRowIndex, columnCount);
   }
   /**
    * 用户调整表结构：移动列
