@@ -76,9 +76,11 @@ class FormulaEvaluationVisitor {
     throw new EvaluationErrors.NameError(`无法识别的符号 ${node.name}`);
   }
 
+  /**
+   * @param {RefItemIdentifier} node
+   */
   visitRefItemIdentifier(node) {
-    // TODO: 从接口取数
-    // not implemented yet
+    return node.name;
   }
 
   /**
@@ -87,13 +89,13 @@ class FormulaEvaluationVisitor {
    * @param {MemberExpression} node
    */
   visitMemberExpression(node) {
-    let object = node.object;
-    let property = node.property;
-    if(!!this.cellValueProxy.fetchDataObject){
+    let objectName = node.object.name;
+    let property = node.property.name;
+    if(!this.cellValueProxy.fetchDataObject){
       throw new EvaluationError('请提供 fetchDataObject 函数，用于获取数据对象的值')
     }
     try {
-      return this.cellValueProxy.fetchDataObject(object, property);
+      return this.cellValueProxy.fetchDataObject(objectName, property);
     }catch(e){
       throw new EvaluationErrors.RefError(`无法获取数据对象的值:${node.toString()}`);
     }

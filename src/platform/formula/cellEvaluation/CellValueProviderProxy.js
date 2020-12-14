@@ -28,6 +28,13 @@ class CellValueProviderProxy {
   }
 
   /**
+   * 获取数据对象（公式中的特定常量、特定档案标识等）
+   */
+  fetchDataObject(object, property){
+    return this.cellValueProvider.fetchDataObject(object, property)
+  }
+
+  /**
    * 获取浮动单元格范围的值，是一个数组。
    * @param {SimpleCellRange} cellRange 
    */

@@ -13,6 +13,30 @@ const Core = require('platform/formula/core/SingleFormulaCore').INSTANCE;
 const SingleFormulaAST = require('platform/formula/core/SingleFormulaAST').SingleFormulaAST;
 const Evaluator = require('platform/formula/cellEvaluation/Evaluator').Evaluator;
 
+describe('特殊常量求值', function() {
+  it('@a.b 语法', function() {
+    let cellValueProvider = {
+      fetchDataObject: function(object, property) {
+        if(property === 'prop'){
+          return 5.0;
+        }
+
+        if(property === 'percent') {
+          return 0.03;
+        }
+      }
+    };
+
+    let input = '= @Entity.prop * @Entity.percent';
+    let ast = new SingleFormulaAST(Core.parse(input));
+    let evaluator = new Evaluator(null, cellValueProvider);
+
+    let ret = evaluator.evaluateAST(ast);
+    let resultExpected = 5.0 * 0.03;
+    expect(ret).to.equal(resultExpected);
+
+  })
+})
 describe('公式求值', function () {
   let cellValueProvider = {
     getCellValue: function (cellAddress) {

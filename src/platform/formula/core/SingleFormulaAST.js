@@ -177,8 +177,13 @@ class ASTVisitor extends FormulaParserVisitor {
     return ctx.refItemCode().accept(this);
   }
 
+  visitIdentifierName(ctx) {
+    // 语法中只有一个孩子节点，不使用默认的处理方法。默认的处理方式，会返回一个数组。
+    return ctx.children[0].accept(this); 
+  }
+
   visitRefItemCode(ctx) {
-    let name = ctx.Identifier().text;
+    let name = ctx.Identifier().getText();
     return new RefItemIdentifier(name);
   }
 
