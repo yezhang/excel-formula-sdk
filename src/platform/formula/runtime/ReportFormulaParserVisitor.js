@@ -90,6 +90,18 @@ ReportFormulaParserVisitor.prototype.visitArrayLiteralExpression = function(ctx)
 };
 
 
+// Visit a parse tree produced by ReportFormulaParser#MemberDotExpression.
+ReportFormulaParserVisitor.prototype.visitMemberDotExpression = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by ReportFormulaParser#MemberIndexExpression.
+ReportFormulaParserVisitor.prototype.visitMemberIndexExpression = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
 // Visit a parse tree produced by ReportFormulaParser#IdentifierExpression.
 ReportFormulaParserVisitor.prototype.visitIdentifierExpression = function(ctx) {
   return this.visitChildren(ctx);

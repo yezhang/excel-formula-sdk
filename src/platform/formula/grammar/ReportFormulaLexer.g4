@@ -29,6 +29,7 @@ Multiply:                       '*';
 Divide:                         '/';
 Modulus:                        '%';
 Power:                          '**';
+Hashtag:                        '#';
 LessThan:                       '<';
 MoreThan:                       '>';
 LessThanEquals:                 '<=';

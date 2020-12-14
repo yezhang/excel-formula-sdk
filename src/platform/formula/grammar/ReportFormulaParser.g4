@@ -10,10 +10,12 @@ expressionStatement: expressionSequence;
 expressionSequence : singleExpression ; //(',' singleExpression)* 
 
 singleExpression
-    : singleExpression arguments                                                # ArgumentsExpression
+    : singleExpression '[' expressionSequence ']'                               # MemberIndexExpression
+    | singleExpression '?'? '.' '#'? identifierName                             # MemberDotExpression
+    | singleExpression arguments                                                # ArgumentsExpression
     | '+' singleExpression                                                      # UnaryPlusExpression
     | '-' singleExpression                                                      # UnaryMinusExpression
-    | <assoc=right> singleExpression op='**' singleExpression                      # PowerExpression
+    | <assoc=right> singleExpression op='**' singleExpression                   # PowerExpression
     | singleExpression op=('*' | '/' | '%') singleExpression                    # MultiplicativeExpression
     | singleExpression op=('+' | '-') singleExpression                          # AdditiveExpression
     | singleExpression op=('<' | '>' | '<=' | '>=') singleExpression            # RelationalExpression

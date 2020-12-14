@@ -128,6 +128,24 @@ ReportFormulaParserListener.prototype.exitArrayLiteralExpression = function(ctx)
 };
 
 
+// Enter a parse tree produced by ReportFormulaParser#MemberDotExpression.
+ReportFormulaParserListener.prototype.enterMemberDotExpression = function(ctx) {
+};
+
+// Exit a parse tree produced by ReportFormulaParser#MemberDotExpression.
+ReportFormulaParserListener.prototype.exitMemberDotExpression = function(ctx) {
+};
+
+
+// Enter a parse tree produced by ReportFormulaParser#MemberIndexExpression.
+ReportFormulaParserListener.prototype.enterMemberIndexExpression = function(ctx) {
+};
+
+// Exit a parse tree produced by ReportFormulaParser#MemberIndexExpression.
+ReportFormulaParserListener.prototype.exitMemberIndexExpression = function(ctx) {
+};
+
+
 // Enter a parse tree produced by ReportFormulaParser#IdentifierExpression.
 ReportFormulaParserListener.prototype.enterIdentifierExpression = function(ctx) {
 };
