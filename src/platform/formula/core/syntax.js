@@ -22,6 +22,7 @@ exports.Syntax = {
   BinaryExpression: 'BinaryExpression',
   AssignmentExpression: 'AssignmentExpression',
   LogicalExpression: 'LogicalExpression',
+  MemberExpression: 'MemberExpression',
   ConditionalExpression: 'ConditionalExpression',
   CallExpression: 'CallExpression',
   ParenthesizedExpression: 'ParenthesizedExpression',

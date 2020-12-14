@@ -157,6 +157,22 @@ class ASTVisitor extends FormulaParserVisitor {
     return new PlainTextIdentifier(name);
   }
 
+  // 语法：a[b]
+  visitMemberIndexExpression(ctx) {
+    let object = ctx.singleExpression().accept(this);
+    let property = ctx.expressionSequence().accept(this);
+
+    return new MemberExpression(object, property, true);
+  }
+
+  // 语法：a.b
+  visitMemberDotExpression(ctx) {
+    let object = ctx.singleExpression().accept(this);
+    let property = ctx.identifierName().accept(this);
+
+    return new MemberExpression(object, property, false);
+  }
+
   visitIdentifierRefItemCode(ctx) {
     return ctx.refItemCode().accept(this);
   }
@@ -340,7 +356,7 @@ SingleFormulaAST.prototype.findAllCellRefNodes = function () {
 class IAccessableType {
   accept(visitor) {
     let fnName = 'visit' + this.type;
-    if(fnName in visitor){
+    if (fnName in visitor) {
       return visitor[fnName](this);
     }
 
@@ -353,7 +369,7 @@ class IAccessableType {
  * https://github.com/estree/estree
  * https://github.com/estree/estree/blob/master/es5.md
  */
-class FormulaProgram extends IAccessableType{
+class FormulaProgram extends IAccessableType {
   constructor(body) {
     super();
     this.type = Syntax.FormulaProgram;
@@ -365,7 +381,7 @@ class FormulaProgram extends IAccessableType{
   }
 }
 
-class Identifier extends IAccessableType{
+class Identifier extends IAccessableType {
   constructor(name) {
     super();
     this.type = Syntax.Identifier;
@@ -377,7 +393,7 @@ class Identifier extends IAccessableType{
   }
 }
 
-class RefItemIdentifier extends IAccessableType{
+class RefItemIdentifier extends IAccessableType {
   constructor(name) {
     super();
     this.type = Syntax.RefItemIdentifier;
@@ -389,7 +405,9 @@ class RefItemIdentifier extends IAccessableType{
   }
 }
 
-class CellAddressIdentifier extends IAccessableType{
+
+
+class CellAddressIdentifier extends IAccessableType {
   /**
    * @param {SheetNameIdentifier} sheetName
    */
@@ -424,7 +442,7 @@ class CellAddressIdentifier extends IAccessableType{
   }
 }
 
-class SheetNameIdentifier extends IAccessableType{
+class SheetNameIdentifier extends IAccessableType {
   constructor(sheetName) {
     super();
     this.type = Syntax.SheetNameIdentifier;
@@ -436,14 +454,14 @@ class SheetNameIdentifier extends IAccessableType{
   }
 
   clone() {
-    if(this.name) {
+    if (this.name) {
       return new SheetNameIdentifier(this.name.slice());
     }
     return new SheetNameIdentifier(undefined);
   }
 }
 
-class A1ReferenceIdentifier extends IAccessableType{
+class A1ReferenceIdentifier extends IAccessableType {
   constructor(columnRef, rowRef) {
     super();
     this.type = Syntax.A1ReferenceIdentifier;
@@ -476,7 +494,7 @@ class A1ReferenceIdentifier extends IAccessableType{
   }
 }
 
-class AbsoluteColumnIdentifier extends IAccessableType{
+class AbsoluteColumnIdentifier extends IAccessableType {
   constructor(text) {
     super();
     this.type = Syntax.AbsoluteColumnIdentifier;
@@ -492,7 +510,7 @@ class AbsoluteColumnIdentifier extends IAccessableType{
   }
 }
 
-class RelativeColumnIdentifier extends IAccessableType{
+class RelativeColumnIdentifier extends IAccessableType {
   constructor(text) {
     super();
     this.type = Syntax.RelativeColumnIdentifier;
@@ -508,7 +526,7 @@ class RelativeColumnIdentifier extends IAccessableType{
   }
 }
 
-class AbsoluteRowIdentifier extends IAccessableType{
+class AbsoluteRowIdentifier extends IAccessableType {
   constructor(line) {
     super();
     this.type = Syntax.AbsoluteRowIdentifier;
@@ -524,7 +542,7 @@ class AbsoluteRowIdentifier extends IAccessableType{
   }
 }
 
-class RelativeRowIdentifier extends IAccessableType{
+class RelativeRowIdentifier extends IAccessableType {
   constructor(line) {
     super();
     this.type = Syntax.RelativeRowIdentifier;
@@ -540,7 +558,7 @@ class RelativeRowIdentifier extends IAccessableType{
   }
 }
 
-class CellRangeIdentifier extends IAccessableType{
+class CellRangeIdentifier extends IAccessableType {
   constructor(sheetName, startRef, endRef) {
     super();
     this.type = Syntax.CellRangeIdentifier;
@@ -583,7 +601,7 @@ class CellFloatRangeIdentifier extends CellRangeIdentifier {
   }
 }
 
-class PlainTextIdentifier extends IAccessableType{
+class PlainTextIdentifier extends IAccessableType {
   constructor(name) {
     super();
     this.type = Syntax.PlainTextIdentifier;
@@ -595,7 +613,7 @@ class PlainTextIdentifier extends IAccessableType{
   }
 }
 
-class Literal extends IAccessableType{
+class Literal extends IAccessableType {
   constructor(value) {
     super();
     this.type = Syntax.Literal;
@@ -607,7 +625,7 @@ class Literal extends IAccessableType{
   }
 }
 
-class PercentageLiteral extends IAccessableType{
+class PercentageLiteral extends IAccessableType {
   constructor(value) {
     super();
     this.type = Syntax.PercentageLiteral;
@@ -619,7 +637,7 @@ class PercentageLiteral extends IAccessableType{
   }
 }
 
-class ExpressionStatement extends IAccessableType{
+class ExpressionStatement extends IAccessableType {
   constructor(expression) {
     super();
     this.type = Syntax.ExpressionStatement;
@@ -631,7 +649,7 @@ class ExpressionStatement extends IAccessableType{
   }
 }
 
-class ArrayExpression extends IAccessableType{
+class ArrayExpression extends IAccessableType {
   constructor(elements) {
     super();
     this.type = Syntax.ArrayExpression;
@@ -648,7 +666,7 @@ class ArrayExpression extends IAccessableType{
   }
 }
 
-class ObjectExpression extends IAccessableType{
+class ObjectExpression extends IAccessableType {
   constructor(properties) {
     super();
     this.type = Syntax.ObjectExpression;
@@ -666,7 +684,7 @@ class ObjectExpression extends IAccessableType{
   }
 }
 
-class Property extends IAccessableType{
+class Property extends IAccessableType {
   constructor(key, value, kind) {
     super();
     this.type = Syntax.Property;
@@ -676,7 +694,7 @@ class Property extends IAccessableType{
   }
 }
 
-class UnaryExpression extends IAccessableType{
+class UnaryExpression extends IAccessableType {
   constructor(operator, argument) {
     super();
     this.type = Syntax.UnaryExpression;
@@ -690,7 +708,7 @@ class UnaryExpression extends IAccessableType{
   }
 }
 
-class BinaryExpression extends IAccessableType{
+class BinaryExpression extends IAccessableType {
   constructor(operator, left, right) {
     super();
     this.type = Syntax.BinaryExpression;
@@ -704,7 +722,7 @@ class BinaryExpression extends IAccessableType{
   }
 }
 
-class AssignmentExpression extends IAccessableType{
+class AssignmentExpression extends IAccessableType {
   constructor(operator, left, right) {
     super();
     this.type = Syntax.AssignmentExpression;
@@ -718,7 +736,7 @@ class AssignmentExpression extends IAccessableType{
   }
 }
 
-class LogicalExpression extends IAccessableType{
+class LogicalExpression extends IAccessableType {
   constructor(operator, left, right) {
     super();
     this.type = Syntax.LogicalExpression;
@@ -732,7 +750,28 @@ class LogicalExpression extends IAccessableType{
   }
 }
 
-class ConditionalExpression extends IAccessableType{
+/**
+ * 如果 computed 是 true，本节点表示计算（a[b]）成员表达式，property 是 Expression
+ * 如果 computed 是 false，本节点表示静态（a.b）成员表达式，property 是 Identifier
+ */
+class MemberExpression extends IAccessableType {
+  constructor(object, property, computed) {
+    super();
+    this.type = Syntax.MemberExpression;
+    this.object = object;
+    this.property = property;
+    this.computed = computed;
+  }
+
+  toString() {
+    let objStr = this.object.toString();
+    let propStr = this.property.toString();
+
+    return this.computed ? `${objStr}[${propStr}]` : `${objStr}.${propStr}`
+  }
+
+}
+class ConditionalExpression extends IAccessableType {
   constructor(test, consequent, alternate) {
     super();
     this.type = Syntax.ConditionalExpression;
@@ -748,7 +787,7 @@ class ConditionalExpression extends IAccessableType{
   }
 }
 
-class CallExpression extends IAccessableType{
+class CallExpression extends IAccessableType {
   constructor(callee, args) {
     super();
     this.type = Syntax.CallExpression;
@@ -783,7 +822,7 @@ class ParenthesizedExpression extends IAccessableType {
   }
 }
 
-class SequenceExpression extends IAccessableType{
+class SequenceExpression extends IAccessableType {
   constructor(expressions) {
     super();
     this.type = Syntax.SequenceExpression;

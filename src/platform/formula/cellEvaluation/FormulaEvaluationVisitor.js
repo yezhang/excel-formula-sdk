@@ -82,6 +82,24 @@ class FormulaEvaluationVisitor {
   }
 
   /**
+   * 计算的语法：a[b], a.b
+   * 
+   * @param {MemberExpression} node
+   */
+  visitMemberExpression(node) {
+    let object = node.object;
+    let property = node.property;
+    if(!!this.cellValueProxy.fetchDataObject){
+      throw new EvaluationError('请提供 fetchDataObject 函数，用于获取数据对象的值')
+    }
+    try {
+      return this.cellValueProxy.fetchDataObject(object, property);
+    }catch(e){
+      throw new EvaluationErrors.RefError(`无法获取数据对象的值:${node.toString()}`);
+    }
+  }
+
+  /**
    * 将语法树节点转换为 SimpleCellAddress 
    * @param {CellAddressIdentifier} node
    */
@@ -136,7 +154,7 @@ class FormulaEvaluationVisitor {
    */
   visitCellRangeIdentifier(node) {
     let _this = this;
-    return this.__visitCellRangeValue(node, function(simpleCellRangeAddr){
+    return this.__visitCellRangeValue(node, function (simpleCellRangeAddr) {
       return _this.cellValueProxy.getCellRangeValues(simpleCellRangeAddr);
     });
   }
@@ -146,7 +164,7 @@ class FormulaEvaluationVisitor {
    */
   visitCellFloatRangeIdentifier(node) {
     let _this = this;
-    return this.__visitCellRangeValue(node, function(simpleCellRangeAddr){
+    return this.__visitCellRangeValue(node, function (simpleCellRangeAddr) {
       return _this.cellValueProxy.getCellFloatRangeValues(simpleCellRangeAddr);
     });
   }

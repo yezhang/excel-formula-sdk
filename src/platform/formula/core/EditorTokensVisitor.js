@@ -84,6 +84,7 @@ class EditorTokensVisitor extends ReportFormulaParserVisitor {
 
     return undefined;
   }
+  
   tryCollect(node) {
     let token = node.getSymbol();
     if (token && token.type !== ReportFormulaParser.EOF) {
