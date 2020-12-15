@@ -17,6 +17,9 @@ describe('特殊常量求值', function() {
   it('@a.b 语法', function() {
     let cellValueProvider = {
       fetchDataObject: function(object, property) {
+        if(object !== 'Entity') {
+          return 0;
+        }
         if(property === 'prop'){
           return 5.0;
         }
@@ -37,6 +40,7 @@ describe('特殊常量求值', function() {
 
   })
 })
+
 describe('公式求值', function () {
   let cellValueProvider = {
     getCellValue: function (cellAddress) {

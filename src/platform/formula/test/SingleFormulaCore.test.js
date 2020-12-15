@@ -200,7 +200,8 @@ describe('一般常量', function () {
         decorateCoreWithErrHandler(core, 'a.0');
       });
 
-      it('0.a', function () {
+      // 跳过该测试。"." 运算符用于“成员表达式”
+      xit('0.a', function () {
         decorateCoreWithErrHandler(core, '0.a');
       });
     })
