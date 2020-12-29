@@ -7,6 +7,8 @@ const FormulaParserVisitor = require('platform/formula/runtime/ReportFormulaPars
 const ASTWalker = require('platform/formula/core/ASTWalker');
 const Syntax = require('./syntax').Syntax;
 
+const StringUtils = require('../../../base/StringUtils').StringUtils;
+
 /**
  * 生成单元格地址、单元格范围的 AST 节点。
  */
@@ -451,10 +453,18 @@ class SheetNameIdentifier extends IAccessableType {
   constructor(sheetName) {
     super();
     this.type = Syntax.SheetNameIdentifier;
-    this.name = sheetName;
+    // 统一处理移除引号
+    this.name = typeof sheetName === 'string' ? StringUtils.removeQuotes(sheetName) : sheetName;
+    // 增加是否有引号标识
+    this.isHasQuotes = this.name !== sheetName;
   }
 
   toString() {
+    // 统一处理引号（根据原有公式是否带有引号自动判断是否增加单引号）
+    return this.isHasQuotes ? `'${this.name}'` : this.name;
+  }
+
+  getSheetName() {
     return this.name;
   }
 

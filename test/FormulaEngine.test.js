@@ -64,7 +64,7 @@ describe('公式引擎-常用场景', function () {
       expect(C2Fromula).to.equal(expectedC2Formula);
     });
 
-    it('重复设置公式+插入行', function () {
+    it('重复设置公式+插入行（报表名称无引号）', function () {
       // 测试用例说明：
       // 1) B2 = A1 + B1 + C1
       // 2) 选择第一行，向上 增加 1 行。insert row: beforeWhich = 1
@@ -81,6 +81,31 @@ describe('公式引擎-常用场景', function () {
 
       const B3 = { column: 2, row: 3 };
       const expectedC2Formula = '=A2+B2+C2';
+      let f = engine.getCellFormula(context, B3);
+      expect(f).to.equal(expectedC2Formula);
+
+      engine.setCellFormula(context, B3, expectedC2Formula);
+      f = engine.getCellFormula(context, B3);
+      expect(f).to.equal(expectedC2Formula);
+    });
+
+    it('重复设置公式+插入行（公式包含引号引入报表名称）', function () {
+      // 测试用例说明：
+      // 1) B2 = A1 + B1 + C1
+      // 2) 选择第一行，向上 增加 1 行。insert row: beforeWhich = 1
+      // 3) 期待: B3 = A2 + B2 + C2
+      // 4) 重新设置 B3 = A2 + B2 + C2
+      // 5) 期待: B3 = A2 + B2 + C2
+
+      let context = new WorkBookContext('sheet1');
+      const B2CellRef = { column: 2, row: 2 };
+      // B2 = A1 + B1 + C1
+      engine.setCellFormula(context, B2CellRef, "= 'sheet2'!A1:B2 + B1 + C1");
+      let affactedCells = engine.addRows(context, 1, 1);
+      expect(affactedCells).to.have.lengthOf(1);
+
+      const B3 = { column: 2, row: 3 };
+      const expectedC2Formula = "='sheet2'!A1:B2+B2+C2";
       let f = engine.getCellFormula(context, B3);
       expect(f).to.equal(expectedC2Formula);
 
@@ -927,14 +952,81 @@ describe('公式引擎-常用场景', function () {
           return addr.column === cell.column && addr.row === cell.row;
         });
       }
-      console.log(newValueContainers);
       expect(includes(newValueContainers, B2)).to.be.true;
       expect(includes(newValueContainers, A4)).to.be.true;
     })
   });
 
   describe('表间公式', function () {
+    let engine;
+    beforeEach(function (done) {
+      engine = new FormulaEngine();
+      done();
+    });
+    it('普通表间公式（报表名称无特殊字符）', function () {
+      // 测试用例描述
+      // 1、设置报表sheet1,sheet2,
+      // 2、在sheet2设置公式 A1 = sheet1!A1;
+      // 3、预期：修改sheet1 A1单元格，正确计算 sheet2 A1单元格
+      let context1 = new WorkBookContext("sheet1");
+      let context2 = new WorkBookContext('sheet2');
 
+      const A1 = { column: 1, row: 1 };
+
+      engine.initCellFormula(context2, A1, "=sheet1!A1");
+
+      let newValue = 0;
+      const cellValueProvider = {
+        getCellValue: function (cell) {
+          return 2;
+        },
+        setCellValue: function (cell, value) {
+          newValue = value;
+        },
+      };
+
+      engine.prepareToEvaluateTable(cellValueProvider);
+
+      // A1 单元格发生了输入。
+      const A1_Input = { column: 1, row: 1 };
+
+      engine.reEvaluateAll(context1, A1_Input);
+
+      expect(newValue).to.equal(2);
+
+    });
+    it('特殊表间公式（报表名称使用单引或者双引）', function () {
+      // 测试用例描述
+      // 1、设置报表sheet1,sheet2,
+      // 2、在sheet2设置公式 A1 = sheet1!A1;
+      // 3、预期：修改sheet1 A1单元格，正确计算 sheet2 A1单元格
+      let context1 = new WorkBookContext("sheet1");
+      let context2 = new WorkBookContext('sheet2');
+
+      const A1 = { column: 1, row: 1 };
+
+      engine.setCellFormula(context2, A1, "='sheet1'!A1");
+
+      let newValue = 0;
+      const cellValueProvider = {
+        getCellValue: function (cell) {
+          return 2;
+        },
+        setCellValue: function (cell, value) {
+          newValue = value;
+        },
+      };
+
+      engine.prepareToEvaluateTable(cellValueProvider);
+
+      // A1 单元格发生了输入。
+      const A1_Input = { column: 1, row: 1 };
+
+      engine.reEvaluateAll(context1, A1_Input);
+
+      expect(newValue).to.equal(2);
+
+    });
   });
 
 });

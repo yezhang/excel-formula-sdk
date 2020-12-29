@@ -1111,7 +1111,7 @@ class CellAddressCarrier extends CellRefDecorator {
 
   toSimpleAddress() {
     let sheetNameID = this.cellAddress.sheetName;
-    let sheetName = sheetNameID ? sheetNameID.toString() : undefined;
+    let sheetName = sheetNameID ? sheetNameID.getSheetName() : undefined;
     if (!sheetName) {
       sheetName = this.getWorkingContext().activeSheetName;
     }
@@ -1225,7 +1225,7 @@ class CellRangeCarrier extends CellRefDecorator {
 
   toSimpleAddress() {
     let sheetNameID = this.cellRange.sheetName;
-    let sheetName = sheetNameID ? sheetNameID.toString() : undefined;
+    let sheetName = sheetNameID ? sheetNameID.getSheetName() : undefined;
     if (!sheetName) {
       sheetName = this.getWorkingContext().activeSheetName;
     }
