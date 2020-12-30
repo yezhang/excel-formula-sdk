@@ -778,7 +778,7 @@ SimpleCellAddress.build = function build(sheetName, column, row) {
 SimpleCellAddress.buildFromASTNode = function buildFromASTNode(sheetName, node) {
   let sheet = sheetName;
   if (node.sheetName) {
-    sheet = node.sheetName.toString();
+    sheet = node.sheetName.getSheetName();
   }
 
   let a1ref = node.a1Reference;
@@ -1046,7 +1046,7 @@ SimpleCellRange.buildFromASTNode = function buildFromASTNode(sheetName, node) {
 
   let sheet = sheetName;
   if (node.sheetName) {
-    sheet = node.sheetName.toString();
+    sheet = node.sheetName.getSheetName();
   }
 
   //

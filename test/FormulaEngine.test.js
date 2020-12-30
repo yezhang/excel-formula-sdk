@@ -1000,12 +1000,12 @@ describe('公式引擎-常用场景', function () {
       // 1、设置报表sheet1,sheet2,
       // 2、在sheet2设置公式 A1 = sheet1!A1;
       // 3、预期：修改sheet1 A1单元格，正确计算 sheet2 A1单元格
-      let context1 = new WorkBookContext("sheet1");
-      let context2 = new WorkBookContext('sheet2');
+      let context1 = new WorkBookContext("语义模型（A类）");
+      let context2 = new WorkBookContext("sheet2");
 
       const A1 = { column: 1, row: 1 };
 
-      engine.setCellFormula(context2, A1, "='sheet1'!A1");
+      engine.initCellFormula(context2, A1, '="语义模型（A类）"!A1');
 
       let newValue = 0;
       const cellValueProvider = {
