@@ -8,6 +8,8 @@ class CellValueProviderProxy {
    */
   constructor(cellValueProvider) {
     this.cellValueProvider = cellValueProvider;
+    // 自定义函数
+    this.customFns = cellValueProvider.customFns;
   }
 
   /**

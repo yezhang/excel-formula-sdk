@@ -47,13 +47,18 @@ class FormulaEvaluationVisitor {
    */
   visitCallExpression(node) {
     const that = this;
+    let customFns = that.cellValueProxy.customFns;
     let fnName = node.callee.toString();
     let args = node.arguments;
     let argList = args.map(function (arg) {
       return arg.accept(that);
     });
-
     fnName = fnName.toUpperCase();
+
+    if (customFns && fnName in customFns) {
+      return customFns[fnName].apply(null, argList);
+    }
+    
     if (fnName in formulaFns) {
       return formulaFns[fnName].apply(null, argList);
     }

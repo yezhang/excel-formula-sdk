@@ -684,6 +684,46 @@ describe('公式引擎-常用场景', function () {
     it('公式求值-浮动单元格的值-重算', function () {
 
     })
+    it('公式求值-自定义sum函数测试', function () {
+      /**
+       * 1、设置 B2 = sum(sum(B1,C1), C1))
+       * 2、自定义求和函数sun，规则将累计参数自动求和 同等于 B2 = B1 + C1 + C1
+       * 3、执行C1重算
+       */
+      let res = undefined;
+      const cellValueProvider = {
+        getCellValue: function (cell) {
+          
+          if (cell.column === 3 && cell.row === 1) {
+            // C1
+            return 3;
+          }
+
+          if (cell.column === 2 && cell.row === 1) {
+            // B1
+            return 2;
+          }
+        },
+        setCellValue: function (cell, value) {
+          res = value;
+        },
+        customFns: {
+          SUM: function(...params) {
+            console.log(params)
+            return params[0] + params[1]
+          }
+        }
+      };
+
+      const B2 = { column: 2, row: 2 };
+      engine.setCellFormula(context, B2, '=sum(sum(B1,C1), C1)');
+
+      // set C1
+      const C1 = { column: 3, row: 1 };
+      engine.prepareToEvaluateTable(cellValueProvider);
+      engine.reEvaluateAll(context, C1);
+      expect(res).equal(8);
+    })
   })
 
 
