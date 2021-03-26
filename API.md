@@ -93,6 +93,43 @@ engine.prepareToEvaluateTable(cellValueProvider);
 let ret = engine.evaluate(context, A1CellRef);
 ```
 
+**场景 - 自定义公式**
+当内置函数无法满足业务需要时，可以使用自定义函数。
+``` js
+const engine = new FormulaEngine();
+const context = new WorkBookContext('sheet1');
+const cellValueProvider = {
+  getCellValue: function (cell) {
+    if (cell.column === 2 && cell.row === 1) {
+      return 10; // 假设 B1 单元格的值是数字 10
+    }
+  },
+  fns: {
+    MyFn: function (val) {
+      /**
+       * 自定义函数，求单元格数字的字符长度。
+       */
+      const str = String(val);
+      return str.length;
+    }
+  }
+};
+
+const A1 = {column: 1, row: 1};
+engine.setf(context, A1, '=MyFn(B1)');
+
+let ret = 0;
+try {
+  engine.prepareToEvaluateTable(cellValueProvider);
+  ret = engine.evaluate(workBookContext, A1);
+} catch (e) {
+  ret = e.getResult();
+}
+```
+
+ret 的值是 2.
+
+
 **场景**  
 假设表格中已经设置了如下公式: A1 = B1, B1 = C1, B2 = C2.  
 当单元格 C1 的数值在表格组件中发生变更时，需要重新计算 B1, A1 处的单元格的值。
@@ -155,6 +192,7 @@ engine.setCellFormula(context, B2, '=SUM(A5->A5)');
 // 选中第 1 行，向下增加 2 个浮动行
 engine.expandFloatRows(context, 1, 2);
 ```
+
 
 
 ## 与编辑器组件 monoca-editor 集成API
