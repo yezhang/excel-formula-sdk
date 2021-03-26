@@ -93,8 +93,11 @@ engine.prepareToEvaluateTable(cellValueProvider);
 let ret = engine.evaluate(context, A1CellRef);
 ```
 
-**场景 - 自定义公式**
+**场景 - 自定义公式**  
 当内置函数无法满足业务需要时，可以使用自定义函数。
+
+注意：自定义函数名区分大小写。
+
 ``` js
 const engine = new FormulaEngine();
 const context = new WorkBookContext('sheet1');
@@ -104,7 +107,7 @@ const cellValueProvider = {
       return 10; // 假设 B1 单元格的值是数字 10
     }
   },
-  fns: {
+  customFns: {
     MyFn: function (val) {
       /**
        * 自定义函数，求单元格数字的字符长度。
