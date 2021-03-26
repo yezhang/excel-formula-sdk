@@ -1,5 +1,4 @@
 const path = require('path');
-const process = require('process');
 const fs = require('fs');
 const _rimraf = require('rimraf');
 const cp = require('child_process');
@@ -112,6 +111,9 @@ function npmPublish(cb) {
   });
 }
 
+/**
+ * 执行完整的打包、更新版本、上传流程。
+ */
 const sdkDistro = series(clean, build, updateSemver, extractSDK, npmPublish);
 
 exports.clean = clean;

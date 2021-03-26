@@ -1,7 +1,10 @@
 const formulaFns = require('@formulajs/formulajs');
 
 const types = require('base/common/types');
-const { SimpleCellAddress, SimpleCellRange } = require('platform/formula/cellAddressParts/common/CellAddressParts');
+const {
+  SimpleCellAddress,
+  SimpleCellRange
+} = require('platform/formula/cellAddressParts/common/CellAddressParts');
 const StringUtils = require('../../../base/StringUtils').StringUtils;
 
 const EvaluationErrors = require('platform/formula/cellEvaluation/EvaluationErrors');
@@ -14,7 +17,7 @@ const EvaluationErrors = require('platform/formula/cellEvaluation/EvaluationErro
 class FormulaEvaluationVisitor {
   /**
    * 
-   * @param {*} cellValueProxy 
+   * @param {*} cellValueProxy 单元格/函数 求值代理
    * @param {String} ownerSheetName 当前公式所属的工作表名称。
    */
   constructor(cellValueProxy, ownerSheetName) {
@@ -42,26 +45,28 @@ class FormulaEvaluationVisitor {
   }
 
   /**
+   * 对于函数调用求值。
+   * 
    * TODO: 针对 IF 函数的短路运算？
    * @param {*} node 
    */
   visitCallExpression(node) {
     const that = this;
-    let customFns = that.cellValueProxy.customFns;
+    let customFns = that.getCellValueProvider().customFns;
     let fnName = node.callee.toString();
     let args = node.arguments;
     let argList = args.map(function (arg) {
       return arg.accept(that);
     });
-    fnName = fnName.toUpperCase();
+    const fnNameUpper = fnName.toUpperCase();
 
     if (customFns && fnName in customFns) {
       return customFns[fnName].apply(null, argList);
     }
     
-    if (fnName in formulaFns) {
+    if (fnNameUpper in formulaFns) {
       return formulaFns[fnName].apply(null, argList);
-    }
+    } 
 
     throw new EvaluationErrors.NameError('非法的函数，无法识别');
   }
@@ -96,12 +101,12 @@ class FormulaEvaluationVisitor {
   visitMemberExpression(node) {
     let objectName = node.object.name;
     let property = node.property.name;
-    if(!this.cellValueProxy.fetchDataObject){
+    if (!this.cellValueProxy.fetchDataObject) {
       throw new EvaluationError('请提供 fetchDataObject 函数，用于获取数据对象的值')
     }
     try {
       return this.cellValueProxy.fetchDataObject(objectName, property);
-    }catch(e){
+    } catch (e) {
       throw new EvaluationErrors.RefError(`无法获取数据对象的值:${node.toString()}`);
     }
   }

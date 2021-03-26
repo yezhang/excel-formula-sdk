@@ -3,7 +3,10 @@
  */
 const expect = require('chai').expect;
 const _ = require('lodash');
-const { WorkBookContext, FormulaEngine } = require('platform/formula/FormulaEngine');
+const {
+  WorkBookContext,
+  FormulaEngine
+} = require('platform/formula/FormulaEngine');
 
 /**
  * 测试常见场景：
@@ -31,7 +34,10 @@ describe('公式引擎-常用场景', function () {
 
     it('设计态-单元格输入错误的公式', function () {
       let context = new WorkBookContext('sheet1');
-      let A1CellRef = { column: 1, row: 1 }; // A1 = B1
+      let A1CellRef = {
+        column: 1,
+        row: 1
+      }; // A1 = B1
       let A1FormulaText = '=B1+';
 
       expect(function () {
@@ -48,13 +54,19 @@ describe('公式引擎-常用场景', function () {
       // 5) 期待: C2 = A1 + C1 + D1
 
       let context = new WorkBookContext('sheet1');
-      const B2CellRef = { column: 2, row: 2 };
+      const B2CellRef = {
+        column: 2,
+        row: 2
+      };
       // B2 = A1 + B1 + C1
       engine.setCellFormula(context, B2CellRef, '= A1 + B1 + C1');
       let affactedCells = engine.addColumns(context, 2, 1);
       expect(affactedCells).to.have.lengthOf(1);
 
-      const C2CellRef = { column: 3, row: 2 };
+      const C2CellRef = {
+        column: 3,
+        row: 2
+      };
       const expectedC2Formula = '=A1+C1+D1';
       let C2Fromula = engine.getCellFormula(context, C2CellRef);
       expect(C2Fromula).to.equal(expectedC2Formula);
@@ -73,13 +85,19 @@ describe('公式引擎-常用场景', function () {
       // 5) 期待: B3 = A2 + B2 + C2
 
       let context = new WorkBookContext('sheet1');
-      const B2CellRef = { column: 2, row: 2 };
+      const B2CellRef = {
+        column: 2,
+        row: 2
+      };
       // B2 = A1 + B1 + C1
       engine.setCellFormula(context, B2CellRef, '= A1 + B1 + C1');
       let affactedCells = engine.addRows(context, 1, 1);
       expect(affactedCells).to.have.lengthOf(1);
 
-      const B3 = { column: 2, row: 3 };
+      const B3 = {
+        column: 2,
+        row: 3
+      };
       const expectedC2Formula = '=A2+B2+C2';
       let f = engine.getCellFormula(context, B3);
       expect(f).to.equal(expectedC2Formula);
@@ -98,13 +116,19 @@ describe('公式引擎-常用场景', function () {
       // 5) 期待: B3 = A2 + B2 + C2
 
       let context = new WorkBookContext('sheet1');
-      const B2CellRef = { column: 2, row: 2 };
+      const B2CellRef = {
+        column: 2,
+        row: 2
+      };
       // B2 = A1 + B1 + C1
       engine.setCellFormula(context, B2CellRef, "= 'sheet2'!A1:B2 + B1 + C1");
       let affactedCells = engine.addRows(context, 1, 1);
       expect(affactedCells).to.have.lengthOf(1);
 
-      const B3 = { column: 2, row: 3 };
+      const B3 = {
+        column: 2,
+        row: 3
+      };
       const expectedC2Formula = "='sheet2'!A1:B2+B2+C2";
       let f = engine.getCellFormula(context, B3);
       expect(f).to.equal(expectedC2Formula);
@@ -125,7 +149,10 @@ describe('公式引擎-常用场景', function () {
       let context = new WorkBookContext('sheet1');
       // 用例：带括号的公式
       // 设置公式 I6  =(E6*F6-G6)*H6
-      let I6 = { c: 'I', r: '6' };
+      let I6 = {
+        c: 'I',
+        r: '6'
+      };
       let I6_f = '=(E6*F6-G6)*H6';
       engine.setCellFormula(context, I6, I6_f);
       innerFormula = engine.getCellFormula(context, I6);
@@ -134,7 +161,10 @@ describe('公式引擎-常用场景', function () {
     })
     it('设计态-单元格输入公式完毕（纯单元格地址）', function () {
       let context = new WorkBookContext('sheet1');
-      let A1CellRef = { column: 1, row: 1 }; // A1 = B1
+      let A1CellRef = {
+        column: 1,
+        row: 1
+      }; // A1 = B1
       let A1FormulaText = '=B1';
       engine.setCellFormula(context, A1CellRef, A1FormulaText);
 
@@ -142,7 +172,10 @@ describe('公式引擎-常用场景', function () {
       expect(innerFormula).to.equal(A1FormulaText);
 
 
-      let C1CellRef = { column: 3, row: 1 }; // C1 = D1
+      let C1CellRef = {
+        column: 3,
+        row: 1
+      }; // C1 = D1
       let C1FormulaText = '=D1';
       engine.setCellFormula(context, C1CellRef, C1FormulaText);
 
@@ -150,7 +183,10 @@ describe('公式引擎-常用场景', function () {
       expect(innerFormula).to.equal(C1FormulaText);
 
 
-      let B1CellRef = { column: 2, row: 1 }; // B1 = C1 * 0.5
+      let B1CellRef = {
+        column: 2,
+        row: 1
+      }; // B1 = C1 * 0.5
       let B1FormulaText = '=C1 * 0.5';
       engine.setCellFormula(context, B1CellRef, B1FormulaText);
 
@@ -161,7 +197,10 @@ describe('公式引擎-常用场景', function () {
 
     it('设计态-单元格输入公式完毕（单元格范围）', function () {
       let context = new WorkBookContext('sheet1');
-      let A1CellRef = { column: 1, row: 1 }; // A1
+      let A1CellRef = {
+        column: 1,
+        row: 1
+      }; // A1
       engine.setCellFormula(context, A1CellRef, '=B1');
     });
 
@@ -171,14 +210,20 @@ describe('公式引擎-常用场景', function () {
       // 验证调整后受影响的单元格公式
 
       let context = new WorkBookContext('sheet1');
-      let A1CellRef = { column: 1, row: 1 }; // A1 = B1
+      let A1CellRef = {
+        column: 1,
+        row: 1
+      }; // A1 = B1
       let A1FormulaText = '=B1';
       engine.setCellFormula(context, A1CellRef, A1FormulaText);
 
       // 插入行，1 行前面插入 1 行
       let updatedCellAddressList = engine.addRows(context, 1, 1);
 
-      let A2CellRef = { column: 1, row: 2 }; // A2 = B2
+      let A2CellRef = {
+        column: 1,
+        row: 2
+      }; // A2 = B2
       let A2FormulaTextUpdated = '=B2';
       let innerFormula = engine.getCellFormula(context, A2CellRef);
       expect(innerFormula).to.equal(A2FormulaTextUpdated);
@@ -194,12 +239,18 @@ describe('公式引擎-常用场景', function () {
       // 3) 期待 C3 = SUM(A2:B3)
 
       let context = new WorkBookContext('sheet1');
-      let C2 = { column: 3, row: 2 }; // C2 = SUM(A1:B2)
+      let C2 = {
+        column: 3,
+        row: 2
+      }; // C2 = SUM(A1:B2)
       let f = '= SUM(A1:B2)'
       engine.setCellFormula(context, C2, f);
 
       let updatedCellAddressList = engine.addRows(context, 1, 1);
-      let C3 = { column: 3, row: 3 };
+      let C3 = {
+        column: 3,
+        row: 3
+      };
       let innerFormula = engine.getCellFormula(context, C3);
       expect(innerFormula).to.equal('=SUM(A2:B3)');
 
@@ -214,7 +265,10 @@ describe('公式引擎-常用场景', function () {
       // 3) 期待：C2 = SUM(A1:B2); 依赖图中包含 2 个节点，一个 C2，一个 A1:B2
 
       let context = new WorkBookContext('sheet1');
-      let C2 = { column: 3, row: 2 }; // C2 =SUM(A1:B3)
+      let C2 = {
+        column: 3,
+        row: 2
+      }; // C2 =SUM(A1:B3)
       engine.setCellFormula(context, C2, '=SUM(A1:B3)');
 
       engine.removeRows(context, 3, 1);
@@ -229,14 +283,20 @@ describe('公式引擎-常用场景', function () {
       // 调整表结构后，受影响的单元格公式需要更新，指向新的单元格地址。
       // 验证调整后受影响的单元格公式
       let context = new WorkBookContext('sheet1');
-      let A2CellRef = { column: 1, row: 2 }; // A2 = B2
+      let A2CellRef = {
+        column: 1,
+        row: 2
+      }; // A2 = B2
       let A2FormulaText = '=B2';
       engine.setCellFormula(context, A2CellRef, A2FormulaText);
 
       // 删除行，从 1 行开始，删除 1 行
       let updatedCellAddressList = engine.removeRows(context, 1, 1);
 
-      let A1CellRef = { column: 1, row: 1 }; // A1 = B1
+      let A1CellRef = {
+        column: 1,
+        row: 1
+      }; // A1 = B1
       let A1FormulaTextUpdated = '=B1';
       let innerFormula = engine.getCellFormula(context, A1CellRef);
       expect(innerFormula).to.equal(A1FormulaTextUpdated);
@@ -252,7 +312,10 @@ describe('公式引擎-常用场景', function () {
       // 验证调整后依赖图中没有节点
 
       let context = new WorkBookContext('sheet1');
-      let A2CellRef = { column: 1, row: 2 }; // A2 = B2
+      let A2CellRef = {
+        column: 1,
+        row: 2
+      }; // A2 = B2
       let A2FormulaText = '=B2';
       engine.setCellFormula(context, A2CellRef, A2FormulaText);
 
@@ -276,13 +339,25 @@ describe('公式引擎-常用场景', function () {
       // （4）选中第 3 行，执行删除浮动行，删除一行，调用 shrinkFloatRows 方法执行删除浮动行动作。
       // （5）受影响公式单元格为 A1，B3，期待 A1 = SUM(A2->A2)，B3(原B4) = A3。
       let context = new WorkBookContext('sheet1');
-      let A1CellRef = { column: 1, row: 1 }; // A1
+      let A1CellRef = {
+        column: 1,
+        row: 1
+      }; // A1
       let A1FormulaText = '=SUM(A2->A2)';
-      let B2CellRef = { column: 2, row: 2 }; // B2
+      let B2CellRef = {
+        column: 2,
+        row: 2
+      }; // B2
       let B2FormulaText = '=A2';
-      let B3CellRef = { column: 2, row: 3 }; // B3
+      let B3CellRef = {
+        column: 2,
+        row: 3
+      }; // B3
       let B3FormulaText = '=A3';
-      let B4CellRef = { column: 2, row: 4 }; // B4
+      let B4CellRef = {
+        column: 2,
+        row: 4
+      }; // B4
       // let B4FormulaText = '=A4';
       engine.setCellFormula(context, A1CellRef, A1FormulaText);
       engine.setCellFormula(context, B2CellRef, B2FormulaText);
@@ -293,14 +368,32 @@ describe('公式引擎-常用场景', function () {
       engine.expandFloatRows(context, 2, 5);
       let A1newF = engine.getCellFormula(context, A1CellRef);
       expect(A1newF).to.equal('=SUM(A2->A7)');
-      let B8newF = engine.getCellFormula(context, { column: 2, row: 8 });
+      let B8newF = engine.getCellFormula(context, {
+        column: 2,
+        row: 8
+      });
       expect(B8newF).to.equal('=A8');
       // 新插入的第 3、4、5、6、7 行 增加公式 B3 = A3 B4 = A4 B5 = A5 B6 = A6 B7 = A7
-      engine.setCellFormula(context, { column: 2, row: 3 }, '=A3');
-      engine.setCellFormula(context, { column: 2, row: 4 }, '=A4');
-      engine.setCellFormula(context, { column: 2, row: 5 }, '=A5');
-      engine.setCellFormula(context, { column: 2, row: 6 }, '=A6');
-      engine.setCellFormula(context, { column: 2, row: 7 }, '=A7');
+      engine.setCellFormula(context, {
+        column: 2,
+        row: 3
+      }, '=A3');
+      engine.setCellFormula(context, {
+        column: 2,
+        row: 4
+      }, '=A4');
+      engine.setCellFormula(context, {
+        column: 2,
+        row: 5
+      }, '=A5');
+      engine.setCellFormula(context, {
+        column: 2,
+        row: 6
+      }, '=A6');
+      engine.setCellFormula(context, {
+        column: 2,
+        row: 7
+      }, '=A7');
 
       // 再删除1行，从 3 行开始，删除 5 行
       engine.shrinkFloatRows(context, 2, 5);
@@ -316,14 +409,18 @@ describe('公式引擎-常用场景', function () {
       // 调整表结构后，受影响的单元格公式需要更新，指向新的单元格地址。
       // 验证调整后受影响的单元格公式
       let context = new WorkBookContext('sheet1');
-      let A2CellRef = { column: 1, row: 2 }; // A2 = B2
+      let A2CellRef = {
+        column: 1,
+        row: 2
+      }; // A2 = B2
       let A2FormulaText = '=B2';
       engine.setCellFormula(context, A2CellRef, A2FormulaText);
 
       // 插入行，B 列前面插入 1 列
       let updatedCellAddressList = engine.addColumns(context, 2, 1);
       expect(updatedCellAddressList[0]).to.include({
-        column: 1, row: 2
+        column: 1,
+        row: 2
       });
 
       let f = engine.getCellFormula(context, updatedCellAddressList[0]);
@@ -337,7 +434,10 @@ describe('公式引擎-常用场景', function () {
       // 验证调整后受影响的单元格公式
 
       let context = new WorkBookContext('sheet1');
-      let C1CellRef = { column: 3, row: 1 }; // C1 = B1
+      let C1CellRef = {
+        column: 3,
+        row: 1
+      }; // C1 = B1
       let C1FormulaText = '=B1';
       engine.setCellFormula(context, C1CellRef, C1FormulaText);
 
@@ -363,7 +463,10 @@ describe('公式引擎-常用场景', function () {
       // (8), 期待 sheet2!A1 的公式为 sheet3!B1 * 2
 
       let context = new WorkBookContext('sheet1');
-      let A1 = { column: 1, row: 1 }; // A1 = sheet2!B1 * 2
+      let A1 = {
+        column: 1,
+        row: 1
+      }; // A1 = sheet2!B1 * 2
       let f = '= sheet2!B1 * 2';
       engine.setCellFormula(context, A1, f);
 
@@ -385,8 +488,9 @@ describe('公式引擎-常用场景', function () {
 
   describe('运行态', function () {
     let engine;
-    let context = undefined;
-    function SimpleEngine() { }
+    let workBookContext = undefined;
+
+    function SimpleEngine() {}
 
     function rebuildSimpleEngine() {
       let innerEngine = new FormulaEngine();
@@ -402,7 +506,8 @@ describe('公式引擎-常用场景', function () {
           const r = groups[2];
 
           fullCellAddr = {
-            column: c, row: r
+            column: c,
+            row: r
           };
         } else {
           fullCellAddr = cellAddr;
@@ -426,7 +531,7 @@ describe('公式引擎-常用场景', function () {
 
       engine = new SimpleEngine();
 
-      context = new WorkBookContext('sheet1');
+      workBookContext = new WorkBookContext('sheet1');
     });
 
     it('公式求值-正确求值', function () {
@@ -451,19 +556,19 @@ describe('公式引擎-常用场景', function () {
 
         }
       };
-      const A1CellRef = {
+      const A1 = {
         column: 1,
         row: 1
-      }
+      };
 
       // A1=IF(C7<E7,MIN(ABS(E7-C7),D7),0)
-      engine.setCellFormula(context, A1CellRef, '=IF(C7<E7,MIN(ABS(E7-C7),D7),0)');
+      engine.setCellFormula(workBookContext, A1, '=IF(C7<E7,MIN(ABS(E7-C7),D7),0)');
 
       let ret = undefined;
 
       try {
         engine.prepareToEvaluateTable(cellValueProvider);
-        ret = engine.evaluate(context, A1CellRef);
+        ret = engine.evaluate(workBookContext, A1);
       } catch (e) {
         ret = e.getResult();
       }
@@ -490,12 +595,15 @@ describe('公式引擎-常用场景', function () {
 
         }
       };
-      const A2CellRef = { column: 1, row: 2 };
+      const A2CellRef = {
+        column: 1,
+        row: 2
+      };
       // A2=A1
-      engine.setCellFormula(context, A2CellRef, '=A1');
+      engine.setCellFormula(workBookContext, A2CellRef, '=A1');
 
       engine.prepareToEvaluateTable(cellValueProvider);
-      engine.evaluateAll(context); // 执行全部公式的重算。
+      engine.evaluateAll(workBookContext); // 执行全部公式的重算。
     });
 
     it('只计算受影响的单元格', function () {
@@ -529,19 +637,31 @@ describe('公式引擎-常用场景', function () {
       };
 
       // A1 = B1; B1 = C1; B2 = C2;
-      const A1 = { column: 1, row: 1 };
-      engine.setCellFormula(context, A1, '=B1');
+      const A1 = {
+        column: 1,
+        row: 1
+      };
+      engine.setCellFormula(workBookContext, A1, '=B1');
 
-      const B1 = { column: 2, row: 1 };
-      engine.setCellFormula(context, B1, '=C1');
+      const B1 = {
+        column: 2,
+        row: 1
+      };
+      engine.setCellFormula(workBookContext, B1, '=C1');
 
-      const B2 = { column: 2, row: 2 };
-      engine.setCellFormula(context, B2, '=C2');
+      const B2 = {
+        column: 2,
+        row: 2
+      };
+      engine.setCellFormula(workBookContext, B2, '=C2');
 
       // set C1
-      const C1 = { column: 3, row: 1 };
+      const C1 = {
+        column: 3,
+        row: 1
+      };
       engine.prepareToEvaluateTable(cellValueProvider);
-      engine.reEvaluateAll(context, C1);
+      engine.reEvaluateAll(workBookContext, C1);
     });
 
     it('公式求值-计算错误-除数为0', function () {
@@ -551,7 +671,10 @@ describe('公式引擎-常用场景', function () {
       // 1) A1 = 1 / B2;
       // 2) 设置 B2 = 0
       // 3) 计算 A1 出错。
-      const A1 = { column: 1, row: 1 };
+      const A1 = {
+        column: 1,
+        row: 1
+      };
 
       const cellValueProvider = {
         getCellValue: function (cell) {
@@ -561,12 +684,12 @@ describe('公式引擎-常用场景', function () {
         }
       };
 
-      engine.setCellFormula(context, A1, '= 1/B2');
+      engine.setCellFormula(workBookContext, A1, '= 1/B2');
       engine.prepareToEvaluateTable(cellValueProvider);
       let ret = undefined;
       expect(function () {
         try {
-          ret = engine.evaluate(context, A1);
+          ret = engine.evaluate(workBookContext, A1);
         } catch (e) {
           ret = e.getResult();
           throw e;
@@ -593,10 +716,13 @@ describe('公式引擎-常用场景', function () {
         }
       };
 
-      const B1 = { column: 2, row: 1 };
-      engine.setCellFormula(context, B1, '=SUM(A7->A7)');
+      const B1 = {
+        column: 2,
+        row: 1
+      };
+      engine.setCellFormula(workBookContext, B1, '=SUM(A7->A7)');
       engine.prepareToEvaluateTable(cellValueProvider);
-      let ret = engine.evaluate(context, B1);
+      let ret = engine.evaluate(workBookContext, B1);
       expect(ret).to.equal(3);
     })
 
@@ -609,23 +735,23 @@ describe('公式引擎-常用场景', function () {
       // 预期：B1 =SUM(B2->B3), B4 =SUM(B5->B5), D4 =B4+C4; 
       // D1 处公式不变，为 =B1+C1, D2 =B2+C2
 
-      engine.setf(context, 'B1', '=SUM(B2->B2)');
-      engine.setf(context, 'D1', '=B1+C1');
-      engine.setf(context, 'D2', '=B2+C2');
-      engine.setf(context, 'B3', '=SUM(B4->B4)');
-      engine.setf(context, 'D3', '=B3+C3');
+      engine.setf(workBookContext, 'B1', '=SUM(B2->B2)');
+      engine.setf(workBookContext, 'D1', '=B1+C1');
+      engine.setf(workBookContext, 'D2', '=B2+C2');
+      engine.setf(workBookContext, 'B3', '=SUM(B4->B4)');
+      engine.setf(workBookContext, 'D3', '=B3+C3');
 
-      let affactedCells = engine.expandFloatRows(context, 2, 1);
+      let affactedCells = engine.expandFloatRows(workBookContext, 2, 1);
 
       // B1/B4/D4 地址受到影响，需要重算。
       expect(affactedCells).to.have.lengthOf(3);
 
-      expect(engine.getf(context, 'B1')).to.equal('=SUM(B2->B3)');
-      expect(engine.getf(context, 'B4')).to.equal('=SUM(B5->B5)');
-      expect(engine.getf(context, 'D4')).to.equal('=B4+C4');
+      expect(engine.getf(workBookContext, 'B1')).to.equal('=SUM(B2->B3)');
+      expect(engine.getf(workBookContext, 'B4')).to.equal('=SUM(B5->B5)');
+      expect(engine.getf(workBookContext, 'D4')).to.equal('=B4+C4');
 
-      expect(engine.getf(context, 'D1')).to.equal('=B1+C1');
-      expect(engine.getf(context, 'D2')).to.equal('=B2+C2');
+      expect(engine.getf(workBookContext, 'D1')).to.equal('=B1+C1');
+      expect(engine.getf(workBookContext, 'D2')).to.equal('=B2+C2');
 
 
     });
@@ -637,24 +763,33 @@ describe('公式引擎-常用场景', function () {
       // 3) 在第二行增加浮动行的范围，即 A1->A1 变更为 A1->A2
       // 预期：B1 =SUM(A1->A2)+SUM(A1:A1), B3 =SUM(A6->A6)
 
-      const B1 = { column: 2, row: 1 };
-      engine.setCellFormula(context, B1, '=SUM(A1->A1)+SUM(A1:A1)');
+      const B1 = {
+        column: 2,
+        row: 1
+      };
+      engine.setCellFormula(workBookContext, B1, '=SUM(A1->A1)+SUM(A1:A1)');
 
-      const B2 = { column: 2, row: 2 };
-      engine.setCellFormula(context, B2, '=SUM(A5->A5)');
+      const B2 = {
+        column: 2,
+        row: 2
+      };
+      engine.setCellFormula(workBookContext, B2, '=SUM(A5->A5)');
 
       // 选中浮动区域中的一行
-      let affactedCells = engine.expandFloatRows(context, 1, 1);
+      let affactedCells = engine.expandFloatRows(workBookContext, 1, 1);
       expect(affactedCells[0]).to.include(B1);
 
       // 判断数组中至少要包含元素 B1、B2
       expect(_.some(affactedCells, B1)).to.be.true;
-      let innerFormula = engine.getCellFormula(context, B1);
+      let innerFormula = engine.getCellFormula(workBookContext, B1);
       expect(innerFormula).to.equal('=SUM(A1->A2)+SUM(A1:A1)');
 
-      const B3 = { column: 2, row: 3 };
+      const B3 = {
+        column: 2,
+        row: 3
+      };
       expect(_.some(affactedCells, B3)).to.be.true;
-      innerFormula = engine.getCellFormula(context, B3);
+      innerFormula = engine.getCellFormula(workBookContext, B3);
       expect(innerFormula).to.equal('=SUM(A6->A6)');
     })
 
@@ -665,26 +800,33 @@ describe('公式引擎-常用场景', function () {
       // 3) 在第 3 行移除 2 行的浮动行范围，即 A2->A3 变更为 A2->A2
       // 预期：B1 =SUM(A2->A2)+SUM(A1:A1), B2 =SUM(A6->A6)
 
-      const B1 = { column: 2, row: 1 };
-      engine.setCellFormula(context, B1, '=SUM(A2->A3)+SUM(A1:A1)');
+      const B1 = {
+        column: 2,
+        row: 1
+      };
+      engine.setCellFormula(workBookContext, B1, '=SUM(A2->A3)+SUM(A1:A1)');
 
-      const B2 = { column: 2, row: 2 };
-      engine.setCellFormula(context, B2, '=SUM(A8->A8)');
+      const B2 = {
+        column: 2,
+        row: 2
+      };
+      engine.setCellFormula(workBookContext, B2, '=SUM(A8->A8)');
 
       // 选中浮动区域中的一行
-      engine.shrinkFloatRows(context, 3, 2);
+      engine.shrinkFloatRows(workBookContext, 3, 2);
 
-      let innerFormula = engine.getCellFormula(context, B1);
+      let innerFormula = engine.getCellFormula(workBookContext, B1);
       expect(innerFormula).to.equal('=SUM(A2->A2)+SUM(A1:A1)');
 
-      innerFormula = engine.getCellFormula(context, B2);
+      innerFormula = engine.getCellFormula(workBookContext, B2);
       expect(innerFormula).to.equal('=SUM(A6->A6)');
 
     })
     it('公式求值-浮动单元格的值-重算', function () {
 
     })
-    it('公式求值-自定义sum函数测试', function () {
+
+    it('公式求值-自定义 sum 函数测试', function () {
       /**
        * 1、设置 B2 = sum(sum(B1,C1), C1))
        * 2、自定义求和函数sun，规则将累计参数自动求和 同等于 B2 = B1 + C1 + C1
@@ -693,7 +835,7 @@ describe('公式引擎-常用场景', function () {
       let res = undefined;
       const cellValueProvider = {
         getCellValue: function (cell) {
-          
+
           if (cell.column === 3 && cell.row === 1) {
             // C1
             return 3;
@@ -708,24 +850,68 @@ describe('公式引擎-常用场景', function () {
           res = value;
         },
         customFns: {
-          SUM: function(...params) {
+          sum: function (...params) {
             console.log(params)
             return params[0] + params[1]
           }
         }
       };
 
-      const B2 = { column: 2, row: 2 };
-      engine.setCellFormula(context, B2, '=sum(sum(B1,C1), C1)');
+
+      const B2 = {
+        column: 2,
+        row: 2
+      };
+      engine.setCellFormula(workBookContext, B2, '=sum(sum(B1,C1), C1)');
 
       // set C1
-      const C1 = { column: 3, row: 1 };
+      const C1 = {
+        column: 3,
+        row: 1
+      };
       engine.prepareToEvaluateTable(cellValueProvider);
-      engine.reEvaluateAll(context, C1);
+      engine.reEvaluateAll(workBookContext, C1);
       expect(res).equal(8);
     })
-  })
 
+    it('公式求值-自定义函数', function () {
+      // 测试用例描述：
+      // 1) 定义函数 MyFn(val)，求 val 的字符长度。
+      // 2) 设置公式 A1=MyFn(B1)
+      // 3) 设置 B1 = 10
+      // 预期：A1 = 2（数字 10 共 2 位）
+
+      const cellValueProvider = {
+        getCellValue: function (cell) {
+          if (cell.column === 2 && cell.row === 1) {
+            return 10;
+          }
+        },
+        customFns: {
+          MyFn: function (val) {
+            const str = String(val);
+            return str.length;
+          }
+        }
+      };
+      const A1 = {
+        column: 1,
+        row: 1
+      };
+      engine.setf(workBookContext, A1, '=MyFn(B1)');
+
+      let ret = 0;
+      try {
+        engine.prepareToEvaluateTable(cellValueProvider);
+        ret = engine.evaluate(workBookContext, A1);
+      } catch (e) {
+        ret = e.getResult();
+      }
+
+      expect(ret).to.equal(2);
+
+    });
+  })
 
   describe('表内公式', function () {
 
@@ -774,7 +960,9 @@ describe('公式引擎-常用场景', function () {
 
       let B1Ret = undefined;
       const cellValueProvider = {
-        datas: [[1, 2]],
+        datas: [
+          [1, 2]
+        ],
         getCellValue: function (cell) {
           return this.datas[cell.column - 1][cell.row - 1];
         },
@@ -787,7 +975,10 @@ describe('公式引擎-常用场景', function () {
       };
 
       // B1 = SUM(A1+A2)
-      const B1 = { column: 2, row: 1 };
+      const B1 = {
+        column: 2,
+        row: 1
+      };
       engine.setCellFormula(context, B1, '= SUM(A1:A2)');
       engine.prepareToEvaluateTable(cellValueProvider);
       B1Ret = engine.evaluate(context, B1);
@@ -796,7 +987,10 @@ describe('公式引擎-常用场景', function () {
       // 测试自动重新计算
       // 设置 A1 = 3;
       // 期待 B1 = 5;
-      const A1 = { column: 1, row: 1 };
+      const A1 = {
+        column: 1,
+        row: 1
+      };
       cellValueProvider.datas[A1.column - 1][A1.row - 1] = 3;
       engine.reEvaluateAll(context, A1);
 
@@ -812,7 +1006,9 @@ describe('公式引擎-常用场景', function () {
       let context = new WorkBookContext('sheet1');
       let A3Ret = undefined;
       const cellValueProvider = {
-        datas: [[1, 2]],
+        datas: [
+          [1, 2]
+        ],
         getCellValue: function (cell) {
           return this.datas[cell.column - 1][cell.row - 1];
         },
@@ -825,13 +1021,19 @@ describe('公式引擎-常用场景', function () {
       };
 
       // A3 = A1 + A2
-      const A3 = { column: 1, row: 3 };
+      const A3 = {
+        column: 1,
+        row: 3
+      };
       engine.setCellFormula(context, A3, '=A1 + A2');
       engine.prepareToEvaluateTable(cellValueProvider);
       A3Ret = engine.evaluate(context, A3);
       expect(A3Ret).to.equal(3)
 
-      const A4 = { column: 1, row: 4 };
+      const A4 = {
+        column: 1,
+        row: 4
+      };
       expect(function () {
         engine.reEvaluateAll(context, A4);
       }).to.not.throw();
@@ -845,8 +1047,14 @@ describe('公式引擎-常用场景', function () {
       // 3) 修改 A2 的值，执行联动计算，A1、C1 被计算
       // 4) 修改 A1 的值，执行联动计算，C1 被计算，A1 不被计算。
 
-      engine.setCellFormula(context, { c: 'A', r: '1' }, '=SUM(A2->A2)');
-      engine.setCellFormula(context, { c: 'C', r: '1' }, '=A1+B1');
+      engine.setCellFormula(context, {
+        c: 'A',
+        r: '1'
+      }, '=SUM(A2->A2)');
+      engine.setCellFormula(context, {
+        c: 'C',
+        r: '1'
+      }, '=A1+B1');
 
       let fetchOperationCount = 0;
       let fetchOperationCellList = [];
@@ -877,14 +1085,20 @@ describe('公式引擎-常用场景', function () {
       // 修改 A2
       fetchOperationCount = 0;
       fetchOperationCellList = [];
-      engine.reEvaluateAll(context, { c: 1, r: 2 });
+      engine.reEvaluateAll(context, {
+        c: 1,
+        r: 2
+      });
       expect(fetchOperationCount).to.equal(3);
 
 
       // 修改 A1
       fetchOperationCount = 0;
       fetchOperationCellList = [];
-      engine.reEvaluateAll(context, { c: 1, r: 1 });
+      engine.reEvaluateAll(context, {
+        c: 1,
+        r: 1
+      });
       expect(fetchOperationCount).to.equal(2);
 
     })
@@ -903,16 +1117,31 @@ describe('公式引擎-常用场景', function () {
       // 2) 期待：联动计算 A1 公式、C2 公式、C1 公式。
 
 
-      const A1 = { column: 1, row: 1 };
-      const B1 = { column: 2, row: 1 };
-      const C1 = { column: 3, row: 1 };
-      const C2 = { column: 3, row: 2 };
+      const A1 = {
+        column: 1,
+        row: 1
+      };
+      const B1 = {
+        column: 2,
+        row: 1
+      };
+      const C1 = {
+        column: 3,
+        row: 1
+      };
+      const C2 = {
+        column: 3,
+        row: 2
+      };
       engine.setCellFormula(context, A1, '=SUM(A2->A2)');
       engine.setCellFormula(context, B1, '=SUM(B2->B2)');
       engine.setCellFormula(context, C1, '=A1+B1');
       engine.setCellFormula(context, C2, '=A2+B2');
 
-      const A2_Input = { column: 1, row: 2 };
+      const A2_Input = {
+        column: 1,
+        row: 2
+      };
       const updatedCellList = [];
 
       const cellValueProvider = {
@@ -961,8 +1190,14 @@ describe('公式引擎-常用场景', function () {
       // 预期结果：
       // B2 重算，A4 重算
 
-      const A4 = { column: 1, row: 4 };
-      const B2 = { column: 2, row: 2 };
+      const A4 = {
+        column: 1,
+        row: 4
+      };
+      const B2 = {
+        column: 2,
+        row: 2
+      };
 
       engine.setCellFormula(context, B2, '=A2');
       engine.setCellFormula(context, A4, '=SUM(A2:A3)');
@@ -982,7 +1217,10 @@ describe('公式引擎-常用场景', function () {
 
       engine.prepareToEvaluateTable(cellValueProvider);
 
-      const A2_Input = { column: 1, row: 2 }; // A2 单元格发生了输入。
+      const A2_Input = {
+        column: 1,
+        row: 2
+      }; // A2 单元格发生了输入。
       engine.reEvaluateAll(context, A2_Input);
 
       expect(newValueContainers).to.have.lengthOf(2);
@@ -1011,7 +1249,10 @@ describe('公式引擎-常用场景', function () {
       let context1 = new WorkBookContext("sheet1");
       let context2 = new WorkBookContext('sheet2');
 
-      const A1 = { column: 1, row: 1 };
+      const A1 = {
+        column: 1,
+        row: 1
+      };
 
       engine.initCellFormula(context2, A1, "=sheet1!A1");
 
@@ -1028,7 +1269,10 @@ describe('公式引擎-常用场景', function () {
       engine.prepareToEvaluateTable(cellValueProvider);
 
       // A1 单元格发生了输入。
-      const A1_Input = { column: 1, row: 1 };
+      const A1_Input = {
+        column: 1,
+        row: 1
+      };
 
       engine.reEvaluateAll(context1, A1_Input);
 
@@ -1043,7 +1287,10 @@ describe('公式引擎-常用场景', function () {
       let context1 = new WorkBookContext("语义模型（A类）");
       let context2 = new WorkBookContext("sheet2");
 
-      const A1 = { column: 1, row: 1 };
+      const A1 = {
+        column: 1,
+        row: 1
+      };
 
       engine.initCellFormula(context2, A1, '="语义模型（A类）"!A1');
 
@@ -1060,7 +1307,10 @@ describe('公式引擎-常用场景', function () {
       engine.prepareToEvaluateTable(cellValueProvider);
 
       // A1 单元格发生了输入。
-      const A1_Input = { column: 1, row: 1 };
+      const A1_Input = {
+        column: 1,
+        row: 1
+      };
 
       engine.reEvaluateAll(context1, A1_Input);
 
