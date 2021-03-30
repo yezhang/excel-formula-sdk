@@ -826,16 +826,15 @@ describe('公式引擎-常用场景', function () {
 
     })
 
-    it('公式求值-自定义 sum 函数测试', function () {
+    it('公式求值-自定义 MySum 函数测试', function () {
       /**
-       * 1、设置 B2 = sum(sum(B1,C1), C1))
+       * 1、设置 B2 = MySum(MySum(B1,C1), C1))
        * 2、自定义求和函数sun，规则将累计参数自动求和 同等于 B2 = B1 + C1 + C1
        * 3、执行C1重算
        */
       let res = undefined;
       const cellValueProvider = {
         getCellValue: function (cell) {
-
           if (cell.column === 3 && cell.row === 1) {
             // C1
             return 3;
@@ -850,24 +849,22 @@ describe('公式引擎-常用场景', function () {
           res = value;
         },
         customFns: {
-          sum: function (...params) {
-            console.log(params)
-            return params[0] + params[1]
-          }
-        }
+          MySum: function (...params) {
+            return params[0] + params[1];
+          },
+        },
       };
-
 
       const B2 = {
         column: 2,
-        row: 2
+        row: 2,
       };
-      engine.setCellFormula(workBookContext, B2, '=sum(sum(B1,C1), C1)');
+      engine.setCellFormula(workBookContext, B2, '=MySum(MySum(B1,C1), C1)');
 
       // set C1
       const C1 = {
         column: 3,
-        row: 1
+        row: 1,
       };
       engine.prepareToEvaluateTable(cellValueProvider);
       engine.reEvaluateAll(workBookContext, C1);
