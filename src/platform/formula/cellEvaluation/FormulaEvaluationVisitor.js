@@ -65,7 +65,7 @@ class FormulaEvaluationVisitor {
     }
     
     if (fnNameUpper in formulaFns) {
-      return formulaFns[fnName].apply(null, argList);
+      return formulaFns[fnNameUpper].apply(null, argList);
     } 
 
     throw new EvaluationErrors.NameError(`非法的函数 ${fnName}，无法识别`);
