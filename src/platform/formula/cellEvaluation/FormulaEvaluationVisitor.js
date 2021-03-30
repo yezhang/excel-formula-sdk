@@ -68,7 +68,7 @@ class FormulaEvaluationVisitor {
       return formulaFns[fnName].apply(null, argList);
     } 
 
-    throw new EvaluationErrors.NameError('非法的函数，无法识别');
+    throw new EvaluationErrors.NameError(`非法的函数 ${fnName}，无法识别`);
   }
 
   /**
