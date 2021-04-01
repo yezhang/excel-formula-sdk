@@ -948,7 +948,7 @@ class SimpleCellRange {
 
   willBeRemovedWhenRemovingRows(activeSheetName, startFrom, numberOfRows) {
     return this.start.willBeRemovedWhenRemovingRows(activeSheetName, startFrom, numberOfRows)
-      && this.end.willBeRemovedWhenRemovingrows(activeSheetName, startFrom, numberOfRows);
+      && this.end.willBeRemovedWhenRemovingRows(activeSheetName, startFrom, numberOfRows);
   }
 
   willBeRemovedWhenRemovingColumns(activeSheetName, startFrom, numberOfColumns) {
