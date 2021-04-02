@@ -4,8 +4,9 @@
 本项目长期维护，如果您有疑问或功能需求，欢迎在 [issue](https://github.com/yezhang/excel-formula-sdk/issues) 提问。
 
 ### 基本功能
-Excel 公式解析引擎，用于支持公式输入编辑器的智能提示、单元格之间的公式依赖计算、公式的求值。
+Excel 公式解析引擎，用于支持公式输入编辑器的智能提示、单元格之间的公式依赖计算、公式的求值、公式语法校验。  
 
+  
 ### 集成用法
 本 SDK 还可以与各类编辑器（或输入框）、表格组件配合使用。
 - [x] 支持公式的语法解析、单元格地址解析、单元格范围解析、单元格公式之间的依赖关系管理等。
@@ -49,9 +50,10 @@ const { FormulaEngine, WorkBookContext } = formulaSDK;
 使用 `formulaSDK.FormulaEngine` 访问公式引擎。
 使用 `formulaSDK.WorkBookContext` 访问工作表的上下文。
 
+
 ## 与表格组件集成API
 
-**场景**  
+**场景：设置单元格公式**  
 当用户输入公式按下回车时，执行如下调用：
 ```js
 const engine = new FormulaEngine();
@@ -64,7 +66,7 @@ engine.setCellFormula(context, A1CellRef, '=B1');
 
 如果输入的公式发生了错误，`engine.setCellFormula` 函数会抛出异常，提示禁止用户提交公式即可。
 
-**场景**  
+**场景：对指定单元格内的公式求值**  
 当对单元格 A1 求值时，执行如下调用：
 ```js
 const engine = new FormulaEngine();
@@ -133,7 +135,7 @@ try {
 ret 的值是 2.
 
 
-**场景**  
+**场景：单元格全部重算**  
 假设表格中已经设置了如下公式: A1 = B1, B1 = C1, B2 = C2.  
 当单元格 C1 的数值在表格组件中发生变更时，需要重新计算 B1, A1 处的单元格的值。
 ```js
@@ -145,7 +147,7 @@ engine.reEvaluateAll(context, C1);
 
 engine.reEvaluateAll(...) 函数可能会抛出计算异常，处理方法同 engine.evaluate(...)。
 
-**场景**  
+**场景：计算失败处理**  
 在公式计算失败时，会抛出异常；在异常中包含界面显示需要的文本。
 ```js
 const engine = new FormulaEngine();
@@ -158,7 +160,7 @@ try{
 }
 ```
 
-**场景**  
+**场景：自动填充公式**  
 自动填充单元格。当希望在表格组件中，拖动鼠标，从当前选中单元格开始向下填充单元格公式时，
 使用 `engine.autofillDown(context, formulaText, rowNumber)` 函数自动生成新单元格的公式。
 随着鼠标不断向下移动，循环调用该 `engine.autofillDown` 函数，并传递逐渐递增的参数 `rowNumber`。
@@ -171,7 +173,7 @@ let downRet = engine.autofillDown(context, f, 1);
 // downRet = '=C4+D4+SUM(C4:D4)+MIN($C4:D$3)';
 ```
 
-**场景「浮动范围」**  
+**场景：「浮动范围」**  
 本公式引擎支持「浮动范围」的概念。公式语法是使用箭头连接两个单元格地址，例如 A1->A1。
 浮动范围与“单元格范围（例如，A1:A1)”的用作类似，都具有覆盖范围内的所有单元格的作用。
 区别是，浮动范围的公式联动方式与单元格范围不同。

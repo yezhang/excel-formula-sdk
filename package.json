@@ -1,6 +1,6 @@
 {
   "name": "excel-formula-sdk",
-  "version": "0.0.40",
+  "version": "0.0.41",
   "description": "Excel 公式解析引擎（公式编辑器、公式计算）",
   "main": "./min/formula-sdk.js",
   "repository": {
